@@ -85,11 +85,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Set session
-      (req.session as any).mockUser = {
+      (req as any).session.mockUser = {
         id: mockUser.id,
         role: mockUser.role,
         isAuthenticated: true
       };
+      
+      // Save session explicitly
+      (req as any).session.save((err: any) => {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+      });
 
       res.json({ success: true, role: mockUser.role });
     } catch (error) {
@@ -270,16 +277,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User management routes
   app.get("/api/users", customAuth, async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const userId = req.user.claims.sub;
       const currentUser = await storage.getUser(userId);
       
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const permissions = getUserPermissions(currentUser.role);
-      if (!permissions.canViewAllUsers) {
-        return res.status(403).json({ message: "Permission denied" });
+      if (!currentUser || !hasPermission(currentUser, 'canViewAllUsers')) {
+        return res.status(403).json({ message: "Access denied" });
       }
 
       const users = await storage.getAllUsers();
@@ -292,16 +294,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/users/:userId/role", customAuth, async (req: any, res) => {
     try {
-      const currentUserId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const currentUserId = req.user.claims.sub;
       const currentUser = await storage.getUser(currentUserId);
       
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const permissions = getUserPermissions(currentUser.role);
-      if (!permissions.canManageUsers) {
-        return res.status(403).json({ message: "Permission denied" });
+      if (!currentUser || !hasPermission(currentUser, 'canManageUsers')) {
+        return res.status(403).json({ message: "Access denied" });
       }
 
       const { userId } = req.params;
@@ -332,6 +329,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error uploading files:", error);
       res.status(500).json({ message: "Failed to upload files" });
+    }
+  });
+
+  // Repair routes
+  app.post("/api/repairs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canCreateRepairs')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const repairData = insertRepairSchema.parse({
+        ...req.body,
+        userId,
+      });
+
+      const repair = await storage.createRepair(repairData);
+      res.status(201).json(repair);
+    } catch (error) {
+      console.error("Error creating repair:", error);
+      res.status(400).json({ message: "Failed to create repair request" });
+    }
+  });
+
+  app.get("/api/repairs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canViewAllRepairs')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const { status, category, page = "1", limit = "10" } = req.query;
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+
+      const filters: any = {
+        limit: parseInt(limit),
+        offset,
+      };
+
+      // Role-based filtering
+      const permissions = getUserPermissions(currentUser.role as any);
+      if (!permissions.canViewAllRepairs) {
+        filters.userId = userId;
+      }
+
+      if (status) filters.status = status;
+      if (category) filters.category = category;
+
+      const repairs = await storage.getRepairs(filters);
+      res.json(repairs);
+    } catch (error) {
+      console.error("Error fetching repairs:", error);
+      res.status(500).json({ message: "Failed to fetch repairs" });
+    }
+  });
+
+  app.get("/api/repairs/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      const repairId = parseInt(req.params.id);
+
+      if (!currentUser) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const repair = await storage.getRepairById(repairId);
+      if (!repair) {
+        return res.status(404).json({ message: "Repair not found" });
+      }
+
+      // Role-based access check
+      const permissions = getUserPermissions(currentUser.role as any);
+      const isOwner = repair.userId === userId;
+      
+      if (!permissions.canViewAllRepairs && !isOwner) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json(repair);
+    } catch (error) {
+      console.error("Error fetching repair:", error);
+      res.status(500).json({ message: "Failed to fetch repair" });
+    }
+  });
+
+  app.patch("/api/repairs/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      const repairId = parseInt(req.params.id);
+
+      if (!currentUser) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const repair = await storage.getRepairById(repairId);
+      if (!repair) {
+        return res.status(404).json({ message: "Repair not found" });
+      }
+
+      const permissions = getUserPermissions(currentUser.role as any);
+      const isOwner = repair.userId === userId;
+
+      // Check if user can update this repair
+      if (!permissions.canViewAllRepairs && !isOwner) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Role-based status update permissions
+      if (req.body.status && !hasPermission(currentUser, 'canUpdateRepairStatus')) {
+        return res.status(403).json({ message: "You cannot change repair status" });
+      }
+
+      const updateData = updateRepairSchema.parse({
+        id: repairId,
+        ...req.body,
+      });
+
+      const updatedRepair = await storage.updateRepair(updateData);
+      res.json(updatedRepair);
+    } catch (error) {
+      console.error("Error updating repair:", error);
+      res.status(400).json({ message: "Failed to update repair" });
+    }
+  });
+
+  // Stats endpoint
+  app.get("/api/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const stats = await storage.getRepairStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
     }
   });
 
