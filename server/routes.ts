@@ -36,7 +36,7 @@ const upload = multer({
 // Custom authentication middleware that supports both session and Replit auth
 const customAuth = (req: any, res: any, next: any) => {
   // Check session-based authentication first
-  if (req.session?.mockUser?.isAuthenticated) {
+  if ((req.session as any)?.mockUser?.isAuthenticated) {
     return next();
   }
   
@@ -101,9 +101,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get("/api/auth/user", async (req: any, res) => {
     try {
+      console.log("Session check:", req.session);
+      console.log("Mock user:", (req.session as any)?.mockUser);
+      
       // Check for mock session first
-      if (req.session?.mockUser?.isAuthenticated) {
-        const userId = req.session.mockUser.id;
+      if ((req.session as any)?.mockUser?.isAuthenticated) {
+        const userId = (req.session as any).mockUser.id;
         const user = await storage.getUser(userId);
         if (user) {
           const permissions = getUserPermissions(user.role as any);
@@ -112,7 +115,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Then check Replit auth
-      if (!req.isAuthenticated() || !req.user?.claims?.sub) {
+      if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
+        console.log("No authentication found");
         return res.status(401).json({ message: "Unauthorized" });
       }
 

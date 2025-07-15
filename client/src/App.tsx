@@ -9,13 +9,14 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import NewRepair from "@/pages/NewRepair";
 import Repairs from "@/pages/Repairs";
@@ -113,8 +114,9 @@ function Router() {
   if (isLoading || !isAuthenticated) {
     return (
       <Switch>
-        <Route path="/" component={Landing} />
-        <Route component={Landing} />
+        <Route path="/login" component={Login} />
+        <Route path="/" component={Login} />
+        <Route component={Login} />
       </Switch>
     );
   }
