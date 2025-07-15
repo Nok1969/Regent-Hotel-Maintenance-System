@@ -13,6 +13,7 @@ import {
   Settings,
   LogOut,
   Wrench,
+  Users,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -32,26 +33,43 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
       icon: Home,
       label: t("navigation.dashboard"),
       badge: null,
+      requiresPermission: null,
     },
     {
       href: "/new-repair",
       icon: Plus,
       label: t("navigation.newRepair"),
       badge: null,
+      requiresPermission: "canCreateRepairs",
     },
     {
       href: "/repairs",
       icon: ClipboardList,
       label: t("navigation.repairHistory"),
       badge: null,
+      requiresPermission: "canViewAllRepairs",
     },
     {
       href: "/notifications",
       icon: Bell,
       label: t("navigation.notifications"),
       badge: 3,
+      requiresPermission: null,
+    },
+    {
+      href: "/users",
+      icon: Users,
+      label: t("navigation.users"),
+      badge: null,
+      requiresPermission: "canViewAllUsers",
     },
   ];
+
+  // Filter menu items based on user permissions
+  const visibleMenuItems = menuItems.filter(item => {
+    if (!item.requiresPermission) return true;
+    return user?.permissions?.[item.requiresPermission];
+  });
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
@@ -66,7 +84,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
       )}
     >
       <nav className="p-4 space-y-2">
-        {menuItems.map((item) => {
+        {visibleMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href;
 

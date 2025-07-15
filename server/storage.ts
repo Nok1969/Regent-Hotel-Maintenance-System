@@ -15,6 +15,8 @@ export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>;
+  updateUserRole(userId: string, role: string): Promise<User>;
   
   // Repair operations
   createRepair(repair: InsertRepair): Promise<Repair>;
@@ -59,6 +61,22 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(users.createdAt);
+  }
+
+  async updateUserRole(userId: string, role: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        role: role as any,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
   // Repair operations
   async createRepair(repair: InsertRepair): Promise<Repair> {
     const [newRepair] = await db
@@ -82,7 +100,7 @@ export class DatabaseStorage implements IStorage {
     if (status) conditions.push(eq(repairs.status, status as any));
     if (category) conditions.push(eq(repairs.category, category as any));
 
-    let query = db
+    const query = db
       .select({
         id: repairs.id,
         room: repairs.room,
@@ -108,19 +126,16 @@ export class DatabaseStorage implements IStorage {
       })
       .from(repairs)
       .innerJoin(users, eq(repairs.userId, users.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(repairs.createdAt))
       .limit(limit)
       .offset(offset);
-
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
 
     return await query;
   }
 
   async getRepairById(id: number): Promise<RepairWithUser | undefined> {
-    const [repair] = await db
+    const result = await db
       .select({
         id: repairs.id,
         room: repairs.room,
@@ -147,8 +162,8 @@ export class DatabaseStorage implements IStorage {
       .from(repairs)
       .innerJoin(users, eq(repairs.userId, users.id))
       .where(eq(repairs.id, id));
-
-    return repair;
+    
+    return result[0];
   }
 
   async updateRepair(repairData: UpdateRepair): Promise<Repair> {

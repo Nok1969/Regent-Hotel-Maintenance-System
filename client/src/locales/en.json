@@ -19,6 +19,7 @@
     "newRepair": "New Repair Request",
     "repairHistory": "Repair History",
     "notifications": "Notifications",
+    "users": "User Management",
     "settings": "Settings"
   },
   "dashboard": {
@@ -92,6 +93,50 @@
     "newRequest": "New repair request submitted",
     "statusUpdated": "Status updated",
     "repairCompleted": "Repair completed"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "manager": "Manager", 
+    "staff": "Staff",
+    "technician": "Technician"
+  },
+  "users": {
+    "title": "User Management",
+    "description": "Manage users and system access permissions",
+    "allUsers": "All Users",
+    "manageRoles": "Manage user roles and permissions",
+    "user": "User",
+    "role": "Role",
+    "language": "Language",
+    "joinedAt": "Joined",
+    "actions": "Actions",
+    "noUsers": "No users found",
+    "noPermission": "You don't have permission to view user data",
+    "roleUpdated": "Role Updated",
+    "roleUpdateSuccess": "User role updated successfully",
+    "roleUpdateError": "Failed to update user role"
+  },
+  "common": {
+    "loading": "Loading...",
+    "noData": "No data available",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "error": "Error",
+    "errorLoading": "Error loading data",
+    "unauthorized": "Unauthorized",
+    "accessDenied": "Access Denied"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Logout",
+    "loginAgain": "Logging in again..."
   },
   "messages": {
     "loading": "Loading...",

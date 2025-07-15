@@ -4,6 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertRepairSchema, updateRepairSchema } from "@shared/schema";
+import { hasPermission, getUserPermissions } from "./permissions";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -44,10 +45,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      res.json(user);
+      if (user) {
+        // Include user permissions in response
+        const permissions = getUserPermissions(user.role as any);
+        res.json({ ...user, permissions });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // User management routes
+  app.get("/api/users", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canViewAllUsers')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.patch("/api/users/:userId/role", isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canManageUsers')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const { userId } = req.params;
+      const { role } = req.body;
+
+      if (!['admin', 'manager', 'staff', 'technician'].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+
+      const updatedUser = await storage.updateUserRole(userId, role);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ message: "Failed to update user role" });
     }
   });
 
@@ -71,6 +120,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/repairs", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canCreateRepairs')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
       const repairData = insertRepairSchema.parse({
         ...req.body,
         userId,
@@ -87,7 +142,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/repairs", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser || !hasPermission(currentUser, 'canViewAllRepairs')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
       
       const { status, category, page = "1", limit = "10" } = req.query;
       const offset = (parseInt(page) - 1) * parseInt(limit);
@@ -97,8 +156,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset,
       };
 
-      // Non-admin users can only see their own repairs
-      if (user?.role !== "admin") {
+      // Role-based filtering
+      const permissions = getUserPermissions(currentUser.role as any);
+      if (!permissions.canViewAllRepairs) {
         filters.userId = userId;
       }
 
@@ -116,16 +176,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/repairs/:id", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      const currentUser = await storage.getUser(userId);
       const repairId = parseInt(req.params.id);
+
+      if (!currentUser) {
+        return res.status(401).json({ message: "User not found" });
+      }
 
       const repair = await storage.getRepairById(repairId);
       if (!repair) {
         return res.status(404).json({ message: "Repair not found" });
       }
 
-      // Non-admin users can only see their own repairs
-      if (user?.role !== "admin" && repair.userId !== userId) {
+      // Role-based access check
+      const permissions = getUserPermissions(currentUser.role as any);
+      const isOwner = repair.userId === userId;
+      
+      if (!permissions.canViewAllRepairs && !isOwner) {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -139,25 +206,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/repairs/:id", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      const currentUser = await storage.getUser(userId);
       const repairId = parseInt(req.params.id);
+
+      if (!currentUser) {
+        return res.status(401).json({ message: "User not found" });
+      }
 
       const repair = await storage.getRepairById(repairId);
       if (!repair) {
         return res.status(404).json({ message: "Repair not found" });
       }
 
-      // Only admin can change status, users can only edit their own repairs
+      const permissions = getUserPermissions(currentUser.role as any);
       const isOwner = repair.userId === userId;
-      const isAdmin = user?.role === "admin";
 
-      if (!isOwner && !isAdmin) {
+      // Check if user can update this repair
+      if (!permissions.canViewAllRepairs && !isOwner) {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      // Non-admin users cannot change status
-      if (!isAdmin && req.body.status) {
-        delete req.body.status;
+      // Role-based status update permissions
+      if (req.body.status && !hasPermission(currentUser, 'canUpdateRepairStatus')) {
+        return res.status(403).json({ message: "You cannot change repair status" });
       }
 
       const updateData = updateRepairSchema.parse({

@@ -39,9 +39,14 @@ Preferred communication style: Simple, everyday language.
 
 ### Authentication System
 - **Provider**: Replit Auth integration with OAuth flow
-- **Authorization**: Role-based access control (admin/staff roles)
+- **Authorization**: 4-tier role-based access control system
+  - **Admin**: Full system access including user management
+  - **Manager**: Full access except cannot add new users
+  - **Staff**: Cannot change job status (view and create only)
+  - **Technician**: Can accept jobs and change job status
 - **Session Storage**: PostgreSQL-backed sessions for scalability
 - **Security**: HTTP-only cookies with secure settings
+- **Permissions**: Granular permission system with backend enforcement
 
 ### Maintenance Request Management
 - **Request Creation**: Multi-step form with image uploads

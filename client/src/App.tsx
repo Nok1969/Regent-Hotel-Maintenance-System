@@ -19,6 +19,7 @@ import Dashboard from "@/pages/Dashboard";
 import NewRepair from "@/pages/NewRepair";
 import Repairs from "@/pages/Repairs";
 import Notifications from "@/pages/Notifications";
+import Users from "@/pages/Users";
 import NotFound from "@/pages/not-found";
 
 import "./i18n";
@@ -113,6 +114,7 @@ function Router() {
             <Route path="/new-repair" component={NewRepair} />
             <Route path="/repairs" component={Repairs} />
             <Route path="/notifications" component={Notifications} />
+            <Route path="/users" component={Users} />
             <Route component={NotFound} />
           </Switch>
         </main>
