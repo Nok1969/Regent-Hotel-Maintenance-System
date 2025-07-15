@@ -8,6 +8,16 @@ This is a full-stack hotel maintenance system built with modern web technologies
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**July 15, 2025 - 4-Tier Role-Based Access Control Implementation**
+- ✅ Complete role-based permission system with 4 user types
+- ✅ User management interface for admin/manager roles
+- ✅ Permission-based sidebar menu filtering
+- ✅ Backend route protection with role validation
+- ✅ Multi-language support (Thai/English) for all role features
+- ✅ Database schema updated with role and language fields
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -47,6 +57,15 @@ Preferred communication style: Simple, everyday language.
 - **Session Storage**: PostgreSQL-backed sessions for scalability
 - **Security**: HTTP-only cookies with secure settings
 - **Permissions**: Granular permission system with backend enforcement
+
+### Role-Based Access Testing
+To test the role-based access control:
+1. Visit the application URL in your browser
+2. Click "Login" to authenticate via Replit Auth
+3. After login, you'll be assigned a default role (staff)
+4. Admin users can access /users page to change user roles
+5. Different roles will see different menu options based on permissions
+6. Backend APIs enforce role permissions at the endpoint level
 
 ### Maintenance Request Management
 - **Request Creation**: Multi-step form with image uploads
