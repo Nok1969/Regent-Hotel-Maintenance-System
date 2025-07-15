@@ -91,7 +91,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isAuthenticated: true
       };
 
-      res.json({ success: true, role: mockUser.role });
+      // Save session explicitly
+      req.session.save((err: any) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ message: "Session save failed" });
+        }
+        res.json({ success: true, role: mockUser.role });
+      });
     } catch (error) {
       console.error("Mock login error:", error);
       res.status(500).json({ message: "Login failed" });
@@ -101,9 +108,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get("/api/auth/user", async (req: any, res) => {
     try {
-      console.log("Session check:", req.session);
-      console.log("Mock user:", (req.session as any)?.mockUser);
-      
       // Check for mock session first
       if ((req.session as any)?.mockUser?.isAuthenticated) {
         const userId = (req.session as any).mockUser.id;
@@ -116,7 +120,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Then check Replit auth
       if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
-        console.log("No authentication found");
         return res.status(401).json({ message: "Unauthorized" });
       }
 

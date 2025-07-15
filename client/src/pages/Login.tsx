@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
@@ -26,7 +26,12 @@ export default function Login() {
           title: "Login successful",
           description: `Welcome back! You are logged in as ${data.role}`,
         });
-        navigate("/");
+        
+        // Invalidate and refetch the auth query to update the authentication state
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        
+        // Force page reload to ensure clean state
+        window.location.href = "/";
       }
     } catch (error) {
       toast({
