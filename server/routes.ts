@@ -8,6 +8,7 @@ import { hasPermission, getUserPermissions } from "./permissions";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import cookieParser from "cookie-parser";
 
 // Configure multer for file uploads
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -33,9 +34,26 @@ const upload = multer({
   },
 });
 
+// Simple in-memory storage for logged-in users (for development only)
+const loggedInUsers = new Map<string, { id: string; role: string; timestamp: number }>();
+
 // Custom authentication middleware that supports both session and Replit auth
 const customAuth = (req: any, res: any, next: any) => {
-  // Check session-based authentication first
+  // Check session token first
+  const sessionToken = req.cookies?.session_token;
+  if (sessionToken && loggedInUsers.has(sessionToken)) {
+    const sessionData = loggedInUsers.get(sessionToken)!;
+    const sessionAge = Date.now() - sessionData.timestamp;
+    const maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
+    
+    if (sessionAge < maxAge) {
+      return next();
+    } else {
+      loggedInUsers.delete(sessionToken);
+    }
+  }
+  
+  // Check session-based authentication fallback
   if ((req.session as any)?.mockUser?.isAuthenticated) {
     return next();
   }
@@ -51,6 +69,9 @@ const customAuth = (req: any, res: any, next: any) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Add cookie parser middleware
+  app.use(cookieParser());
 
   // Serve uploaded files
   app.use("/uploads", express.static(uploadDir));
@@ -84,31 +105,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         language: "en"
       });
 
-      // Set session
-      (req.session as any).mockUser = {
+      // Generate a simple session token
+      const sessionToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      
+      // Store in memory (for development)
+      loggedInUsers.set(sessionToken, {
         id: mockUser.id,
         role: mockUser.role,
-        isAuthenticated: true
-      };
-
-      console.log('Setting session mockUser:', (req.session as any).mockUser);
-      console.log('Session ID:', req.sessionID);
-
-      // Save session explicitly
-      req.session.save((err: any) => {
-        if (err) {
-          console.error('Session save error:', err);
-          return res.status(500).json({ message: "Session save failed" });
-        }
-        console.log('Session saved successfully');
-        
-        // Redirect to home page after successful login
-        if (req.headers.accept && req.headers.accept.includes('application/json')) {
-          res.json({ success: true, role: mockUser.role });
-        } else {
-          res.redirect('/');
-        }
+        timestamp: Date.now()
       });
+
+      console.log('Login successful for user:', mockUser.id);
+      console.log('Generated session token:', sessionToken);
+
+      // Set session cookie
+      res.cookie('session_token', sessionToken, {
+        httpOnly: true,
+        secure: false, // Allow in development
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+        sameSite: 'lax'
+      });
+
+      // Redirect to home page after successful login
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        res.json({ success: true, role: mockUser.role });
+      } else {
+        res.redirect('/');
+      }
     } catch (error) {
       console.error("Mock login error:", error);
       res.status(500).json({ message: "Login failed" });
@@ -118,10 +141,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get("/api/auth/user", async (req: any, res) => {
     try {
-      console.log('Auth check - Session ID:', req.sessionID);
-      console.log('Auth check - Session mockUser:', (req.session as any)?.mockUser);
+      // Check for session token first
+      const sessionToken = req.cookies?.session_token;
+      console.log('Auth check - Session token:', sessionToken);
       
-      // Check for mock session first
+      if (sessionToken && loggedInUsers.has(sessionToken)) {
+        const sessionData = loggedInUsers.get(sessionToken)!;
+        console.log('Found session data:', sessionData);
+        
+        // Check if session is still valid (not expired)
+        const sessionAge = Date.now() - sessionData.timestamp;
+        const maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
+        
+        if (sessionAge < maxAge) {
+          const user = await storage.getUser(sessionData.id);
+          if (user) {
+            const permissions = getUserPermissions(user.role as any);
+            return res.json({ ...user, permissions });
+          }
+        } else {
+          // Remove expired session
+          loggedInUsers.delete(sessionToken);
+        }
+      }
+
+      // Check for mock session fallback
       if ((req.session as any)?.mockUser?.isAuthenticated) {
         const userId = (req.session as any).mockUser.id;
         const user = await storage.getUser(userId);
