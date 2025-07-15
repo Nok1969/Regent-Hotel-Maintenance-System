@@ -13,6 +13,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTranslation } from "react-i18next";
+import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
@@ -36,7 +37,14 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
             <Menu className="h-5 w-5" />
           </Button>
         )}
-        <h1 className="text-xl font-semibold">{t("navigation.dashboard")}</h1>
+        <div className="flex items-center space-x-3">
+          <img 
+            src={maintenanceIcon} 
+            alt="Maintenance System" 
+            className="w-8 h-8 rounded-full"
+          />
+          <h1 className="text-xl font-semibold">{t("app.title")}</h1>
+        </div>
       </div>
 
       <div className="flex items-center space-x-4">
