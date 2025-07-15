@@ -36,21 +36,13 @@ const upload = multer({
 
 // Simple in-memory storage for logged-in users (for development only)
 const loggedInUsers = new Map<string, { id: string; role: string; timestamp: number }>();
+let currentUser: { id: string; role: string } | null = null;
 
 // Custom authentication middleware that supports both session and Replit auth
 const customAuth = (req: any, res: any, next: any) => {
-  // Check session token first
-  const sessionToken = req.cookies?.session_token;
-  if (sessionToken && loggedInUsers.has(sessionToken)) {
-    const sessionData = loggedInUsers.get(sessionToken)!;
-    const sessionAge = Date.now() - sessionData.timestamp;
-    const maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
-    
-    if (sessionAge < maxAge) {
-      return next();
-    } else {
-      loggedInUsers.delete(sessionToken);
-    }
+  // Check current user first
+  if (currentUser) {
+    return next();
   }
   
   // Check session-based authentication fallback
@@ -79,11 +71,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mock login for testing purposes
   app.post("/api/auth/mock-login", async (req, res) => {
     try {
-      console.log('Login request body:', req.body);
       const { username, password } = req.body;
       
       if (!username || !password) {
-        console.log('Missing username or password');
         return res.status(400).json({ message: "Username and password required" });
       }
       
@@ -96,10 +86,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const mockUser = mockUsers[username as keyof typeof mockUsers];
-      console.log('Found user:', !!mockUser, 'Password match:', mockUser?.password === password);
       
       if (!mockUser || mockUser.password !== password) {
-        console.log('Authentication failed for:', username);
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
@@ -114,59 +102,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         language: "en"
       });
 
-      // Generate a simple session token
-      const sessionToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-      
-      // Store in memory (for development)
-      loggedInUsers.set(sessionToken, {
+      // Store current user in memory (simple approach for development)
+      currentUser = {
         id: mockUser.id,
-        role: mockUser.role,
-        timestamp: Date.now()
-      });
+        role: mockUser.role
+      };
 
       console.log('Login successful for user:', mockUser.id);
-      console.log('Generated session token:', sessionToken);
-
-      // Set session cookie
-      res.cookie('session_token', sessionToken, {
-        httpOnly: true,
-        secure: false, // Allow in development
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-        sameSite: 'lax'
-      });
 
       // Always return JSON for API requests
       res.json({ success: true, role: mockUser.role });
     } catch (error) {
-      console.error("Mock login error:", error);
       res.status(500).json({ message: "Login failed" });
     }
+  });
+
+  // Logout route
+  app.post("/api/auth/logout", (req, res) => {
+    currentUser = null;
+    res.json({ success: true });
   });
 
   // Auth routes
   app.get("/api/auth/user", async (req: any, res) => {
     try {
-      // Check for session token first
-      const sessionToken = req.cookies?.session_token;
-      console.log('Auth check - Session token:', sessionToken);
-      
-      if (sessionToken && loggedInUsers.has(sessionToken)) {
-        const sessionData = loggedInUsers.get(sessionToken)!;
-        console.log('Found session data:', sessionData);
-        
-        // Check if session is still valid (not expired)
-        const sessionAge = Date.now() - sessionData.timestamp;
-        const maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
-        
-        if (sessionAge < maxAge) {
-          const user = await storage.getUser(sessionData.id);
-          if (user) {
-            const permissions = getUserPermissions(user.role as any);
-            return res.json({ ...user, permissions });
-          }
-        } else {
-          // Remove expired session
-          loggedInUsers.delete(sessionToken);
+      // Check current user first (simple in-memory approach)
+      if (currentUser) {
+        const user = await storage.getUser(currentUser.id);
+        if (user) {
+          const permissions = getUserPermissions(user.role as any);
+          return res.json({ ...user, permissions });
         }
       }
 
@@ -182,7 +147,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Then check Replit auth
       if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
-        console.log('No authentication found');
         return res.status(401).json({ message: "Unauthorized" });
       }
 
