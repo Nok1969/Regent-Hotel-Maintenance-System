@@ -53,7 +53,10 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
         <NotificationBell count={3} />
 
         {user && (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-muted-foreground">
+              {user.firstName} ({user.role})
+            </span>
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
               {user.profileImageUrl ? (
                 <img
@@ -75,6 +78,24 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
                 {user.role}
               </p>
             </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Check if this is a mock user by looking at email domain
+                if (user.email?.includes('@hotel.com')) {
+                  // Mock logout
+                  fetch('/api/auth/mock-logout', { method: 'POST' })
+                    .then(() => window.location.reload());
+                } else {
+                  // Replit logout
+                  window.location.href = "/api/logout";
+                }
+              }}
+            >
+              Logout
+            </Button>
           </div>
         )}
       </div>

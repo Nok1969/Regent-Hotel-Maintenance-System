@@ -40,13 +40,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Serve uploaded files
   app.use("/uploads", express.static(uploadDir));
 
-  // Auth routes
-  app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
+  // Mock login for testing purposes
+  app.post("/api/auth/mock-login", async (req, res) => {
     try {
+      const { username, password } = req.body;
+      
+      // Mock users for testing different roles
+      const mockUsers = {
+        "admin": { id: "admin-123", role: "admin", password: "admin123" },
+        "manager": { id: "manager-123", role: "manager", password: "manager123" },
+        "staff": { id: "staff-123", role: "staff", password: "staff123" },
+        "technician": { id: "tech-123", role: "technician", password: "tech123" }
+      };
+
+      const mockUser = mockUsers[username as keyof typeof mockUsers];
+      if (!mockUser || mockUser.password !== password) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Create or update user in database
+      await storage.upsertUser({
+        id: mockUser.id,
+        email: `${username}@hotel.com`,
+        firstName: username.charAt(0).toUpperCase() + username.slice(1),
+        lastName: "User",
+        profileImageUrl: null,
+        role: mockUser.role as "admin" | "manager" | "staff" | "technician",
+        language: "en"
+      });
+
+      // Set session
+      (req as any).session.mockUser = {
+        id: mockUser.id,
+        role: mockUser.role,
+        isAuthenticated: true
+      };
+
+      res.json({ success: true, role: mockUser.role });
+    } catch (error) {
+      console.error("Mock login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Auth routes
+  app.get("/api/auth/user", async (req: any, res) => {
+    try {
+      // Check for mock session first
+      if (req.session?.mockUser?.isAuthenticated) {
+        const userId = req.session.mockUser.id;
+        const user = await storage.getUser(userId);
+        if (user) {
+          const permissions = getUserPermissions(user.role as any);
+          return res.json({ ...user, permissions });
+        }
+      }
+
+      // Then check Replit auth
+      if (!req.isAuthenticated() || !req.user?.claims?.sub) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       if (user) {
-        // Include user permissions in response
         const permissions = getUserPermissions(user.role as any);
         res.json({ ...user, permissions });
       } else {
@@ -56,6 +113,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
     }
+  });
+
+  // Mock logout
+  app.post("/api/auth/mock-logout", (req: any, res) => {
+    req.session.mockUser = null;
+    res.json({ success: true });
   });
 
   // User management routes
