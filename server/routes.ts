@@ -135,12 +135,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sameSite: 'lax'
       });
 
-      // Redirect to home page after successful login
-      if (req.headers.accept && req.headers.accept.includes('application/json')) {
-        res.json({ success: true, role: mockUser.role });
-      } else {
-        res.redirect('/');
-      }
+      // Always return JSON for API requests
+      res.json({ success: true, role: mockUser.role });
     } catch (error) {
       console.error("Mock login error:", error);
       res.status(500).json({ message: "Login failed" });
