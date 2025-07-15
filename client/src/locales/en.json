@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "Hotel Maintenance System",
+    "subtitle": "Hotel maintenance request system"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "newRepair": "New Repair Request",
+    "repairHistory": "Repair History",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "totalRequests": "Total Requests",
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "repairCategories": "Repair Categories",
+    "weeklyOverview": "Weekly Status Overview",
+    "recentRequests": "Recent Requests"
+  },
+  "repair": {
+    "newRequest": "New Repair Request",
+    "room": "Room/Location",
+    "selectRoom": "Select a room...",
+    "category": "Category",
+    "selectCategory": "Select category...",
+    "priority": "Priority Level",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the issue in detail...",
+    "attachImages": "Attach Images",
+    "dragDropImages": "Drag and drop images here, or click to browse",
+    "browseFiles": "Browse Files",
+    "submitRequest": "Submit Request",
+    "cancel": "Cancel",
+    "repairHistory": "Repair History",
+    "allStatus": "All Status",
+    "allCategories": "All Categories"
+  },
+  "categories": {
+    "electrical": "Electrical",
+    "plumbing": "Plumbing",
+    "air_conditioning": "Air Conditioning",
+    "furniture": "Furniture",
+    "other": "Other"
+  },
+  "status": {
+    "pending": "Pending",
+    "in_progress": "In Progress",
+    "completed": "Completed"
+  },
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "table": {
+    "id": "ID",
+    "room": "Room",
+    "category": "Category",
+    "description": "Description",
+    "status": "Status",
+    "priority": "Priority",
+    "date": "Date",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "edit": "Edit",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "newRequest": "New repair request submitted",
+    "statusUpdated": "Status updated",
+    "repairCompleted": "Repair completed"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Operation completed successfully",
+    "unauthorized": "You are logged out. Logging in again...",
+    "accessDenied": "Access denied",
+    "repairSubmitted": "Repair request submitted successfully",
+    "repairUpdated": "Repair request updated successfully"
+  }
+}

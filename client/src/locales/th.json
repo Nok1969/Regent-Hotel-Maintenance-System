@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "ระบบแจ้งซ่อมโรงแรม",
+    "subtitle": "ระบบแจ้งซ่อมสำหรับโรงแรม"
+  },
+  "auth": {
+    "signIn": "เข้าสู่ระบบ",
+    "signOut": "ออกจากระบบ",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "forgotPassword": "ลืมรหัสผ่าน?",
+    "noAccount": "ยังไม่มีบัญชี?",
+    "register": "สมัครสมาชิก",
+    "enterEmail": "กรอกอีเมลของคุณ",
+    "enterPassword": "กรอกรหัสผ่านของคุณ"
+  },
+  "navigation": {
+    "dashboard": "แดชบอร์ด",
+    "newRepair": "แจ้งซ่อมใหม่",
+    "repairHistory": "ประวัติการซ่อม",
+    "notifications": "การแจ้งเตือน",
+    "settings": "การตั้งค่า"
+  },
+  "dashboard": {
+    "totalRequests": "รายการทั้งหมด",
+    "pending": "รอดำเนินการ",
+    "inProgress": "กำลังดำเนินการ",
+    "completed": "เสร็จสิ้น",
+    "repairCategories": "ประเภทการซ่อม",
+    "weeklyOverview": "สรุปรายสัปดาห์",
+    "recentRequests": "รายการล่าสุด"
+  },
+  "repair": {
+    "newRequest": "แจ้งซ่อมใหม่",
+    "room": "ห้อง/สถานที่",
+    "selectRoom": "เลือกห้อง...",
+    "category": "ประเภท",
+    "selectCategory": "เลือกประเภท...",
+    "priority": "ระดับความเร่งด่วน",
+    "low": "ต่ำ",
+    "medium": "กลาง",
+    "high": "สูง",
+    "description": "รายละเอียด",
+    "descriptionPlaceholder": "อธิบายปัญหาโดยละเอียด...",
+    "attachImages": "แนบรูปภาพ",
+    "dragDropImages": "ลากและวางรูปภาพที่นี่ หรือคลิกเพื่อเลือกไฟล์",
+    "browseFiles": "เลือกไฟล์",
+    "submitRequest": "ส่งคำขอ",
+    "cancel": "ยกเลิก",
+    "repairHistory": "ประวัติการซ่อม",
+    "allStatus": "ทุกสถานะ",
+    "allCategories": "ทุกประเภท"
+  },
+  "categories": {
+    "electrical": "ไฟฟ้า",
+    "plumbing": "ประปา",
+    "air_conditioning": "เครื่องปรับอากาศ",
+    "furniture": "เฟอร์นิเจอร์",
+    "other": "อื่นๆ"
+  },
+  "status": {
+    "pending": "รอดำเนินการ",
+    "in_progress": "กำลังดำเนินการ",
+    "completed": "เสร็จสิ้น"
+  },
+  "priority": {
+    "high": "สูง",
+    "medium": "กลาง",
+    "low": "ต่ำ"
+  },
+  "table": {
+    "id": "รหัส",
+    "room": "ห้อง",
+    "category": "ประเภท",
+    "description": "รายละเอียด",
+    "status": "สถานะ",
+    "priority": "ความเร่งด่วน",
+    "date": "วันที่",
+    "actions": "การดำเนินการ",
+    "viewDetails": "ดูรายละเอียด",
+    "edit": "แก้ไข",
+    "showing": "แสดง",
+    "to": "ถึง",
+    "of": "จาก",
+    "results": "รายการ",
+    "previous": "ก่อนหน้า",
+    "next": "ถัดไป"
+  },
+  "notifications": {
+    "title": "การแจ้งเตือน",
+    "markAllRead": "ทำเครื่องหมายว่าอ่านแล้วทั้งหมด",
+    "newRequest": "มีการแจ้งซ่อมใหม่",
+    "statusUpdated": "สถานะได้รับการอัปเดต",
+    "repairCompleted": "การซ่อมเสร็จสิ้นแล้ว"
+  },
+  "messages": {
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "success": "ดำเนินการเสร็จสิ้น",
+    "unauthorized": "คุณได้ออกจากระบบแล้ว กำลังเข้าสู่ระบบใหม่...",
+    "accessDenied": "ไม่มีสิทธิ์เข้าถึง",
+    "repairSubmitted": "ส่งคำขอซ่อมเรียบร้อยแล้ว",
+    "repairUpdated": "อัปเดตคำขอซ่อมเรียบร้อยแล้ว"
+  }
+}
