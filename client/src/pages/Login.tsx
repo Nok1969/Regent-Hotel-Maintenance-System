@@ -17,24 +17,32 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Create a form and submit it directly to ensure proper cookie handling
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/api/auth/mock-login';
-    form.style.display = 'none';
+    try {
+      const response = await apiRequest("POST", "/api/auth/mock-login", credentials);
+      const data = await response.json();
 
-    const usernameInput = document.createElement('input');
-    usernameInput.name = 'username';
-    usernameInput.value = credentials.username;
-    form.appendChild(usernameInput);
-
-    const passwordInput = document.createElement('input');
-    passwordInput.name = 'password';
-    passwordInput.value = credentials.password;
-    form.appendChild(passwordInput);
-
-    document.body.appendChild(form);
-    form.submit();
+      if (data.success) {
+        toast({
+          title: "Login successful",
+          description: `Welcome back! You are logged in as ${data.role}`,
+        });
+        
+        // Invalidate and refetch the auth query to update the authentication state
+        await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+        
+        // Force page reload to ensure clean state
+        window.location.href = "/";
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login failed",
+        description: "Invalid username or password",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

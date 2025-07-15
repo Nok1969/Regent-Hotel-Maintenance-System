@@ -79,7 +79,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mock login for testing purposes
   app.post("/api/auth/mock-login", async (req, res) => {
     try {
+      console.log('Login request body:', req.body);
       const { username, password } = req.body;
+      
+      if (!username || !password) {
+        console.log('Missing username or password');
+        return res.status(400).json({ message: "Username and password required" });
+      }
       
       // Mock users for testing different roles
       const mockUsers = {
@@ -90,7 +96,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const mockUser = mockUsers[username as keyof typeof mockUsers];
+      console.log('Found user:', !!mockUser, 'Password match:', mockUser?.password === password);
+      
       if (!mockUser || mockUser.password !== password) {
+        console.log('Authentication failed for:', username);
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
