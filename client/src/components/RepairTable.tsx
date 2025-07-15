@@ -43,8 +43,8 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState({
-    status: initialFilters?.status || "",
-    category: initialFilters?.category || "",
+    status: initialFilters?.status || "all",
+    category: initialFilters?.category || "all",
     search: "",
   });
 
@@ -116,12 +116,12 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   };
 
   const clearFilters = () => {
-    setFilters({ status: "", category: "", search: "" });
+    setFilters({ status: "all", category: "all", search: "" });
   };
 
   const filteredRepairs = repairs.filter((repair: any) => {
-    const matchesStatus = !filters.status || repair.status === filters.status;
-    const matchesCategory = !filters.category || repair.category === filters.category;
+    const matchesStatus = !filters.status || filters.status === "all" || repair.status === filters.status;
+    const matchesCategory = !filters.category || filters.category === "all" || repair.category === filters.category;
     const matchesSearch = !filters.search || 
       repair.title.toLowerCase().includes(filters.search.toLowerCase()) ||
       repair.location.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -182,7 +182,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <SelectValue placeholder={t("filters.allStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t("filters.allStatus")}</SelectItem>
+                <SelectItem value="all">{t("filters.allStatus")}</SelectItem>
                 <SelectItem value="pending">{t("status.pending")}</SelectItem>
                 <SelectItem value="in_progress">{t("status.in_progress")}</SelectItem>
                 <SelectItem value="completed">{t("status.completed")}</SelectItem>
@@ -200,7 +200,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <SelectValue placeholder={t("filters.allCategories")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{t("filters.allCategories")}</SelectItem>
+                <SelectItem value="all">{t("filters.allCategories")}</SelectItem>
                 <SelectItem value="electrical">{t("categories.electrical")}</SelectItem>
                 <SelectItem value="plumbing">{t("categories.plumbing")}</SelectItem>
                 <SelectItem value="hvac">{t("categories.hvac")}</SelectItem>
