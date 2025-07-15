@@ -24,7 +24,8 @@ export default function Landing() {
 
   const mockLoginMutation = useMutation({
     mutationFn: async (credentials: { username: string; password: string }) => {
-      return await apiRequest("/api/auth/mock-login", "POST", credentials);
+      const response = await apiRequest("POST", "/api/auth/mock-login", credentials);
+      return await response.json();
     },
     onSuccess: () => {
       toast({
