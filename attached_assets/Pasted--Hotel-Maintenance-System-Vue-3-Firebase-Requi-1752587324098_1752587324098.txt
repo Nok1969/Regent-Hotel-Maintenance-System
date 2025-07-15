@@ -1,0 +1,105 @@
+**สร้างแอปพลิเคชันแจ้งซ่อมสำหรับโรงแรม (Hotel Maintenance System) ด้วย Vue 3 + Firebase**
+
+**Requirements:**
+1. **Modern UI/UX Design**
+   - ใช้ Vuetify 3 + SCSS สำหรับ UI ที่ทันสมัยและ Responsive
+   - ธีมสีหลัก: ฟ้า (#1976D2) และเทา (#F5F5F5) แบบ Material Design
+   - แบ่ง Layout เป็น 3 ส่วน: 
+     - Sidebar เมนู (สำหรับแอดมิน)
+     - Dashboard แสดงสถิติ
+     - ฟอร์มแจ้งซ่อมแบบ Card-based
+
+2. **Multi-language Support**
+   - รองรับ 2 ภาษา: ไทยและอังกฤษ (ใช้ vue-i18n)
+   - สวิตช์เปลี่ยนภาษาที่มุมขวาบน
+   - แปลหน้า: Login, Dashboard, แบบฟอร์ม, การแจ้งเตือน
+
+3. **ระบบ Login/Authentication**
+   - ใช้ Firebase Authentication
+   - รองรับ: Email/Password + Google Sign-In
+   - ระดับผู้ใช้:
+     - แอดมิน (ดูทั้งหมด, แก้ไขสถานะ)
+     - พนักงาน (แจ้งซ่อม, ดูของตัวเอง)
+   - หน้า Login/Register แบบ Custom
+
+4. **ระบบแจ้งซ่อม (Maintenance Request)**
+   - ฟอร์มแจ้งซ่อมประกอบด้วย:
+     * ห้อง/สถานที่ (เลือกจาก dropdown)
+     * ประเภท (ไฟฟ้า, ประปา, เครื่องปรับอากาศ, เฟอร์นิเจอร์)
+     * ระดับความเร่งด่วน (สูง/กลาง/ต่ำ)
+     * รายละเอียด (textarea)
+     * แนบรูป (รองรับหลายรูป, ใช้ Firebase Storage)
+     * สถานะ (pending/in progress/completed)
+   - ดูประวัติการแจ้งซ่อมแบบตาราง (เรียงลำดับใหม่สุดบน)
+
+5. **ระบบแจ้งเตือน (Real-time Notifications)**
+   - ใช้ Firebase Cloud Messaging (FCM) สำหรับแจ้งเตือนแบบ real-time
+   - ชนิดการแจ้งเตือน:
+     * เมื่อมีการแจ้งซ่อมใหม่
+     * เมื่อสถานะงานเปลี่ยน
+     * ข้อความจากแอดมิน
+   - แสดง badge บนไอคอนแจ้งเตือน
+
+6. **Dashboard & สถิติ**
+   - แสดงด้วย Chart.js แบบ responsive:
+     * Pie Chart: สัดส่วนประเภทงานซ่อม
+     * Bar Chart: จำนวนงานแยกตามสถานะ (รายวัน/สัปดาห์)
+     * Line Chart: แนวโน้มงานซ่อม (7 วันย้อนหลัง)
+   - สรุปตัวเลข: งานทั้งหมด/งานรอดำเนินการ/งานเสร็จสิ้น
+   - ตารางงานล่าสุด (5 รายการ)
+
+7. **Backend & Database**
+   - ใช้ Firebase:
+     * Firestore: เก็บข้อมูลผู้ใช้, งานซ่อม
+     * Firebase Storage: จัดเก็บรูปภาพ
+     * Firebase Cloud Functions: จัดการ notification
+   - โครงสร้าง Firestore:
+     ```js
+     users/{uid}:
+       - name: string
+       - role: "admin" | "staff"
+       - language: "th" | "en"
+
+     repairs/{repairId}:
+       - room: string
+       - category: string
+       - urgency: "high" | "medium" | "low"
+       - description: string
+       - images: array[string] (URLs)
+       - status: "pending" | "in_progress" | "completed"
+       - createdAt: timestamp
+       - userId: string (reference)
+     ```
+
+**Technical Specifications:**
+- Vue 3 (Composition API)
+- Vue Router สำหรับหน้า:
+  `/login`, `/dashboard`, `/new-repair`, `/repairs`, `/notifications`
+- Pinia สำหรับ State Management
+- ใช้ Firebase Modular SDK (v9+)
+- Responsive Design (รองรับมือถือ/แท็บเล็ต)
+
+**Additional Features:**
+- Dark Mode สลับธีมมืด/สว่าง
+- ส่งอีเมลยืนยันเมื่อสมัครสมาชิก
+- ระบบลืมรหัสผ่าน
+- Export ข้อมูลเป็น PDF/Excel (เฉพาะแอดมิน)
+
+**ตัวอย่าง UI Components ที่ต้องมี:**
+1. RepairForm.vue (ฟอร์มแจ้งซ่อม)
+2. RepairTable.vue (ตารางรายการซ่อม)
+3. DashboardCharts.vue (รวมกราฟทั้งหมด)
+4. NotificationBell.vue (แสดงการแจ้งเตือน)
+5. LanguageSwitcher.vue (สวิตช์ภาษา)
+
+**สิ่งที่ต้องแสดงในโค้ด:**
+- การเชื่อมต่อ Firebase ในไฟล์ `src/firebase.js`
+- การดึงข้อมูลแบบ real-time จาก Firestore
+- ตัวอย่าง Security Rules สำหรับ Firestore
+- การอัปโหลดรูปภาพหลายภาพพร้อมกัน
+- การตั้งค่า FCM สำหรับแจ้งเตือน
+
+**หมายเหตุ:** 
+- เน้น UX ที่ใช้งานง่ายโดยเฉพาะบนมือถือ
+- ใช้ icon จาก Material Design Icons
+- จัดการ error การล็อกอิน/อัปโหลดให้ชัดเจน
