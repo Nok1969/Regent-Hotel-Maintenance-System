@@ -75,6 +75,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         role: mockUser.role,
         isAuthenticated: true
       };
+      
+      // Save session explicitly
+      (req as any).session.save((err: any) => {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+      });
 
       res.json({ success: true, role: mockUser.role });
     } catch (error) {
@@ -117,8 +124,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Mock logout
   app.post("/api/auth/mock-logout", (req: any, res) => {
-    req.session.mockUser = null;
-    res.json({ success: true });
+    if (req.session) {
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error('Session destroy error:', err);
+          return res.status(500).json({ error: 'Logout failed' });
+        }
+        res.clearCookie('connect.sid');
+        res.json({ success: true });
+      });
+    } else {
+      res.json({ success: true });
+    }
+  });
+
+  // Get repair statistics
+  app.get("/api/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const stats = await storage.getRepairStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // Repair routes
+  app.get("/api/repairs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const permissions = getUserPermissions(user.role);
+      const filters = {
+        userId: permissions.canViewAllRepairs ? undefined : userId,
+        status: req.query.status as string,
+        category: req.query.category as string,
+        limit: parseInt(req.query.limit as string) || undefined,
+        offset: parseInt(req.query.offset as string) || undefined,
+      };
+
+      const repairs = await storage.getRepairs(filters);
+      res.json(repairs);
+    } catch (error) {
+      console.error("Error fetching repairs:", error);
+      res.status(500).json({ message: "Failed to fetch repairs" });
+    }
+  });
+
+  app.post("/api/repairs", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const permissions = getUserPermissions(user.role);
+      if (!permissions.canCreateRepairs) {
+        return res.status(403).json({ message: "Permission denied" });
+      }
+
+      const repairData = {
+        ...req.body,
+        userId: userId,
+        status: "pending",
+      };
+
+      const repair = await storage.createRepair(repairData);
+      res.json(repair);
+    } catch (error) {
+      console.error("Error creating repair:", error);
+      res.status(500).json({ message: "Failed to create repair" });
+    }
+  });
+
+  app.patch("/api/repairs/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const permissions = getUserPermissions(user.role);
+      if (!permissions.canUpdateRepairStatus) {
+        return res.status(403).json({ message: "Permission denied" });
+      }
+
+      const repairId = parseInt(req.params.id);
+      const updateData = {
+        id: repairId,
+        ...req.body,
+      };
+
+      const repair = await storage.updateRepair(updateData);
+      res.json(repair);
+    } catch (error) {
+      console.error("Error updating repair:", error);
+      res.status(500).json({ message: "Failed to update repair" });
+    }
+  });
+
+  app.post("/api/repairs/:id/upload", isAuthenticated, upload.array("images", 5), async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const repairId = parseInt(req.params.id);
+      const files = req.files as Express.Multer.File[];
+      
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+      }
+
+      const filePaths = files.map(file => `/uploads/${file.filename}`);
+      
+      // In a real app, you'd store these paths in the database
+      // For now, we'll just return the uploaded file paths
+      res.json({ files: filePaths });
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      res.status(500).json({ message: "Failed to upload files" });
+    }
   });
 
   // User management routes
