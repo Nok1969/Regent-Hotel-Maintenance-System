@@ -10,6 +10,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**July 18, 2025 - Enhanced Dashboard Charts & Security Improvements**
+- ✅ Enhanced dashboard with comprehensive statistical visualizations
+- ✅ Added 4 statistical overview cards (total, pending, in-progress, completed)
+- ✅ Created pie chart for repairs by category with proper color coding
+- ✅ Built bar chart for repairs by status distribution
+- ✅ Added area chart showing monthly trend analysis
+- ✅ Implemented urgency level distribution chart
+- ✅ Added sample repair data to database for meaningful chart display
+- ✅ Complete Thai and English translations for all chart components
+- ✅ Improved loading states and responsive chart design
+- ✅ **Security Framework Implementation:**
+  - Added Helmet.js for security headers (CSP, XSS protection, clickjacking prevention)
+  - Implemented CORS configuration with domain whitelisting
+  - Rate limiting: 100 req/15min for API, 5 req/15min for auth endpoints
+  - Input validation with Zod schemas for all API endpoints
+  - XSS protection with automatic script tag sanitization
+  - Async error handling wrapper for all routes
+  - Global error handler with development/production modes
+  - 404 handling for unknown API endpoints
+  - Enhanced authentication middleware with permission validation
+  - Parameter validation for numeric inputs (limit, offset, IDs)
+- ✅ Created comprehensive security documentation (SECURITY.md)
+
 **July 15, 2025 - Complete Hotel Maintenance System Implementation**
 - ✅ Complete role-based permission system with 4 user types
 - ✅ User management interface for admin/manager roles

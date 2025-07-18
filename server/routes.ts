@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertRepairSchema, updateRepairSchema } from "@shared/schema";
 import { hasPermission, getUserPermissions } from "./permissions";
+import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -34,6 +35,54 @@ const upload = multer({
   },
 });
 
+// Validation middleware
+const validateSchema = (schema: any) => {
+  return (req: any, res: any, next: any) => {
+    try {
+      req.body = schema.parse(req.body);
+      next();
+    } catch (error: any) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: error.errors || [{ message: error.message }]
+      });
+    }
+  };
+};
+
+// Async error wrapper
+const asyncHandler = (fn: Function) => {
+  return (req: any, res: any, next: any) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
+// Input sanitization
+const sanitizeInput = (req: any, res: any, next: any) => {
+  // Basic XSS protection
+  const sanitize = (obj: any): any => {
+    if (typeof obj === 'string') {
+      return obj.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      const sanitized: any = {};
+      for (const key in obj) {
+        sanitized[key] = sanitize(obj[key]);
+      }
+      return sanitized;
+    }
+    return obj;
+  };
+
+  if (req.body) {
+    req.body = sanitize(req.body);
+  }
+  if (req.query) {
+    req.query = sanitize(req.query);
+  }
+  next();
+};
+
 // Simple in-memory storage for logged-in users (for development only)
 const loggedInUsers = new Map<string, { id: string; role: string; timestamp: number }>();
 let currentUser: { id: string; role: string } | null = null;
@@ -59,6 +108,9 @@ const customAuth = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply input sanitization to all routes
+  app.use(sanitizeInput);
+  
   // Auth middleware
   await setupAuth(app);
   
@@ -69,13 +121,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/uploads", express.static(uploadDir));
 
   // Mock login for testing purposes
-  app.post("/api/auth/mock-login", async (req, res) => {
-    try {
+  app.post("/api/auth/mock-login", 
+    validateSchema(z.object({
+      username: z.string().min(1, "Username is required"),
+      password: z.string().min(1, "Password is required")
+    })),
+    asyncHandler(async (req: any, res: any) => {
       const { username, password } = req.body;
-      
-      if (!username || !password) {
-        return res.status(400).json({ message: "Username and password required" });
-      }
       
       // Mock users for testing different roles
       const mockUsers = {
@@ -112,10 +164,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Always return JSON for API requests
       res.json({ success: true, role: mockUser.role });
-    } catch (error) {
-      res.status(500).json({ message: "Login failed" });
-    }
-  });
+    })
+  );
 
   // Logout route
   app.post("/api/auth/logout", (req, res) => {
@@ -181,46 +231,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get repair statistics
-  app.get("/api/stats", customAuth, async (req: any, res) => {
-    try {
-      const stats = await storage.getRepairStats();
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-      res.status(500).json({ message: "Failed to fetch statistics" });
-    }
-  });
+  app.get("/api/stats", customAuth, asyncHandler(async (req: any, res: any) => {
+    const stats = await storage.getRepairStats();
+    res.json(stats);
+  }));
 
   // Repair routes
-  app.get("/api/repairs", customAuth, async (req: any, res) => {
-    try {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
-      const user = await storage.getUser(userId);
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const permissions = getUserPermissions(user.role);
-      const filters = {
-        userId: permissions.canViewAllRepairs ? undefined : userId,
-        status: req.query.status as string,
-        category: req.query.category as string,
-        limit: parseInt(req.query.limit as string) || undefined,
-        offset: parseInt(req.query.offset as string) || undefined,
-      };
-
-      const repairs = await storage.getRepairs(filters);
-      res.json(repairs);
-    } catch (error) {
-      console.error("Error fetching repairs:", error);
-      res.status(500).json({ message: "Failed to fetch repairs" });
+  app.get("/api/repairs", customAuth, asyncHandler(async (req: any, res: any) => {
+    const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
+    const user = await storage.getUser(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
 
-  app.post("/api/repairs", customAuth, async (req: any, res) => {
-    try {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+    const permissions = getUserPermissions(user.role);
+    
+    // Validate query parameters
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+    const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+    
+    if (limit && (isNaN(limit) || limit < 1 || limit > 100)) {
+      return res.status(400).json({ message: "Invalid limit parameter (1-100)" });
+    }
+    
+    if (offset && (isNaN(offset) || offset < 0)) {
+      return res.status(400).json({ message: "Invalid offset parameter" });
+    }
+
+    const filters = {
+      userId: permissions.canViewAllRepairs ? undefined : userId,
+      status: req.query.status as string,
+      category: req.query.category as string,
+      limit,
+      offset,
+    };
+
+    const repairs = await storage.getRepairs(filters);
+    res.json(repairs);
+  }));
+
+  app.post("/api/repairs", 
+    customAuth,
+    validateSchema(insertRepairSchema),
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -240,15 +295,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const repair = await storage.createRepair(repairData);
       res.json(repair);
-    } catch (error) {
-      console.error("Error creating repair:", error);
-      res.status(500).json({ message: "Failed to create repair" });
-    }
-  });
+    })
+  );
 
-  app.patch("/api/repairs/:id", customAuth, async (req: any, res) => {
-    try {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+  app.patch("/api/repairs/:id", 
+    customAuth,
+    validateSchema(updateRepairSchema.omit({ id: true })),
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -261,6 +315,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const repairId = parseInt(req.params.id);
+      if (isNaN(repairId)) {
+        return res.status(400).json({ message: "Invalid repair ID" });
+      }
+
       const updateData = {
         id: repairId,
         ...req.body,
@@ -268,11 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const repair = await storage.updateRepair(updateData);
       res.json(repair);
-    } catch (error) {
-      console.error("Error updating repair:", error);
-      res.status(500).json({ message: "Failed to update repair" });
-    }
-  });
+    })
+  );
 
   app.post("/api/repairs/:id/upload", customAuth, upload.array("images", 5), async (req: any, res) => {
     try {
