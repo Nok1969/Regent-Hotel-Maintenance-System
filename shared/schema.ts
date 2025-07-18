@@ -51,6 +51,7 @@ export const repairs = pgTable("repairs", {
     enum: ["pending", "in_progress", "completed"] 
   }).default("pending").notNull(),
   userId: varchar("user_id").notNull(),
+  assignedTo: varchar("assigned_to"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -99,6 +100,7 @@ export const baseRepairSchema = z.object({
   urgency: urgencyEnum,
   status: statusEnum.default("pending"),
   userId: z.string(),
+  assignedTo: z.string().nullable().optional(),
   images: z.array(z.string()).default([]),
 });
 

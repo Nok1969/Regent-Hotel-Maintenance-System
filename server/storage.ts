@@ -151,6 +151,7 @@ export class DatabaseStorage implements IStorage {
         images: repairs.images,
         status: repairs.status,
         userId: repairs.userId,
+        assignedTo: repairs.assignedTo,
         createdAt: repairs.createdAt,
         updatedAt: repairs.updatedAt,
         // Select only necessary user fields
@@ -183,6 +184,7 @@ export class DatabaseStorage implements IStorage {
         images: repairs.images,
         status: repairs.status,
         userId: repairs.userId,
+        assignedTo: repairs.assignedTo,
         createdAt: repairs.createdAt,
         updatedAt: repairs.updatedAt,
         user: {
@@ -212,6 +214,25 @@ export class DatabaseStorage implements IStorage {
       .where(eq(repairs.id, id))
       .returning();
     return updatedRepair;
+  }
+
+  async updateRepairStatus(id: number, status: string, assignedTo?: string | null): Promise<Repair> {
+    const updateData: any = { 
+      status: status as any,
+      updatedAt: new Date(),
+    };
+    
+    // Update assignedTo if provided
+    if (assignedTo !== undefined) {
+      updateData.assignedTo = assignedTo;
+    }
+    
+    const [repair] = await db
+      .update(repairs)
+      .set(updateData)
+      .where(eq(repairs.id, id))
+      .returning();
+    return repair;
   }
 
   async getRepairStats(): Promise<{

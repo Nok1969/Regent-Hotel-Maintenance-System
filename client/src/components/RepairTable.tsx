@@ -100,6 +100,56 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
     },
   });
 
+  const acceptJobMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest("PATCH", `/api/repairs/${id}`, { 
+        status: "in_progress",
+        assignedTo: user?.id 
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["repairs"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+      toast({
+        title: t("messages.success"),
+        description: t("messages.jobAccepted"),
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("messages.error"),
+        description: error.message || t("messages.acceptFailed"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const cancelJobMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest("PATCH", `/api/repairs/${id}`, { 
+        status: "pending",
+        assignedTo: null 
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["repairs"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+      toast({
+        title: t("messages.success"),
+        description: t("messages.jobCancelled"),
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("messages.error"),
+        description: error.message || t("messages.cancelFailed"),
+        variant: "destructive",
+      });
+    },
+  });
+
   const getStatusBadge = (status: string) => {
     const colors = {
       pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
@@ -130,14 +180,17 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
 
   const canUpdateStatus = (repair: any) => {
     if (!user?.permissions) return false;
-    
-    // Technicians can update status
-    if (user.role === "technician") return true;
-    
-    // Admins and managers can update status
-    if (user.permissions.canUpdateRepairStatus) return true;
-    
-    return false;
+    return user.permissions.canUpdateRepairStatus;
+  };
+
+  const canAcceptJob = (repair: any) => {
+    if (!user?.permissions) return false;
+    return user.permissions.canAcceptJobs && repair.status === "pending";
+  };
+
+  const canCancelJob = (repair: any) => {
+    if (!user?.permissions) return false;
+    return user.permissions.canCancelJobs && repair.status !== "completed";
   };
 
   const clearFilters = () => {
@@ -259,6 +312,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <TableHead>{t("table.urgency")}</TableHead>
                 <TableHead>{t("table.status")}</TableHead>
                 <TableHead>{t("table.reporter")}</TableHead>
+                <TableHead>{t("table.assignedTo")}</TableHead>
                 <TableHead>{t("table.created")}</TableHead>
                 <TableHead>{t("table.actions")}</TableHead>
               </TableRow>
@@ -266,7 +320,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
             <TableBody>
               {filteredRepairs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
+                  <TableCell colSpan={9} className="text-center py-8">
                     <div className="text-muted-foreground">
                       {t("repairs.noRepairs")}
                     </div>
@@ -297,6 +351,19 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                     <TableCell>
                       <div className="max-w-[120px] truncate" title={`${repair.user?.firstName || ''} ${repair.user?.lastName || ''}`}>
                         {repair.user?.firstName} {repair.user?.lastName}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[120px] truncate">
+                        {repair.assignedTo ? (
+                          <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                            {repair.assignedTo}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">
+                            {t("table.unassigned")}
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -373,6 +440,28 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                           </DialogContent>
                         </Dialog>
                         
+                        {canAcceptJob(repair) && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => acceptJobMutation.mutate(repair.id)}
+                            disabled={acceptJobMutation.isPending}
+                          >
+                            {t("table.acceptJob")}
+                          </Button>
+                        )}
+                        
+                        {canCancelJob(repair) && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => cancelJobMutation.mutate(repair.id)}
+                            disabled={cancelJobMutation.isPending}
+                          >
+                            {t("table.cancelJob")}
+                          </Button>
+                        )}
+
                         {canUpdateStatus(repair) && (
                           <Select
                             value={repair.status}

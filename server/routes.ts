@@ -388,6 +388,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       location: z.string().min(3, "Location must be at least 3 characters").optional(),
       status: z.enum(["pending", "in_progress", "completed"]).optional(),
       room: z.string().min(3, "Room must be at least 3 characters").optional(),
+      assignedTo: z.string().nullable().optional(),
     }).refine((data) => {
       if (data.urgency === "high" && data.description && data.description.length < 20) {
         return false;
@@ -405,23 +406,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const permissions = getUserPermissions(user.role);
-      if (!permissions.canUpdateRepairStatus) {
-        return res.status(403).json({ message: "Permission denied" });
-      }
-
       const repairId = parseInt(req.params.id);
       if (isNaN(repairId)) {
         return res.status(400).json({ message: "Invalid repair ID" });
       }
 
-      const updateData = {
-        id: repairId,
-        ...req.body,
-      };
+      const { status, assignedTo, ...otherUpdateData } = req.body;
+      const permissions = getUserPermissions(user.role);
 
-      const repair = await storage.updateRepair(updateData);
-      res.json(repair);
+      // Handle specific job actions (accept/cancel) vs general updates
+      if (status && assignedTo !== undefined) {
+        // Job accept/cancel actions
+        if (status === "in_progress" && assignedTo) {
+          // Accepting a job
+          if (!permissions.canAcceptJobs) {
+            return res.status(403).json({ message: "Insufficient permissions to accept jobs" });
+          }
+        } else if (status === "pending" && assignedTo === null) {
+          // Cancelling a job
+          if (!permissions.canCancelJobs) {
+            return res.status(403).json({ message: "Insufficient permissions to cancel jobs" });
+          }
+        }
+        
+        // Use updateRepairStatus for status changes with assignment
+        const repair = await storage.updateRepairStatus(repairId, status, assignedTo);
+        return res.json(repair);
+      } else if (status && !assignedTo) {
+        // Regular status update
+        if (!permissions.canUpdateRepairStatus) {
+          return res.status(403).json({ message: "Insufficient permissions to update status" });
+        }
+        
+        const repair = await storage.updateRepairStatus(repairId, status);
+        return res.json(repair);
+      } else {
+        // General repair update (other fields)
+        if (!permissions.canUpdateRepairStatus) {
+          return res.status(403).json({ message: "Permission denied" });
+        }
+
+        const updateData = {
+          id: repairId,
+          ...otherUpdateData,
+        };
+
+        const repair = await storage.updateRepair(updateData);
+        res.json(repair);
+      }
     })
   );
 

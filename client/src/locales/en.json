@@ -96,7 +96,11 @@
     "of": "of",
     "results": "results",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "acceptJob": "Accept Job",
+    "cancelJob": "Cancel Job",
+    "assignedTo": "Assigned To",
+    "unassigned": "Unassigned"
   },
   "notifications": {
     "title": "Notifications",
@@ -163,6 +167,10 @@
     "repairFailed": "Failed to create repair request",
     "statusUpdated": "Status updated successfully",
     "updateFailed": "Failed to update status",
+    "jobAccepted": "Job accepted successfully",
+    "acceptFailed": "Failed to accept job",
+    "jobCancelled": "Job cancelled successfully",
+    "cancelFailed": "Failed to cancel job",
     "invalidFileType": "Invalid file type. Please upload images only.",
     "fileTooLarge": "File size too large. Maximum 5MB allowed."
   },

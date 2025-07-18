@@ -7,13 +7,23 @@ export interface RolePermissions {
   canCreateUsers: boolean;
   canViewAllUsers: boolean;
   canManageUsers: boolean;
+  canAddUsers: boolean;
   
   // Repair management
   canViewAllRepairs: boolean;
+  canViewOwnRepairs: boolean;
   canCreateRepairs: boolean;
   canUpdateRepairStatus: boolean;
+  canAcceptJobs: boolean;
+  canCancelJobs: boolean;
   canAssignRepairs: boolean;
   canDeleteRepairs: boolean;
+  
+  // Notifications
+  canReceiveNotifications: boolean;
+  canReceiveNewJobNotifications: boolean;
+  canReceiveStatusChangeNotifications: boolean;
+  canManageNotifications: boolean;
   
   // Dashboard access
   canViewDashboard: boolean;
@@ -22,54 +32,86 @@ export interface RolePermissions {
 
 const rolePermissions: Record<UserRole, RolePermissions> = {
   admin: {
-    // Full access to everything
+    // Admin: Full Access + เพิ่มผู้ใช้ได้
     canCreateUsers: true,
     canViewAllUsers: true,
     canManageUsers: true,
+    canAddUsers: true, // Only admin can add new users
     canViewAllRepairs: true,
+    canViewOwnRepairs: true,
     canCreateRepairs: true,
     canUpdateRepairStatus: true,
+    canAcceptJobs: true,
+    canCancelJobs: true,
     canAssignRepairs: true,
     canDeleteRepairs: true,
+    canReceiveNotifications: true,
+    canReceiveNewJobNotifications: true,
+    canReceiveStatusChangeNotifications: true,
+    canManageNotifications: true,
     canViewDashboard: true,
     canViewAnalytics: true,
   },
   manager: {
-    // Full access except cannot add new users
+    // Manager: Full Access, รับการแจ้งเตือนเมื่อมีงานใหม่เข้ามา, กดรับงาน, สามารถเปลี่ยนสถานะงาน, ยกเลิกงานได้
     canCreateUsers: false,
     canViewAllUsers: true,
-    canManageUsers: false,
+    canManageUsers: true,
+    canAddUsers: false, // Cannot add new users
     canViewAllRepairs: true,
+    canViewOwnRepairs: true,
     canCreateRepairs: true,
     canUpdateRepairStatus: true,
+    canAcceptJobs: true, // กดรับงาน
+    canCancelJobs: true, // ยกเลิกงานได้
     canAssignRepairs: true,
     canDeleteRepairs: true,
+    canReceiveNotifications: true,
+    canReceiveNewJobNotifications: true, // รับการแจ้งเตือนเมื่อมีงานใหม่เข้ามา
+    canReceiveStatusChangeNotifications: true,
+    canManageNotifications: true,
     canViewDashboard: true,
     canViewAnalytics: true,
   },
   staff: {
-    // Cannot change job status (view and create only)
+    // Staff: แจ้งงานใหม่, ติดตามสถานะงานของตัวเองได้, รับแจ้งเตือนเมื่อสถานะงานเปลี่ยนแปลง
     canCreateUsers: false,
     canViewAllUsers: false,
     canManageUsers: false,
-    canViewAllRepairs: true,
-    canCreateRepairs: true,
+    canAddUsers: false,
+    canViewAllRepairs: false, // Cannot view all repairs
+    canViewOwnRepairs: true, // ติดตามสถานะงานของตัวเองได้
+    canCreateRepairs: true, // แจ้งงานใหม่
     canUpdateRepairStatus: false,
+    canAcceptJobs: false,
+    canCancelJobs: false,
     canAssignRepairs: false,
     canDeleteRepairs: false,
+    canReceiveNotifications: true,
+    canReceiveNewJobNotifications: false,
+    canReceiveStatusChangeNotifications: true, // รับแจ้งเตือนเมื่อสถานะงานเปลี่ยนแปลง
+    canManageNotifications: false,
     canViewDashboard: true,
     canViewAnalytics: false,
   },
   technician: {
-    // Can accept jobs and change job status
+    // Technician: รับการแจ้งเตือนเมื่อมีงานใหม่เข้ามา, กดรับงาน, สามารถเปลี่ยนสถานะงาน
     canCreateUsers: false,
     canViewAllUsers: false,
     canManageUsers: false,
+    canAddUsers: false,
     canViewAllRepairs: true,
+    canViewOwnRepairs: true,
     canCreateRepairs: false,
-    canUpdateRepairStatus: true,
+    canUpdateRepairStatus: true, // สามารถเปลี่ยนสถานะงาน
+    canAcceptJobs: true, // กดรับงาน
+    canCancelJobs: false,
     canAssignRepairs: false,
     canDeleteRepairs: false,
+    canReceiveNotifications: true,
+    canReceiveNewJobNotifications: true, // รับการแจ้งเตือนเมื่อมีงานใหม่เข้ามา
+    canReceiveStatusChangeNotifications: true,
+    canManageNotifications: false,
     canViewDashboard: true,
     canViewAnalytics: false,
   },
@@ -109,6 +151,11 @@ export function filterRepairsByRole(user: User, repairs: any[]): any[] {
     return repairs;
   }
   
-  // Otherwise, only return repairs created by this user
-  return repairs.filter(repair => repair.userId === user.id);
+  // If user can only view own repairs (staff), filter by user ID
+  if (permissions.canViewOwnRepairs && !permissions.canViewAllRepairs) {
+    return repairs.filter(repair => repair.userId === user.id);
+  }
+  
+  // Default: return empty array if no permissions
+  return [];
 }
