@@ -59,10 +59,10 @@ export default function Login() {
             <Wrench className="w-10 h-10 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold text-gray-800 mb-2">
-            Hotel Maintenance System
+            Regent Hotel Maintenance System
           </CardTitle>
           <CardDescription className="text-gray-600 text-base">
-            Hotel maintenance request system
+            
           </CardDescription>
         </CardHeader>
         
