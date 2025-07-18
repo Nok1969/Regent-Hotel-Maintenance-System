@@ -36,6 +36,19 @@ const RepairBarChart = memo(({
   const { t } = useLanguage();
   const chartSize = chartSizes[size];
 
+  console.log('RepairBarChart data:', data);
+
+  // Early return if no data
+  if (!data || Object.keys(data).length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-muted-foreground">No status data available</p>
+        </div>
+      </div>
+    );
+  }
+
   const statusColors = {
     pending: "#F59E0B", // Amber
     in_progress: "#3B82F6", // Blue

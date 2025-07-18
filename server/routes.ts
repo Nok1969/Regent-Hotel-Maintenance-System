@@ -281,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     queryValidation,
     handleValidationErrors,
     asyncHandler(async (req: any, res: any) => {
-      const stats = await storage.getRepairStatsSummary();
+      const stats = await storage.getRepairStats();
       res.json(stats);
     })
   );

@@ -55,6 +55,17 @@ const RepairPieChart = memo(({ data, size = "md", title }: RepairPieChartProps) 
   // Debug: log data to check if it's being passed correctly
   console.log('RepairPieChart data:', data, 'chartData:', chartData);
 
+  // Early return if no data
+  if (!data || Object.keys(data).length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-muted-foreground">No category data available</p>
+        </div>
+      </div>
+    );
+  }
+
   const options: ChartOptions<"pie"> = {
     responsive: true,
     maintainAspectRatio: false,

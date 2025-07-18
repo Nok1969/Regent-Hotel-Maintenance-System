@@ -125,6 +125,9 @@ export default function Dashboard() {
   const chartData = useMemo(() => {
     if (!stats) return null;
     
+    console.log('Dashboard stats:', stats);
+    console.log('Monthly stats:', monthlyStats);
+    
     return {
       categoryData: stats.byCategory || {},
       statusData: stats.byStatus || {},
@@ -137,7 +140,7 @@ export default function Dashboard() {
         { month: "Jun", count: 14, completed: 12 },
       ],
     };
-  }, [stats]);
+  }, [stats, monthlyStats]);
 
   // Memoize stats cards to prevent re-renders
   const statsCards = useMemo(() => {
