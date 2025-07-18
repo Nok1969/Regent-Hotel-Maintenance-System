@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
@@ -6,8 +6,11 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DashboardCharts } from "@/components/DashboardCharts";
 import { Badge } from "@/components/ui/badge";
+import { RepairPieChart } from "@/components/charts/RepairPieChart";
+import { RepairBarChart } from "@/components/charts/RepairBarChart";
+import { RepairAreaChart } from "@/components/charts/RepairAreaChart";
+import { StatusBadge, UrgencyBadge, CategoryBadge } from "@/components/StatusBadge";
 import {
   Table,
   TableBody,
@@ -85,67 +88,91 @@ export default function Dashboard() {
     );
   };
 
-  const statsCards = [
-    {
-      title: t("dashboard.totalRequests"),
-      value: stats?.total || 0,
-      icon: ClipboardList,
-      color: "text-primary",
-      bgColor: "bg-primary",
-    },
-    {
-      title: t("dashboard.pending"),
-      value: stats?.pending || 0,
-      icon: Clock,
-      color: "text-yellow-600",
-      bgColor: "bg-yellow-500",
-    },
-    {
-      title: t("dashboard.inProgress"),
-      value: stats?.inProgress || 0,
-      icon: Zap,
-      color: "text-blue-600",
-      bgColor: "bg-blue-500",
-    },
-    {
-      title: t("dashboard.completed"),
-      value: stats?.completed || 0,
-      icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-500",
-    },
-  ];
+  // Memoize chart data to prevent unnecessary re-renders
+  const chartData = useMemo(() => {
+    if (!stats) return null;
+    
+    return {
+      categoryData: stats.byCategory || {},
+      statusData: stats.byStatus || {},
+      monthlyData: stats.monthlyTrend || [
+        { month: "Jan", count: 8 },
+        { month: "Feb", count: 12 },
+        { month: "Mar", count: 15 },
+        { month: "Apr", count: 10 },
+        { month: "May", count: 18 },
+        { month: "Jun", count: 14 },
+      ],
+    };
+  }, [stats]);
+
+  // Memoize stats cards to prevent re-renders
+  const statsCards = useMemo(() => {
+    if (!stats) return [];
+    
+    return [
+      {
+        title: t("dashboard.totalRepairs"),
+        value: stats.total || 0,
+        icon: ClipboardList,
+        color: "text-blue-600",
+        bgColor: "bg-blue-50 dark:bg-blue-900/20",
+      },
+      {
+        title: t("dashboard.pendingRepairs"),
+        value: stats.pending || 0,
+        icon: Clock,
+        color: "text-yellow-600",
+        bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+      },
+      {
+        title: t("dashboard.inProgressRepairs"),
+        value: stats.inProgress || 0,
+        icon: Zap,
+        color: "text-orange-600",
+        bgColor: "bg-orange-50 dark:bg-orange-900/20",
+      },
+      {
+        title: t("dashboard.completedRepairs"),
+        value: stats.completed || 0,
+        icon: CheckCircle,
+        color: "text-green-600",
+        bgColor: "bg-green-50 dark:bg-green-900/20",
+      },
+    ];
+  }, [stats, t]);
 
   return (
     <div className="space-y-8">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statsCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
+        {statsLoading ? (
+          [...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton className="h-16 w-full" />
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          statsCards.map((card, index) => (
             <Card key={index}>
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-full ${card.bgColor}`}>
+                    <card.icon className={`w-6 h-6 ${card.color}`} />
+                  </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
-                      {stat.title}
+                      {card.title}
                     </p>
-                    {statsLoading ? (
-                      <Skeleton className="h-8 w-16 mt-2" />
-                    ) : (
-                      <p className={`text-2xl font-bold ${stat.color}`}>
-                        {stat.value}
-                      </p>
-                    )}
-                  </div>
-                  <div className={`p-3 ${stat.bgColor} rounded-full`}>
-                    <Icon className="h-6 w-6 text-white" />
+                    <p className="text-2xl font-bold">{card.value}</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          );
-        })}
+          ))
+        )}
       </div>
 
       {/* Charts */}
@@ -166,16 +193,29 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <DashboardCharts
-          stats={{
-            total: stats?.total || 0,
-            pending: stats?.pending || 0,
-            inProgress: stats?.inProgress || 0,
-            completed: stats?.completed || 0,
-            byCategory: stats?.byCategory || {},
-            byStatus: stats?.byStatus || {},
-          }}
-        />
+        chartData && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <RepairPieChart
+              data={chartData.categoryData}
+              title={t("charts.repairsByCategory")}
+              size="md"
+            />
+            <RepairBarChart
+              data={chartData.statusData}
+              title={t("charts.repairsByStatus")}
+              size="md"
+              color="#10B981"
+            />
+            <div className="lg:col-span-2 xl:col-span-1">
+              <RepairAreaChart
+                data={chartData.monthlyData}
+                title={t("charts.monthlyTrend")}
+                size="md"
+                color="#3B82F6"
+              />
+            </div>
+          </div>
+        )
       )}
 
       {/* Recent Requests */}

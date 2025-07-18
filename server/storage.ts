@@ -42,7 +42,17 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations (mandatory for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
+    const [user] = await db.select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      profileImageUrl: users.profileImageUrl,
+      role: users.role,
+      language: users.language,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    }).from(users).where(eq(users.id, id));
     return user;
   }
 
@@ -62,7 +72,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return await db.select().from(users).orderBy(users.createdAt);
+    return await db.select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      profileImageUrl: users.profileImageUrl,
+      role: users.role,
+      language: users.language,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    }).from(users).orderBy(users.createdAt);
   }
 
   async updateUserRole(userId: string, role: string): Promise<User> {
@@ -90,18 +110,30 @@ export class DatabaseStorage implements IStorage {
     userId?: string;
     status?: string;
     category?: string;
+    urgency?: string;
+    search?: string;
     limit?: number;
     offset?: number;
   } = {}): Promise<RepairWithUser[]> {
-    const { userId, status, category, limit = 50, offset = 0 } = filters;
+    const { userId, status, category, urgency, search, limit = 50, offset = 0 } = filters;
     
     const conditions = [];
     if (userId) conditions.push(eq(repairs.userId, userId));
     if (status) conditions.push(eq(repairs.status, status as any));
     if (category) conditions.push(eq(repairs.category, category as any));
+    if (urgency) conditions.push(eq(repairs.urgency, urgency as any));
+    if (search) {
+      conditions.push(
+        or(
+          like(repairs.room, `%${search}%`),
+          like(repairs.description, `%${search}%`)
+        )
+      );
+    }
 
     const query = db
       .select({
+        // Select only necessary repair fields
         id: repairs.id,
         room: repairs.room,
         category: repairs.category,
@@ -112,16 +144,13 @@ export class DatabaseStorage implements IStorage {
         userId: repairs.userId,
         createdAt: repairs.createdAt,
         updatedAt: repairs.updatedAt,
+        // Select only necessary user fields
         user: {
           id: users.id,
-          email: users.email,
           firstName: users.firstName,
           lastName: users.lastName,
-          profileImageUrl: users.profileImageUrl,
+          email: users.email,
           role: users.role,
-          language: users.language,
-          createdAt: users.createdAt,
-          updatedAt: users.updatedAt,
         },
       })
       .from(repairs)

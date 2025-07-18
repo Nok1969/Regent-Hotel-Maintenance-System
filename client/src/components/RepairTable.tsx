@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
@@ -10,6 +10,7 @@ import { useDebouncedSearch } from "@/hooks/useDebounce";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatusBadge, UrgencyBadge, CategoryBadge } from "@/components/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -255,55 +256,99 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 filteredRepairs.map((repair: any) => (
                   <TableRow key={repair.id}>
                     <TableCell className="font-medium">
-                      {repair.title}
-                    </TableCell>
-                    <TableCell>{repair.location}</TableCell>
-                    <TableCell>{t(`categories.${repair.category}`)}</TableCell>
-                    <TableCell>{getUrgencyBadge(repair.urgency)}</TableCell>
-                    <TableCell>{getStatusBadge(repair.status)}</TableCell>
-                    <TableCell>
-                      {repair.user?.firstName} {repair.user?.lastName}
+                      <div className="max-w-[200px] truncate" title={repair.description}>
+                        {repair.description}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      {format(new Date(repair.createdAt), "MMM d, yyyy")}
+                      <div className="max-w-[150px] truncate" title={repair.room}>
+                        {repair.room}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center space-x-2">
+                      <CategoryBadge category={repair.category as any} />
+                    </TableCell>
+                    <TableCell>
+                      <UrgencyBadge urgency={repair.urgency as any} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusBadge status={repair.status as any} />
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-[120px] truncate" title={`${repair.user?.firstName || ''} ${repair.user?.lastName || ''}`}>
+                        {repair.user?.firstName} {repair.user?.lastName}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-muted-foreground">
+                        {format(new Date(repair.createdAt), "MMM dd, yyyy")}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="outline" size="sm">
                               <Eye className="w-4 h-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-2xl">
                             <DialogHeader>
-                              <DialogTitle>{repair.title}</DialogTitle>
+                              <DialogTitle>{t("repairs.details")}</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4">
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <Label>{t("table.location")}</Label>
-                                  <p className="text-sm">{repair.location}</p>
+                                  <strong className="text-sm text-muted-foreground">{t("table.location")}:</strong>
+                                  <p className="mt-1">{repair.room}</p>
                                 </div>
                                 <div>
-                                  <Label>{t("table.category")}</Label>
-                                  <p className="text-sm">{t(`categories.${repair.category}`)}</p>
+                                  <strong className="text-sm text-muted-foreground">{t("table.reporter")}:</strong>
+                                  <p className="mt-1">{repair.user?.firstName} {repair.user?.lastName}</p>
                                 </div>
                               </div>
+                              
                               <div>
-                                <Label>{t("forms.description")}</Label>
-                                <p className="text-sm mt-1">{repair.description}</p>
+                                <strong className="text-sm text-muted-foreground">{t("table.description")}:</strong>
+                                <p className="mt-1 p-3 bg-muted rounded-md">{repair.description}</p>
                               </div>
-                              <div className="flex items-center space-x-4">
+                              
+                              <div className="grid grid-cols-3 gap-4">
                                 <div>
-                                  <Label>{t("table.urgency")}</Label>
-                                  <div className="mt-1">{getUrgencyBadge(repair.urgency)}</div>
+                                  <strong className="text-sm text-muted-foreground">{t("table.category")}:</strong>
+                                  <div className="mt-2">
+                                    <CategoryBadge category={repair.category as any} />
+                                  </div>
                                 </div>
                                 <div>
-                                  <Label>{t("table.status")}</Label>
-                                  <div className="mt-1">{getStatusBadge(repair.status)}</div>
+                                  <strong className="text-sm text-muted-foreground">{t("table.urgency")}:</strong>
+                                  <div className="mt-2">
+                                    <UrgencyBadge urgency={repair.urgency as any} />
+                                  </div>
+                                </div>
+                                <div>
+                                  <strong className="text-sm text-muted-foreground">{t("table.status")}:</strong>
+                                  <div className="mt-2">
+                                    <StatusBadge status={repair.status as any} />
+                                  </div>
                                 </div>
                               </div>
+                              
+                              {repair.images && repair.images.length > 0 && (
+                                <div>
+                                  <strong className="text-sm text-muted-foreground">{t("forms.images")}:</strong>
+                                  <div className="grid grid-cols-2 gap-2 mt-2">
+                                    {repair.images.map((image: string, index: number) => (
+                                      <img
+                                        key={index}
+                                        src={`/uploads/${image}`}
+                                        alt={`Repair ${index + 1}`}
+                                        className="w-full h-32 object-cover rounded-md border"
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           </DialogContent>
                         </Dialog>
@@ -316,7 +361,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                             }
                           >
                             <SelectTrigger className="w-32">
-                              <Edit className="w-4 h-4" />
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="pending">{t("status.pending")}</SelectItem>
