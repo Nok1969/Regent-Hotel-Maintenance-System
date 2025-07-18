@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDebouncedSearch } from "@/hooks/useDebounce";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import {
@@ -30,7 +31,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users as UsersIcon, Shield, Crown, Wrench } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Users as UsersIcon, Shield, Crown, Wrench, Search } from "lucide-react";
 
 interface User {
   id: string;
@@ -63,6 +66,10 @@ export default function Users() {
   const { user: currentUser, isAuthenticated, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const queryClient = useQueryClient();
+  const [searchInput, setSearchInput] = useState("");
+  
+  // Debounce search input to avoid too many API calls
+  const { debouncedQuery: debouncedSearch, isSearching } = useDebouncedSearch(searchInput, 400);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -84,13 +91,25 @@ export default function Users() {
   const canViewAllUsers = currentUser?.permissions?.canViewAllUsers;
 
   const {
-    data: users,
+    data: users = [],
     isLoading,
     error
   } = useQuery({
-    queryKey: ["/api/users"],
+    queryKey: ["/api/users", { search: debouncedSearch }],
     enabled: isAuthenticated && canViewAllUsers,
     retry: false,
+  });
+
+  // Filter users based on search
+  const filteredUsers = users.filter((user: any) => {
+    if (!debouncedSearch) return true;
+    const searchLower = debouncedSearch.toLowerCase();
+    return (
+      user.firstName?.toLowerCase().includes(searchLower) ||
+      user.lastName?.toLowerCase().includes(searchLower) ||
+      user.email?.toLowerCase().includes(searchLower) ||
+      user.role?.toLowerCase().includes(searchLower)
+    );
   });
 
   const updateRoleMutation = useMutation({
@@ -191,6 +210,26 @@ export default function Users() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Search Users */}
+          <div className="mb-6">
+            <Label htmlFor="user-search">{t("users.searchUsers")}</Label>
+            <div className="relative mt-2">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="user-search"
+                placeholder={t("users.searchPlaceholder")}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pl-10"
+              />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                </div>
+              )}
+            </div>
+          </div>
+
           {isLoading ? (
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
@@ -207,7 +246,7 @@ export default function Users() {
             <div className="text-center py-8">
               <p className="text-destructive">{t("common.errorLoading")}</p>
             </div>
-          ) : users && users.length > 0 ? (
+          ) : filteredUsers && filteredUsers.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -219,7 +258,7 @@ export default function Users() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user: User) => (
+                {filteredUsers.map((user: User) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
@@ -276,6 +315,11 @@ export default function Users() {
                 ))}
               </TableBody>
             </Table>
+          ) : searchInput ? (
+            <div className="text-center py-8">
+              <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">{t("users.noSearchResults")}</p>
+            </div>
           ) : (
             <div className="text-center py-8">
               <UsersIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />

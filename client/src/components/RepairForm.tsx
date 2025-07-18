@@ -11,11 +11,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, FileImage } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -124,165 +131,175 @@ export function RepairForm({ onSuccess }: RepairFormProps) {
     mutation.mutate(data);
   };
 
-  const getUrgencyColor = (urgency: string) => {
-    const colors = {
-      low: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
-      medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
-      high: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
-    };
-    return colors[urgency as keyof typeof colors];
-  };
-
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>{t("forms.newRepair")}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">{t("forms.title")}</Label>
-            <Input
-              id="title"
-              {...form.register("title")}
-              placeholder={t("forms.titlePlaceholder")}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("forms.title")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("forms.titlePlaceholder")} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {form.formState.errors.title && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {form.formState.errors.title.message}
-              </p>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">{t("forms.location")}</Label>
-            <Input
-              id="location"
-              {...form.register("location")}
-              placeholder={t("forms.locationPlaceholder")}
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("forms.location")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("forms.locationPlaceholder")} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {form.formState.errors.location && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {form.formState.errors.location.message}
-              </p>
-            )}
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">{t("forms.category")}</Label>
-              <Select
-                value={form.watch("category")}
-                onValueChange={(value) => form.setValue("category", value as any)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("forms.selectCategory")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="electrical">{t("categories.electrical")}</SelectItem>
-                  <SelectItem value="plumbing">{t("categories.plumbing")}</SelectItem>
-                  <SelectItem value="hvac">{t("categories.hvac")}</SelectItem>
-                  <SelectItem value="furniture">{t("categories.furniture")}</SelectItem>
-                  <SelectItem value="other">{t("categories.other")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="urgency">{t("forms.urgency")}</Label>
-              <Select
-                value={form.watch("urgency")}
-                onValueChange={(value) => form.setValue("urgency", value as any)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("forms.selectUrgency")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">{t("urgency.low")}</SelectItem>
-                  <SelectItem value="medium">{t("urgency.medium")}</SelectItem>
-                  <SelectItem value="high">{t("urgency.high")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">{t("forms.description")}</Label>
-            <Textarea
-              id="description"
-              {...form.register("description")}
-              placeholder={t("forms.descriptionPlaceholder")}
-              rows={4}
-            />
-            {form.formState.errors.description && (
-              <p className="text-sm text-red-600 dark:text-red-400">
-                {form.formState.errors.description.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label>{t("forms.images")}</Label>
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
-              <input
-                type="file"
-                id="file-upload"
-                multiple
-                accept="image/*"
-                onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
-                className="hidden"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("forms.category")}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t("forms.selectCategory")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="electrical">{t("categories.electrical")}</SelectItem>
+                        <SelectItem value="plumbing">{t("categories.plumbing")}</SelectItem>
+                        <SelectItem value="hvac">{t("categories.hvac")}</SelectItem>
+                        <SelectItem value="furniture">{t("categories.furniture")}</SelectItem>
+                        <SelectItem value="other">{t("categories.other")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer flex flex-col items-center space-y-2"
-              >
-                <Upload className="w-8 h-8 text-gray-400" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  {t("forms.uploadImages")}
-                </span>
-              </label>
-            </div>
-            
-            {uploadedFiles.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {uploadedFiles.map((file, index) => (
-                  <div key={index} className="relative">
-                    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center space-x-2">
-                      <FileImage className="w-4 h-4 text-blue-500" />
-                      <span className="text-sm truncate">{file.name}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(index)}
-                        className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          <div className="flex items-center justify-between pt-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">{t("forms.urgency")}:</span>
-              <Badge className={getUrgencyColor(form.watch("urgency"))}>
-                {t(`urgency.${form.watch("urgency")}`)}
-              </Badge>
+              <FormField
+                control={form.control}
+                name="urgency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("forms.urgency")}</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={t("forms.selectUrgency")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="low">{t("urgency.low")}</SelectItem>
+                        <SelectItem value="medium">{t("urgency.medium")}</SelectItem>
+                        <SelectItem value="high">{t("urgency.high")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            
-            <Button
-              type="submit"
-              disabled={mutation.isPending}
-              className="w-32"
-            >
-              {mutation.isPending ? t("forms.creating") : t("forms.create")}
-            </Button>
-          </div>
-        </form>
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("forms.description")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={t("forms.descriptionPlaceholder")}
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-2">
+              <FormLabel>{t("forms.images")}</FormLabel>
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                <input
+                  type="file"
+                  id="file-upload"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer flex flex-col items-center space-y-2"
+                >
+                  <Upload className="w-8 h-8 text-gray-400" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {t("forms.uploadImages")}
+                  </span>
+                </label>
+              </div>
+              
+              {uploadedFiles.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={index} className="relative">
+                      <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center space-x-2">
+                        <FileImage className="w-4 h-4 text-blue-500" />
+                        <span className="text-sm truncate">{file.name}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeFile(index)}
+                          className="absolute -top-2 -right-2 w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  form.reset();
+                  setUploadedFiles([]);
+                }}
+              >
+                {t("forms.reset")}
+              </Button>
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? t("forms.creating") : t("forms.create")}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   );

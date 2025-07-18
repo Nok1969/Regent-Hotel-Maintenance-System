@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useDebouncedSearch } from "@/hooks/useDebounce";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,14 +43,17 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState({
     status: initialFilters?.status || "all",
     category: initialFilters?.category || "all",
-    search: "",
   });
 
+  // Debounce search input to avoid too many API calls
+  const { debouncedQuery: debouncedSearch, isSearching } = useDebouncedSearch(searchInput, 500);
+
   const { data: repairs = [], isLoading } = useQuery({
-    queryKey: ["/api/repairs", filters],
+    queryKey: ["/api/repairs", { ...filters, search: debouncedSearch }],
     retry: false,
   });
 
@@ -116,19 +120,12 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   };
 
   const clearFilters = () => {
-    setFilters({ status: "all", category: "all", search: "" });
+    setFilters({ status: "all", category: "all" });
+    setSearchInput("");
   };
 
-  const filteredRepairs = repairs.filter((repair: any) => {
-    const matchesStatus = !filters.status || filters.status === "all" || repair.status === filters.status;
-    const matchesCategory = !filters.category || filters.category === "all" || repair.category === filters.category;
-    const matchesSearch = !filters.search || 
-      repair.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-      repair.location.toLowerCase().includes(filters.search.toLowerCase()) ||
-      repair.description.toLowerCase().includes(filters.search.toLowerCase());
-    
-    return matchesStatus && matchesCategory && matchesSearch;
-  });
+  // No need for client-side filtering since we're using debounced API calls
+  const filteredRepairs = repairs;
 
   if (isLoading) {
     return (
@@ -165,11 +162,18 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="space-y-2">
             <Label>{t("filters.search")}</Label>
-            <Input
-              placeholder={t("filters.searchPlaceholder")}
-              value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-            />
+            <div className="relative">
+              <Input
+                placeholder={t("filters.searchPlaceholder")}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="space-y-2">
