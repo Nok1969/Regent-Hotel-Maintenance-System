@@ -86,12 +86,12 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card border-r border-border transform transition-transform duration-200 z-30",
+        "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card border-r border-border transform transition-transform duration-200 z-30 shadow-modern gradient-card",
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         className
       )}
     >
-      <nav className="p-4 space-y-2">
+      <nav className="p-4 space-y-2 custom-scrollbar">
         {visibleMenuItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href;

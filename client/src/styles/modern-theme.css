@@ -1,0 +1,194 @@
+/* Modern Blue Theme CSS Variables */
+:root {
+  --background: 225 25% 97%;
+  --foreground: 220 15% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 15% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 15% 15%;
+  --primary: 220 70% 50%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 220 30% 92%;
+  --secondary-foreground: 220 15% 15%;
+  --muted: 220 20% 94%;
+  --muted-foreground: 220 10% 45%;
+  --accent: 220 60% 88%;
+  --accent-foreground: 220 15% 15%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 20% 88%;
+  --input: 220 20% 88%;
+  --ring: 220 70% 50%;
+  --chart-1: 220 70% 50%;
+  --chart-2: 260 60% 60%;
+  --chart-3: 280 55% 55%;
+  --chart-4: 200 80% 60%;
+  --chart-5: 180 65% 50%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 220 25% 6%;
+  --foreground: 220 15% 92%;
+  --card: 220 20% 8%;
+  --card-foreground: 220 15% 92%;
+  --popover: 220 20% 8%;
+  --popover-foreground: 220 15% 92%;
+  --primary: 220 70% 60%;
+  --primary-foreground: 220 25% 6%;
+  --secondary: 220 15% 12%;
+  --secondary-foreground: 220 15% 92%;
+  --muted: 220 15% 12%;
+  --muted-foreground: 220 10% 55%;
+  --accent: 220 25% 15%;
+  --accent-foreground: 220 15% 92%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 15% 12%;
+  --input: 220 15% 12%;
+  --ring: 220 70% 60%;
+  --chart-1: 220 70% 60%;
+  --chart-2: 260 60% 65%;
+  --chart-3: 280 55% 60%;
+  --chart-4: 200 80% 65%;
+  --chart-5: 180 65% 55%;
+}
+
+/* Modern gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+}
+
+.gradient-card {
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.95) 100%);
+  border: 1px solid hsl(var(--border) / 0.5);
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.1);
+}
+
+.glass-effect {
+  backdrop-filter: blur(16px);
+  background: hsl(var(--card) / 0.8);
+  border: 1px solid hsl(var(--border) / 0.3);
+}
+
+/* Enhanced shadows */
+.shadow-modern {
+  box-shadow: 0 4px 24px hsl(var(--primary) / 0.15);
+}
+
+.shadow-hover {
+  transition: all 0.3s ease;
+}
+
+.shadow-hover:hover {
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.2);
+  transform: translateY(-2px);
+}
+
+/* Smooth animations */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
+}
+
+/* Modern header gradient */
+.header-gradient {
+  background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.9) 50%, hsl(var(--primary)) 100%);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
+}
+
+/* Sidebar modern styling */
+.sidebar-modern {
+  background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.98) 100%);
+  border-right: 1px solid hsl(var(--border) / 0.5);
+  box-shadow: 4px 0 16px hsl(var(--primary) / 0.1);
+}
+
+/* Button enhancements */
+.btn-modern {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px hsl(var(--primary) / 0.2);
+}
+
+.btn-modern:hover {
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+  transform: translateY(-1px);
+}
+
+/* Card enhancements */
+.card-modern {
+  backdrop-filter: blur(10px);
+  background: hsl(var(--card) / 0.95);
+  border: 1px solid hsl(var(--border) / 0.5);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.1);
+  transition: all 0.3s ease;
+}
+
+.card-modern:hover {
+  box-shadow: 0 8px 24px hsl(var(--primary) / 0.15);
+  transform: translateY(-2px);
+}
+
+/* Status indicators */
+.status-pending {
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.status-progress {
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.status-completed {
+  background: linear-gradient(45deg, #10b981, #059669);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Priority indicators */
+.priority-high {
+  background: linear-gradient(45deg, #ef4444, #dc2626);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.priority-medium {
+  background: linear-gradient(45deg, #f59e0b, #d97706);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.priority-low {
+  background: linear-gradient(45deg, #10b981, #059669);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}

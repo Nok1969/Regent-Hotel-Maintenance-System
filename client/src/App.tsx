@@ -33,20 +33,18 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
   const isMobile = useIsMobile();
 
   return (
-    <header className="bg-card border-b border-border h-16 flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-40">
+    <header className="bg-card border-b border-border h-16 flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-40 shadow-modern gradient-bg">
       <div className="flex items-center space-x-4">
         {isMobile && (
-          <Button variant="ghost" size="icon" onClick={onMenuClick}>
+          <Button variant="ghost" size="icon" onClick={onMenuClick} className="text-primary-foreground">
             <Menu className="h-5 w-5" />
           </Button>
         )}
         <div className="flex items-center space-x-3">
-          <img 
-            src={maintenanceIcon} 
-            alt="Maintenance System" 
-            className="w-8 h-8 rounded-full"
-          />
-          <h1 className="text-xl font-semibold">{t("app.title")}</h1>
+          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shadow-modern">
+            <Wrench className="w-6 h-6 text-primary-foreground" />
+          </div>
+          <h1 className="text-xl font-semibold text-primary-foreground">{t("app.title")}</h1>
         </div>
       </div>
 
@@ -57,10 +55,10 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
 
         {user && (
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-primary-foreground/80">
               {user.firstName} ({user.role})
             </span>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-modern">
               {user.profileImageUrl ? (
                 <img
                   src={user.profileImageUrl}
@@ -74,10 +72,10 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
               )}
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-medium">
+              <p className="text-sm font-medium text-primary-foreground">
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-xs text-muted-foreground capitalize">
+              <p className="text-xs text-primary-foreground/70 capitalize">
                 {user.role}
               </p>
             </div>
@@ -96,6 +94,7 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
                   window.location.href = "/api/logout";
                 }
               }}
+              className="border-white/20 text-primary-foreground hover:bg-white/10 shadow-modern"
             >
               Logout
             </Button>
@@ -141,7 +140,7 @@ function Router() {
           />
         )}
 
-        <main className="flex-1 lg:ml-64 p-6">
+        <main className="flex-1 lg:ml-64 p-6 custom-scrollbar">
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/new-repair" component={NewRepair} />
