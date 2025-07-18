@@ -1,4 +1,5 @@
-import { memo } from "react";
+import React, { memo } from "react";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,68 +8,68 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/hooks/useLanguage";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface RepairBarChartProps {
   data: Record<string, number>;
-  title: string;
-  color?: string;
   size?: "sm" | "md" | "lg";
-  horizontal?: boolean;
+  title?: string;
+  orientation?: "vertical" | "horizontal";
 }
+
+const chartSizes = {
+  sm: { width: 300, height: 200 },
+  md: { width: 400, height: 300 },
+  lg: { width: 500, height: 400 },
+};
 
 const RepairBarChart = memo(({ 
   data, 
-  title, 
-  color = "#3B82F6", 
   size = "md", 
-  horizontal = false 
+  title, 
+  orientation = "vertical" 
 }: RepairBarChartProps) => {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
+  const chartSize = chartSizes[size];
+
+  const statusColors = {
+    pending: "#F59E0B", // Amber
+    in_progress: "#3B82F6", // Blue
+    completed: "#10B981", // Green
+  };
 
   const chartData = {
-    labels: Object.keys(data).map(key => t(`status.${key}`) || t(`urgency.${key}`) || key),
+    labels: Object.keys(data).map((key) => t(`status.${key}`)),
     datasets: [
       {
-        label: t("charts.count"),
+        label: t("dashboard.repairCount"),
         data: Object.values(data),
-        backgroundColor: color + "80", // Add transparency
-        borderColor: color,
-        borderWidth: 2,
+        backgroundColor: Object.keys(data).map(
+          (key) => statusColors[key as keyof typeof statusColors] || "#6B7280"
+        ),
+        borderWidth: 1,
         borderRadius: 4,
         borderSkipped: false,
       },
     ],
   };
 
-  const getSizeConfig = () => {
-    switch (size) {
-      case "sm":
-        return { height: 200, maintainAspectRatio: false };
-      case "lg":
-        return { height: 400, maintainAspectRatio: false };
-      default:
-        return { height: 300, maintainAspectRatio: false };
-    }
-  };
-
-  const options = {
+  const options: ChartOptions<"bar"> = {
     responsive: true,
-    indexAxis: horizontal ? "y" as const : "x" as const,
-    ...getSizeConfig(),
+    maintainAspectRatio: false,
+    indexAxis: orientation === "horizontal" ? "y" as const : "x" as const,
     plugins: {
       legend: {
         display: false,
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
-            return `${context.label}: ${context.parsed.y || context.parsed.x}`;
+          label: (context) => {
+            return `${context.dataset.label}: ${context.raw}`;
           },
         },
       },
@@ -79,52 +80,23 @@ const RepairBarChart = memo(({
         grid: {
           display: false,
         },
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
       },
       y: {
         beginAtZero: true,
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
       },
     },
   };
 
-  if (Object.keys(data).length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-48 text-muted-foreground">
-            {t("charts.noData")}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="relative">
-          <Bar data={chartData} options={options} />
-        </div>
-      </CardContent>
-    </Card>
+    <div style={{ width: chartSize.width, height: chartSize.height }}>
+      {title && (
+        <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
+      )}
+      <Bar data={chartData} options={options} />
+    </div>
   );
 });
 

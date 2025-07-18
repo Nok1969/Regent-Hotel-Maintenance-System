@@ -1,51 +1,46 @@
-import { memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { FixedSizeList as List } from "react-window";
-import { cn } from "@/lib/utils";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface VirtualizedTableProps {
-  data: any[];
-  height: number;
-  itemHeight: number;
-  renderRow: (index: number, style: React.CSSProperties, data: any) => React.ReactNode;
+  items: any[];
+  height?: number;
+  itemHeight?: number;
+  renderRow: (props: { index: number; style: React.CSSProperties; data: any[] }) => React.ReactNode;
+  headers?: React.ReactNode;
   className?: string;
 }
 
-const VirtualizedTable = memo(({ 
-  data, 
-  height, 
-  itemHeight, 
-  renderRow, 
-  className 
+const VirtualizedTable = memo(({
+  items,
+  height = 400,
+  itemHeight = 60,
+  renderRow,
+  headers,
+  className = "",
 }: VirtualizedTableProps) => {
-  const memoizedData = useMemo(() => data, [data]);
-
-  const Row = memo(({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const item = memoizedData[index];
-    return (
-      <div style={style}>
-        {renderRow(index, style, item)}
-      </div>
-    );
-  });
-
-  if (!memoizedData.length) {
-    return (
-      <div className={cn("flex items-center justify-center", className)} style={{ height }}>
-        <p className="text-muted-foreground">No data available</p>
-      </div>
-    );
-  }
+  const memoizedItems = useMemo(() => items, [items]);
 
   return (
-    <div className={cn("border rounded-md", className)}>
-      <List
-        height={height}
-        itemCount={memoizedData.length}
-        itemSize={itemHeight}
-        width="100%"
-      >
-        {Row}
-      </List>
+    <div className={`border rounded-lg ${className}`}>
+      <Table>
+        {headers && (
+          <TableHeader>
+            {headers}
+          </TableHeader>
+        )}
+      </Table>
+      
+      <div style={{ height }}>
+        <List
+          height={height}
+          itemCount={memoizedItems.length}
+          itemSize={itemHeight}
+          itemData={memoizedItems}
+        >
+          {renderRow}
+        </List>
+      </div>
     </div>
   );
 });

@@ -1,60 +1,59 @@
-import { memo } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import React, { memo } from "react";
 import { Pie } from "react-chartjs-2";
-import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  ChartOptions,
+} from "chart.js";
+import { useLanguage } from "@/hooks/useLanguage";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface RepairPieChartProps {
   data: Record<string, number>;
-  title: string;
-  colors?: string[];
   size?: "sm" | "md" | "lg";
+  title?: string;
 }
 
-const RepairPieChart = memo(({ data, title, colors, size = "md" }: RepairPieChartProps) => {
-  const { t } = useTranslation();
+const chartSizes = {
+  sm: { width: 250, height: 200 },
+  md: { width: 350, height: 280 },
+  lg: { width: 450, height: 360 },
+};
 
-  const defaultColors = [
-    "#3B82F6", // blue
-    "#EF4444", // red
-    "#10B981", // green
-    "#F59E0B", // amber
-    "#8B5CF6", // purple
-    "#F97316", // orange
-    "#06B6D4", // cyan
-  ];
+const RepairPieChart = memo(({ data, size = "md", title }: RepairPieChartProps) => {
+  const { t } = useLanguage();
+  const chartSize = chartSizes[size];
 
-  const chartColors = colors || defaultColors;
+  const categoryColors = {
+    electrical: "#3B82F6", // Blue
+    plumbing: "#10B981", // Green
+    hvac: "#F59E0B", // Amber
+    furniture: "#8B5CF6", // Purple
+    other: "#6B7280", // Gray
+  };
 
   const chartData = {
-    labels: Object.keys(data).map(key => t(`categories.${key}`) || key),
+    labels: Object.keys(data).map((key) => t(`categories.${key}`)),
     datasets: [
       {
         data: Object.values(data),
-        backgroundColor: chartColors.slice(0, Object.keys(data).length),
-        borderColor: chartColors.slice(0, Object.keys(data).length).map(color => color + "CC"),
+        backgroundColor: Object.keys(data).map(
+          (key) => categoryColors[key as keyof typeof categoryColors] || "#6B7280"
+        ),
         borderWidth: 2,
+        borderColor: "rgba(255, 255, 255, 0.8)",
         hoverBorderWidth: 3,
+        hoverBorderColor: "rgba(255, 255, 255, 1)",
       },
     ],
   };
 
-  const getSizeConfig = () => {
-    switch (size) {
-      case "sm":
-        return { height: 200, maintainAspectRatio: false };
-      case "lg":
-        return { height: 400, maintainAspectRatio: false };
-      default:
-        return { height: 300, maintainAspectRatio: false };
-    }
-  };
-
-  const options = {
+  const options: ChartOptions<"pie"> = {
     responsive: true,
-    ...getSizeConfig(),
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "bottom" as const,
@@ -68,42 +67,23 @@ const RepairPieChart = memo(({ data, title, colors, size = "md" }: RepairPieChar
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
-            const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
-            const percentage = ((context.parsed / total) * 100).toFixed(1);
-            return `${context.label}: ${context.parsed} (${percentage}%)`;
+          label: (context) => {
+            const total = context.dataset.data.reduce((sum, value) => sum + (value as number), 0);
+            const percentage = (((context.raw as number) / total) * 100).toFixed(1);
+            return `${context.label}: ${context.raw} (${percentage}%)`;
           },
         },
       },
     },
   };
 
-  if (Object.keys(data).length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-48 text-muted-foreground">
-            {t("charts.noData")}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="relative">
-          <Pie data={chartData} options={options} />
-        </div>
-      </CardContent>
-    </Card>
+    <div style={{ width: chartSize.width, height: chartSize.height }}>
+      {title && (
+        <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
+      )}
+      <Pie data={chartData} options={options} />
+    </div>
   );
 });
 

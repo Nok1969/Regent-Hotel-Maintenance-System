@@ -1,4 +1,5 @@
-import { memo } from "react";
+import React, { memo } from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,10 +10,9 @@ import {
   Tooltip,
   Legend,
   Filler,
+  ChartOptions,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
-import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/hooks/useLanguage";
 
 ChartJS.register(
   CategoryScale,
@@ -25,125 +25,118 @@ ChartJS.register(
   Filler
 );
 
-interface RepairAreaChartProps {
-  data: Array<{ month: string; count: number }>;
-  title: string;
-  color?: string;
-  size?: "sm" | "md" | "lg";
+interface MonthlyData {
+  month: string;
+  count: number;
+  completed: number;
 }
 
-const RepairAreaChart = memo(({ 
-  data, 
-  title, 
-  color = "#3B82F6", 
-  size = "md" 
-}: RepairAreaChartProps) => {
-  const { t } = useTranslation();
+interface RepairAreaChartProps {
+  data: MonthlyData[];
+  size?: "sm" | "md" | "lg";
+  title?: string;
+}
+
+const chartSizes = {
+  sm: { width: 350, height: 200 },
+  md: { width: 450, height: 300 },
+  lg: { width: 550, height: 400 },
+};
+
+const RepairAreaChart = memo(({ data, size = "md", title }: RepairAreaChartProps) => {
+  const { t } = useLanguage();
+  const chartSize = chartSizes[size];
 
   const chartData = {
     labels: data.map(item => item.month),
     datasets: [
       {
-        label: t("charts.repairs"),
+        label: t("dashboard.totalRepairs"),
         data: data.map(item => item.count),
-        borderColor: color,
-        backgroundColor: color + "20", // Very transparent fill
-        borderWidth: 2,
         fill: true,
-        tension: 0.4,
-        pointBackgroundColor: color,
-        pointBorderColor: "#ffffff",
+        backgroundColor: "rgba(59, 130, 246, 0.1)",
+        borderColor: "rgba(59, 130, 246, 1)",
+        borderWidth: 2,
+        pointBackgroundColor: "rgba(59, 130, 246, 1)",
+        pointBorderColor: "rgba(255, 255, 255, 1)",
         pointBorderWidth: 2,
         pointRadius: 4,
-        pointHoverRadius: 6,
+        tension: 0.4,
+      },
+      {
+        label: t("dashboard.completedRepairs"),
+        data: data.map(item => item.completed),
+        fill: true,
+        backgroundColor: "rgba(16, 185, 129, 0.1)",
+        borderColor: "rgba(16, 185, 129, 1)",
+        borderWidth: 2,
+        pointBackgroundColor: "rgba(16, 185, 129, 1)",
+        pointBorderColor: "rgba(255, 255, 255, 1)",
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        tension: 0.4,
       },
     ],
   };
 
-  const getSizeConfig = () => {
-    switch (size) {
-      case "sm":
-        return { height: 200, maintainAspectRatio: false };
-      case "lg":
-        return { height: 400, maintainAspectRatio: false };
-      default:
-        return { height: 300, maintainAspectRatio: false };
-    }
-  };
-
-  const options = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
-    ...getSizeConfig(),
+    maintainAspectRatio: false,
+    interaction: {
+      mode: "index" as const,
+      intersect: false,
+    },
     plugins: {
       legend: {
-        display: false,
+        position: "top" as const,
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+        },
       },
       tooltip: {
-        mode: "index" as const,
-        intersect: false,
         callbacks: {
-          label: function(context: any) {
-            return `${context.dataset.label}: ${context.parsed.y}`;
+          title: (context) => {
+            return `${context[0].label}`;
+          },
+          label: (context) => {
+            return `${context.dataset.label}: ${context.raw}`;
           },
         },
       },
     },
     scales: {
       x: {
+        display: true,
+        title: {
+          display: true,
+          text: t("dashboard.month"),
+        },
         grid: {
           display: false,
         },
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
       },
       y: {
+        display: true,
+        title: {
+          display: true,
+          text: t("dashboard.repairCount"),
+        },
         beginAtZero: true,
         grid: {
           color: "rgba(0, 0, 0, 0.1)",
         },
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
       },
-    },
-    interaction: {
-      mode: "nearest" as const,
-      axis: "x" as const,
-      intersect: false,
     },
   };
 
-  if (data.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-48 text-muted-foreground">
-            {t("charts.noData")}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="relative">
-          <Line data={chartData} options={options} />
-        </div>
-      </CardContent>
-    </Card>
+    <div style={{ width: chartSize.width, height: chartSize.height }}>
+      {title && (
+        <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
+      )}
+      <Line data={chartData} options={options} />
+    </div>
   );
 });
 
