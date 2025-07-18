@@ -47,6 +47,19 @@ const RepairAreaChart = memo(({ data, size = "md", title }: RepairAreaChartProps
   const { t } = useLanguage();
   const chartSize = chartSizes[size];
 
+  console.log('RepairAreaChart data:', data);
+
+  // Early return if no data
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-muted-foreground">No monthly trend data available</p>
+        </div>
+      </div>
+    );
+  }
+
   const chartData = {
     labels: data.map(item => item.month),
     datasets: [

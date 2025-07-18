@@ -131,14 +131,16 @@ export default function Dashboard() {
     return {
       categoryData: stats.byCategory || {},
       statusData: stats.byStatus || {},
-      monthlyData: monthlyStats || [
-        { month: "Jan", count: 8, completed: 6 },
-        { month: "Feb", count: 12, completed: 10 },
-        { month: "Mar", count: 15, completed: 13 },
-        { month: "Apr", count: 10, completed: 8 },
-        { month: "May", count: 18, completed: 15 },
-        { month: "Jun", count: 14, completed: 12 },
-      ],
+      monthlyData: monthlyStats && Array.isArray(monthlyStats) && monthlyStats.length > 0 
+        ? monthlyStats 
+        : [
+            { month: "Jan", count: 8, completed: 6 },
+            { month: "Feb", count: 12, completed: 10 },
+            { month: "Mar", count: 15, completed: 13 },
+            { month: "Apr", count: 10, completed: 8 },
+            { month: "May", count: 18, completed: 15 },
+            { month: "Jun", count: 14, completed: 12 },
+          ],
     };
   }, [stats, monthlyStats]);
 
