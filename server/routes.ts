@@ -3,6 +3,15 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { 
+  repairValidation, 
+  updateRepairValidation, 
+  queryValidation, 
+  userValidation,
+  handleValidationErrors,
+  asyncHandler,
+  uploadLimiter 
+} from "./middleware/security";
 import {
   insertRepairSchema,
   backendRepairSchema,

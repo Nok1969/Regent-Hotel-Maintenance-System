@@ -1,195 +1,270 @@
-# Security Configuration
+# Security Implementation Guide
 
 ## Overview
 
-This document outlines the comprehensive security measures implemented in the Hotel Maintenance System to protect against common web application vulnerabilities. All security issues identified in the code review have been addressed.
+This document outlines the comprehensive security measures implemented in the Hotel Maintenance System to protect against common web vulnerabilities and ensure data integrity.
 
-## ✅ Security Issues Resolved
+## Security Middleware Stack
 
-### 1. **Global State Security Issue** ❌ → ✅
-- **Problem**: `currentUser` global variable created shared state between requests
-- **Solution**: Removed global state, now using only `req.session` for authentication
-- **Impact**: Prevents user session conflicts and data leakage between requests
+### 1. Rate Limiting
 
-### 2. **Rate Limiting** 🔒 → ✅
-- **Problem**: No request rate limiting
-- **Solution**: Implemented express-rate-limit with tiered limits
-  - General API: 100 requests/15 minutes
-  - Auth endpoints: 5 requests/15 minutes
-- **Impact**: Prevents brute force attacks and DDoS
+**Purpose**: Prevent abuse and DDoS attacks
 
-### 3. **File Upload Error Handling** ✅ → ✅
-- **Problem**: Hardcoded error throwing in fileFilter
-- **Solution**: Standardized error handling with proper HTTP status codes
-- **Impact**: Better error messages and security through information hiding
+- **API Rate Limit**: 100 requests per 15 minutes per IP
+- **Auth Rate Limit**: 5 authentication attempts per 15 minutes per IP  
+- **Upload Rate Limit**: 10 file uploads per minute per IP
 
-### 4. **Session Storage** 🔥 → ✅
-- **Problem**: In-memory Map storage that doesn't persist
-- **Solution**: Session-based authentication with proper cleanup
-- **Impact**: Reliable authentication that survives server restarts
+```typescript
+// Usage
+app.use('/api', apiLimiter);
+app.use('/api/auth', authLimiter);
+app.use('/api/repairs', uploadLimiter);
+```
 
-## Security Middleware
+### 2. Helmet Security Headers
 
-### 1. Helmet.js Security Headers
-- **Content Security Policy (CSP)**: Prevents XSS attacks by controlling resource loading
-- **X-Frame-Options**: Prevents clickjacking attacks
-- **X-Content-Type-Options**: Prevents MIME type sniffing
-- **Referrer Policy**: Controls referrer information sent to external sites
-- **HSTS**: Forces HTTPS connections in production
+**Purpose**: Set security headers to prevent common attacks
 
-### 2. CORS (Cross-Origin Resource Sharing)
-- Configured to allow requests only from approved domains
-- Development: localhost variations allowed
-- Production: Specific domain whitelist required
-- Credentials support enabled for authentication
+- **Content Security Policy (CSP)**: Prevents XSS attacks
+- **X-Frame-Options**: Prevents clickjacking
+- **X-Content-Type-Options**: Prevents MIME sniffing
+- **Referrer-Policy**: Controls referrer information
+- **HSTS**: Forces HTTPS in production
 
-### 3. Rate Limiting
-- **General API**: 100 requests per 15 minutes per IP
-- **Authentication endpoints**: 5 requests per 15 minutes per IP
-- Headers indicate remaining requests and reset time
-- Prevents brute force and DDoS attacks
+```typescript
+// Configuration
+helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: process.env.NODE_ENV === "development" 
+        ? ["'self'", "'unsafe-eval'", "'unsafe-inline'"] 
+        : ["'self'"],
+      // ... other directives
+    },
+  },
+})
+```
 
-## Input Validation & Sanitization
+### 3. Input Validation & Sanitization
 
-### 1. Schema Validation
-- Zod schemas validate all incoming data
-- Type checking and format validation
-- Required field enforcement
-- Data length and range limits
+**Purpose**: Prevent injection attacks and data corruption
 
-### 2. XSS Protection
-- Automatic script tag removal from user inputs
-- HTML encoding of user-generated content
-- Safe rendering in React components
+#### Express-Validator Rules
 
-### 3. SQL Injection Prevention
-- Drizzle ORM with parameterized queries
-- No raw SQL string concatenation
-- Input validation before database operations
+- **Repair Creation**: Validates room, category, urgency, description
+- **Repair Updates**: Validates status, room, description with proper escaping
+- **Query Parameters**: Validates limit, offset, search terms
+- **User Management**: Validates user IDs, roles, languages
 
-## Authentication & Authorization
+#### XSS Protection
 
-### 1. Session Management
-- HTTP-only cookies prevent XSS access
-- Secure cookie settings in production
-- Session timeout and cleanup
-- CSRF protection through SameSite cookies
+```typescript
+// Automatic script tag removal
+req.params[key] = req.params[key].replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+```
 
-### 2. Role-Based Access Control (RBAC)
-- Four permission levels: Admin, Manager, Staff, Technician
-- API endpoint protection with permission checks
-- Frontend route guards based on user roles
-- Principle of least privilege
+### 4. CORS Configuration
 
-### 3. Password Security
-- No plaintext password storage
-- Secure session token generation
-- Account lockout after failed attempts (rate limiting)
+**Purpose**: Control cross-origin requests
+
+```typescript
+{
+  origin: process.env.NODE_ENV === "production" 
+    ? process.env.ALLOWED_ORIGINS?.split(",") || []
+    : ["http://localhost:3000", "http://localhost:5000"],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept", "Origin"],
+}
+```
+
+## Validation Schemas
+
+### Repair Validation
+
+```typescript
+export const repairValidation = [
+  body("room")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .withMessage("Room number is required and must be less than 100 characters")
+    .escape(),
+
+  body("category")
+    .isIn(["electrical", "plumbing", "hvac", "furniture", "other"])
+    .withMessage("Invalid category"),
+
+  body("urgency")
+    .isIn(["low", "medium", "high"])
+    .withMessage("Invalid urgency level"),
+
+  body("description")
+    .trim()
+    .isLength({ min: 10, max: 1000 })
+    .withMessage("Description must be between 10 and 1000 characters")
+    .escape(),
+];
+```
+
+### Parameter Validation
+
+```typescript
+export const queryValidation = [
+  query("limit")
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100")
+    .toInt(),
+
+  query("offset")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Offset must be a non-negative integer")
+    .toInt(),
+];
+```
 
 ## Error Handling
 
-### 1. Global Error Handler
-- Centralized error processing
-- Development vs production error details
-- Security-safe error messages
-- Error logging with request context
+### Global Error Handler
 
-### 2. 404 Handling
-- Custom 404 responses for API routes
-- No information disclosure about system structure
-- User-friendly error messages
+The system includes comprehensive error handling for:
 
-### 3. Validation Errors
-- Detailed validation feedback in development
-- Sanitized error messages in production
-- No internal system information exposure
+- **Validation Errors**: Field-level validation failures
+- **Database Errors**: Connection and query failures  
+- **Authentication Errors**: JWT and session failures
+- **File Upload Errors**: Size and type restrictions
+- **Generic Errors**: Fallback handling with environment-specific responses
+
+### Error Response Format
+
+```typescript
+{
+  error: "Error type",
+  message: "Human-readable message",
+  details?: ValidationDetail[], // Only for validation errors
+  stack?: string // Only in development
+}
+```
 
 ## File Upload Security
 
-### 1. File Type Validation
-- Whitelist of allowed image formats
-- MIME type and extension checking
-- File size limits (5MB maximum)
+### Restrictions
 
-### 2. Upload Directory Protection
-- Uploads stored outside web root when possible
-- Static file serving with proper headers
-- No executable file uploads
+- **File Size**: Maximum 5MB per file
+- **File Count**: Maximum 5 files per request
+- **File Types**: Only JPEG, PNG, GIF, WebP images
+- **File Names**: Randomized to prevent conflicts
+
+### Upload Rate Limiting
+
+- **Limit**: 10 uploads per minute per IP
+- **Storage**: Local filesystem with validation
+- **Processing**: Automatic file renaming and path validation
+
+## Session Management
+
+### Configuration
+
+- **Store**: PostgreSQL-backed sessions for scalability
+- **Duration**: 7 days with automatic cleanup
+- **Security**: HTTP-only cookies with secure settings
+- **CSRF**: Protected through SameSite cookie attributes
+
+### Authentication Flow
+
+1. **Session Creation**: Secure session establishment
+2. **Token Validation**: Automatic token refresh when needed
+3. **Session Cleanup**: Automatic session destruction on logout
+4. **Multi-Auth Support**: Both Replit Auth and session-based auth
 
 ## Database Security
 
-### 1. Connection Security
-- Environment variable configuration
-- Connection pooling with limits
-- Database user with minimal privileges
+### Query Protection
 
-### 2. Data Protection
-- Parameterized queries only
-- Input sanitization before database operations
-- No sensitive data in logs
+- **Parameterized Queries**: All database operations use parameterized queries
+- **Field Selection**: Explicit field selection (no SELECT *)
+- **Input Validation**: All inputs validated before database operations
+- **Connection Pooling**: Secure connection management
 
-## Production Recommendations
+### Role-Based Access Control
 
-### 1. Environment Configuration
-```env
-NODE_ENV=production
-SESSION_SECRET=<strong-random-secret>
-DATABASE_URL=<secure-connection-string>
-```
+- **Admin**: Full system access including user management
+- **Manager**: Full access except user creation
+- **Staff**: View and create only (no status changes)
+- **Technician**: Can accept jobs and change status
 
-### 2. HTTPS Requirements
-- All production traffic over HTTPS
-- Secure cookie settings enabled
-- HSTS headers configured
+## Environment-Specific Security
 
-### 3. Monitoring & Logging
-- Request logging for security analysis
-- Error tracking and alerting
-- Rate limit monitoring
+### Development Mode
 
-### 4. Database Security
-- Regular backup procedures
-- Access control and user permissions
-- Connection encryption
+- **CSP**: Relaxed for development tools
+- **Error Details**: Full error information and stack traces
+- **Logging**: Verbose request/response logging
+- **CORS**: Permissive localhost origins
 
-## Security Headers Applied
+### Production Mode
 
-```http
-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'
-X-Content-Type-Options: nosniff
-X-Frame-Options: DENY
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-```
+- **CSP**: Strict content security policy
+- **Error Hiding**: Generic error messages
+- **HTTPS**: Forced secure connections
+- **Domain Restriction**: Limited to allowed origins
 
-## Rate Limiting Headers
+## Security Best Practices
 
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 99
-X-RateLimit-Reset: 1640995200
-```
+### Input Handling
 
-## Vulnerability Prevention
+1. **Validate Early**: Validate all inputs at the API boundary
+2. **Sanitize Always**: Escape user inputs to prevent XSS
+3. **Type Safety**: Use TypeScript and Zod for type validation
+4. **Size Limits**: Enforce reasonable limits on all inputs
 
-- **XSS**: CSP headers, input sanitization, safe rendering
-- **CSRF**: SameSite cookies, origin validation
-- **SQL Injection**: Parameterized queries, input validation
-- **Clickjacking**: X-Frame-Options header
-- **MIME Sniffing**: X-Content-Type-Options header
-- **DDoS**: Rate limiting, request size limits
-- **Brute Force**: Authentication rate limiting
-- **File Upload**: Type validation, size limits
+### Authentication
 
-## Security Testing
+1. **Session Security**: Secure session configuration
+2. **Rate Limiting**: Prevent brute force attacks
+3. **Token Management**: Proper token lifecycle management
+4. **Logout Cleanup**: Complete session destruction
 
-### Regular Checks
-- Dependency vulnerability scanning
-- Rate limit testing
-- Input validation testing
-- Error handling verification
+### Error Management
 
-### Recommended Tools
-- `npm audit` for dependency vulnerabilities
-- OWASP ZAP for security scanning
-- Postman for API security testing
+1. **Information Disclosure**: Never expose sensitive data in errors
+2. **Logging**: Log security events for monitoring
+3. **Graceful Degradation**: Handle errors without breaking functionality
+4. **User Feedback**: Provide helpful but safe error messages
+
+## Monitoring and Alerts
+
+### Request Monitoring
+
+- **Rate Limit Tracking**: Monitor for rate limit violations
+- **Error Frequency**: Track error patterns and frequencies
+- **Authentication Attempts**: Monitor failed login attempts
+- **File Upload Activity**: Track upload patterns and failures
+
+### Security Events
+
+- **Failed Authentication**: Log and monitor authentication failures
+- **Validation Failures**: Track input validation rejections
+- **Rate Limit Hits**: Monitor for potential abuse attempts
+- **Error Patterns**: Identify potential attack patterns
+
+## Compliance and Standards
+
+### Standards Followed
+
+- **OWASP Top 10**: Protection against common vulnerabilities
+- **Input Validation**: Comprehensive input sanitization
+- **Output Encoding**: Proper output encoding for XSS prevention
+- **Session Management**: Secure session handling practices
+
+### Regular Security Tasks
+
+1. **Dependency Updates**: Regular security patches
+2. **Log Review**: Periodic security log analysis
+3. **Configuration Audit**: Regular security configuration review
+4. **Penetration Testing**: Periodic security testing
+
+This security implementation provides enterprise-grade protection while maintaining usability and performance for the Hotel Maintenance System.

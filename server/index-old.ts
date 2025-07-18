@@ -34,7 +34,6 @@ app.use('/api/logout', authLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
-// Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -71,28 +70,37 @@ app.use((req, res, next) => {
   // Enhanced global error handler
   app.use(globalErrorHandler);
 
-  // 404 handler for API routes
-  app.use('/api/*', (req: Request, res: Response) => {
-    res.status(404).json({
-      error: "Not Found",
-      message: `API endpoint ${req.method} ${req.path} not found`,
+    res.status(status).json({ 
+      message,
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
     });
   });
 
-  if (process.env.NODE_ENV === "development") {
+  // Handle 404 for API routes
+  app.use('/api/*', (req: Request, res: Response) => {
+    res.status(404).json({ 
+      message: `API endpoint not found: ${req.method} ${req.path}`,
+    });
+  });
+
+  // importantly only setup vite in development and after
+  // setting up all the other routes so the catch-all route
+  // doesn't interfere with the other routes
+  if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  const PORT = Number(process.env.PORT) || 5000;
-  server.listen(PORT, "0.0.0.0", () => {
-    const url = `http://localhost:${PORT}`;
-    console.log(`Server running on ${url}`);
-
-    if (process.env.NODE_ENV === "development") {
-      console.log(`Frontend: ${url}`);
-      console.log(`Backend API: ${url}/api`);
-    }
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = 5000;
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
   });
 })();
