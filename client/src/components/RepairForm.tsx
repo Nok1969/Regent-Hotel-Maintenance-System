@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { insertRepairSchema, type InsertRepair } from "@shared/schema";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,15 +24,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.enum(["electrical", "plumbing", "hvac", "furniture", "other"]),
-  urgency: z.enum(["low", "medium", "high"]),
-  location: z.string().min(3, "Location must be at least 3 characters"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+// Use shared schema for type safety consistency
+const formSchema = insertRepairSchema;
+type FormValues = InsertRepair;
 
 interface RepairFormProps {
   onSuccess?: () => void;
@@ -51,15 +45,25 @@ export function RepairForm({ onSuccess }: RepairFormProps) {
       title: "",
       description: "",
       category: "other",
-      urgency: "medium",
+      urgency: "medium", 
       location: "",
+      status: "pending",
+      userId: user?.id || "",
+      images: [],
     },
   });
 
   const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
+      // Transform data to match backend expectations
+      const repairData = {
+        ...data,
+        room: data.location, // Backend expects 'room' field
+        userId: user?.id || "",
+      };
+      
       // First create the repair request
-      const response = await apiRequest("POST", "/api/repairs", data);
+      const response = await apiRequest("POST", "/api/repairs", repairData);
       const repair = await response.json();
       
       // Then upload files if any

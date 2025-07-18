@@ -39,6 +39,12 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
   - Debounced search functionality for RepairTable and Users page (500ms, 400ms)
   - Loading indicators for search operations
   - Client-side and server-side search filtering optimization
+- ✅ **Advanced Schema Validation with Custom refine() Functions:**
+  - Shared Zod schemas between frontend and backend for type consistency
+  - Custom validation rules using refine() for complex business logic
+  - Examples: start time < end time, high urgency requires detailed description
+  - Proper error handling with specific field-level error messages
+  - Type-safe API responses with consistent error handling
 - ✅ Created comprehensive security documentation (SECURITY.md)
 - ✅ Resolved all security vulnerabilities identified in code review
 

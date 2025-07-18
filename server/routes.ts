@@ -3,7 +3,23 @@ import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertRepairSchema, updateRepairSchema } from "@shared/schema";
+import {
+  insertRepairSchema,
+  backendRepairSchema,
+  updateRepairSchema,
+  repairFiltersSchema,
+  userFiltersSchema,
+  updateUserRoleSchema,
+  type InsertRepair,
+  type UpdateRepair,
+  type Repair,
+  type User,
+  type RepairFilters,
+  type UserFilters,
+  type Role,
+  type PaginatedResponse,
+  type ApiResponse,
+} from "@shared/schema";
 import { hasPermission, getUserPermissions } from "./permissions";
 import { z } from "zod";
 import multer from "multer";
@@ -256,44 +272,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(stats);
   }));
 
-  // Repair routes
-  app.get("/api/repairs", customAuth, asyncHandler(async (req: any, res: any) => {
-    const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
-    const user = await storage.getUser(userId);
-    
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  // Repair routes with proper validation
+  app.get("/api/repairs", 
+    customAuth, 
+    validateSchema(repairFiltersSchema, 'query'),
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-    const permissions = getUserPermissions(user.role);
-    
-    // Validate query parameters
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
-    
-    if (limit && (isNaN(limit) || limit < 1 || limit > 100)) {
-      return res.status(400).json({ message: "Invalid limit parameter (1-100)" });
-    }
-    
-    if (offset && (isNaN(offset) || offset < 0)) {
-      return res.status(400).json({ message: "Invalid offset parameter" });
-    }
+      const permissions = getUserPermissions(user.role);
+      
+      const filters = {
+        userId: permissions.canViewAllRepairs ? undefined : userId,
+        status: req.query.status,
+        category: req.query.category,
+        urgency: req.query.urgency,
+        search: req.query.search,
+        limit: req.query.limit,
+        offset: req.query.offset,
+      };
 
-    const filters = {
-      userId: permissions.canViewAllRepairs ? undefined : userId,
-      status: req.query.status as string,
-      category: req.query.category as string,
-      limit,
-      offset,
-    };
-
-    const repairs = await storage.getRepairs(filters);
-    res.json(repairs);
-  }));
+      const repairs = await storage.getRepairs(filters);
+      res.json(repairs);
+    })
+  );
 
   app.post("/api/repairs", 
     customAuth,
-    validateSchema(insertRepairSchema),
+    validateSchema(z.object({
+      title: z.string().min(3, "Title must be at least 3 characters"),
+      description: z.string().min(10, "Description must be at least 10 characters"),
+      category: z.enum(["electrical", "plumbing", "hvac", "furniture", "other"]),
+      urgency: z.enum(["high", "medium", "low"]),
+      location: z.string().min(3, "Location must be at least 3 characters"),
+    }).refine((data) => {
+      if (data.urgency === "high" && data.description.length < 20) {
+        return false;
+      }
+      return true;
+    }, {
+      message: "High urgency repairs require detailed description (min 20 characters)",
+      path: ["description"],
+    })),
     asyncHandler(async (req: any, res: any) => {
       const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const user = await storage.getUser(userId);
@@ -307,10 +331,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Permission denied" });
       }
 
+      // Transform frontend data to backend format
       const repairData = {
-        ...req.body,
+        room: req.body.location, // Map location to room for backend
+        description: req.body.description,
+        category: req.body.category,
+        urgency: req.body.urgency,
         userId: userId,
         status: "pending",
+        images: [],
       };
 
       const repair = await storage.createRepair(repairData);
@@ -320,7 +349,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/repairs/:id", 
     customAuth,
-    validateSchema(updateRepairSchema.omit({ id: true })),
+    validateSchema(z.object({
+      title: z.string().min(3, "Title must be at least 3 characters").optional(),
+      description: z.string().min(10, "Description must be at least 10 characters").optional(),
+      category: z.enum(["electrical", "plumbing", "hvac", "furniture", "other"]).optional(),
+      urgency: z.enum(["high", "medium", "low"]).optional(),
+      location: z.string().min(3, "Location must be at least 3 characters").optional(),
+      status: z.enum(["pending", "in_progress", "completed"]).optional(),
+      room: z.string().min(3, "Room must be at least 3 characters").optional(),
+    }).refine((data) => {
+      if (data.urgency === "high" && data.description && data.description.length < 20) {
+        return false;
+      }
+      return true;
+    }, {
+      message: "High urgency repairs require detailed description (min 20 characters)",
+      path: ["description"],
+    })),
     asyncHandler(async (req: any, res: any) => {
       const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const user = await storage.getUser(userId);
