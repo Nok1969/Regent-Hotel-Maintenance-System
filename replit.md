@@ -76,6 +76,10 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
   - Updated all useQuery calls to use explicit queryKey and queryFn with URLSearchParams
   - Standardized query cache invalidation with consistent queryKey patterns
   - Enhanced error handling in fetch operations with proper status code checks
+  - Fixed 429 Too Many Requests by adding staleTime (5min) and gcTime (10min) to React Query
+  - Added debounced auth checks and reduced refetchOnWindowFocus to prevent rate limiting
+  - Implemented exponential backoff retry strategy for failed requests
+  - Added specific retry logic for auth errors (401, 403, 429) to avoid unnecessary requests
 - ✅ Created comprehensive security documentation (SECURITY.md)
 - ✅ Resolved all security vulnerabilities identified in code review
 

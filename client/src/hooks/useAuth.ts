@@ -14,8 +14,10 @@ export function useAuth() {
       return response.json();
     },
     retry: false,
-    refetchOnWindowFocus: true,
-    staleTime: 0, // Always check authentication status
+    refetchOnWindowFocus: false, // Reduce unnecessary refetches
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchInterval: false, // Don't auto-refetch
   });
 
   return {

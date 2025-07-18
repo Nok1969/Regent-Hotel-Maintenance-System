@@ -71,19 +71,26 @@ export default function Users() {
   // Debounce search input to avoid too many API calls
   const { debouncedQuery: debouncedSearch, isSearching } = useDebouncedSearch(searchInput, 400);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated (debounced to prevent multiple calls)
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     if (!authLoading && !isAuthenticated) {
-      toast({
-        title: t("common.unauthorized"),
-        description: t("auth.loginAgain"),
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+      timeoutId = setTimeout(() => {
+        toast({
+          title: t("common.unauthorized"),
+          description: t("auth.loginAgain"),
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+      }, 100); // Small delay to prevent rapid calls
     }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [isAuthenticated, authLoading, toast, t]);
 
   // Check permissions

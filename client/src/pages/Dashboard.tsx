@@ -68,23 +68,29 @@ export default function Dashboard() {
     retry: false,
   });
 
+  // Debounced error handling to prevent rapid redirects
   useEffect(() => {
-    // Handle unauthorized errors at page level
+    let timeoutId: NodeJS.Timeout;
+    
     const handleError = (error: Error) => {
       if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: t("messages.unauthorized"),
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          toast({
+            title: "Unauthorized",
+            description: t("messages.unauthorized"),
+            variant: "destructive",
+          });
+          setTimeout(() => {
+            window.location.href = "/api/login";
+          }, 500);
+        }, 100);
       }
     };
 
-    // This would be triggered by query errors
-    // The actual error handling is done in the query configuration
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [toast, t]);
 
   const getStatusBadge = (status: string) => {

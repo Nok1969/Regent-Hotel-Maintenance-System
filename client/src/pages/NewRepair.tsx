@@ -11,19 +11,26 @@ export default function NewRepair() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Redirect to home if not authenticated
+  // Redirect to home if not authenticated (debounced)
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
     if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: t("messages.unauthorized"),
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+      timeoutId = setTimeout(() => {
+        toast({
+          title: "Unauthorized",
+          description: t("messages.unauthorized"),
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+      }, 100);
     }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [isAuthenticated, isLoading, toast, t]);
 
   const handleSuccess = () => {

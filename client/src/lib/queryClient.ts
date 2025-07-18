@@ -47,8 +47,18 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      staleTime: 5 * 60 * 1000, // Cache for 5 minutes to reduce API calls
+      gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (TanStack Query v5)
+      retry: (failureCount, error: any) => {
+        // Don't retry on rate limiting or auth errors
+        if (error?.message?.includes('429') || 
+            error?.message?.includes('401') || 
+            error?.message?.includes('403')) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
     mutations: {
       retry: false,
