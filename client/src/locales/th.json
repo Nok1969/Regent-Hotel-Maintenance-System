@@ -114,7 +114,9 @@
     "noPermission": "คุณไม่มีสิทธิ์ในการดูข้อมูลผู้ใช้",
     "roleUpdated": "อัปเดตบทบาทแล้ว",
     "roleUpdateSuccess": "อัปเดตบทบาทผู้ใช้สำเร็จ",
-    "roleUpdateError": "เกิดข้อผิดพลาดในการอัปเดตบทบาท"
+    "roleUpdateError": "เกิดข้อผิดพลาดในการอัปเดตบทบาท",
+    "searchUsers": "ค้นหาผู้ใช้",
+    "searchPlaceholder": "ใส่ชื่อหรืออีเมล"
   },
   "common": {
     "loading": "กำลังโหลด...",

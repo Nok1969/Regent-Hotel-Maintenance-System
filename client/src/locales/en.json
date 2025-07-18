@@ -125,7 +125,9 @@
     "noPermission": "You don't have permission to view user data",
     "roleUpdated": "Role Updated",
     "roleUpdateSuccess": "User role updated successfully",
-    "roleUpdateError": "Failed to update user role"
+    "roleUpdateError": "Failed to update user role",
+    "searchUsers": "Search Users",
+    "searchPlaceholder": "Enter name or email"
   },
   "common": {
     "loading": "Loading...",

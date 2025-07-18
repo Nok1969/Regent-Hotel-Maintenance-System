@@ -80,6 +80,7 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
   - Added debounced auth checks and reduced refetchOnWindowFocus to prevent rate limiting
   - Implemented exponential backoff retry strategy for failed requests
   - Added specific retry logic for auth errors (401, 403, 429) to avoid unnecessary requests
+  - Fixed missing translation keys: users.searchUsers and users.searchPlaceholder for both English and Thai
 - ✅ Created comprehensive security documentation (SECURITY.md)
 - ✅ Resolved all security vulnerabilities identified in code review
 
