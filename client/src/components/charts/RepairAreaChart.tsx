@@ -65,7 +65,7 @@ const RepairAreaChart = memo(({ data, size = "md", title }: RepairAreaChartProps
     datasets: [
       {
         label: t("dashboard.totalRepairs"),
-        data: data.map(item => item.count),
+        data: data.map(item => Number(item.count)),
         fill: true,
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         borderColor: "rgba(59, 130, 246, 1)",
@@ -78,7 +78,7 @@ const RepairAreaChart = memo(({ data, size = "md", title }: RepairAreaChartProps
       },
       {
         label: t("dashboard.completedRepairs"),
-        data: data.map(item => item.completed),
+        data: data.map(item => Number(item.completed)),
         fill: true,
         backgroundColor: "rgba(16, 185, 129, 0.1)",
         borderColor: "rgba(16, 185, 129, 1)",

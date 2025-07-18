@@ -340,11 +340,11 @@ export class DatabaseStorage implements IStorage {
       .groupBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`)
       .orderBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`);
 
-    // Format month names
+    // Format month names and ensure numbers are properly typed
     return monthlyData.map(({ month, count, completed }) => ({
       month: new Date(month + '-01').toLocaleDateString('en', { month: 'short' }),
-      count,
-      completed,
+      count: Number(count),
+      completed: Number(completed),
     }));
   }
 
