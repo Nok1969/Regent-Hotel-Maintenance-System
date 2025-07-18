@@ -30,7 +30,8 @@ const RepairPieChart = memo(({ data, size = "md", title }: RepairPieChartProps) 
   const categoryColors = {
     electrical: "#3B82F6", // Blue
     plumbing: "#10B981", // Green
-    hvac: "#F59E0B", // Amber
+    hvac: "#F59E0B", // Amber (air_conditioning)
+    air_conditioning: "#F59E0B", // Amber (same as hvac)
     furniture: "#8B5CF6", // Purple
     other: "#6B7280", // Gray
   };
@@ -50,6 +51,9 @@ const RepairPieChart = memo(({ data, size = "md", title }: RepairPieChartProps) 
       },
     ],
   };
+
+  // Debug: log data to check if it's being passed correctly
+  console.log('RepairPieChart data:', data, 'chartData:', chartData);
 
   const options: ChartOptions<"pie"> = {
     responsive: true,

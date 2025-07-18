@@ -55,6 +55,7 @@
   "categories": {
     "electrical": "ไฟฟ้า",
     "plumbing": "ประปา",
+    "hvac": "แอร์",
     "air_conditioning": "เครื่องปรับอากาศ",
     "furniture": "เฟอร์นิเจอร์",
     "other": "อื่นๆ"

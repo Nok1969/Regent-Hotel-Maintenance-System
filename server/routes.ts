@@ -548,6 +548,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     })
   );
 
+  // Notification endpoints
+  app.get("/api/notifications", 
+    customAuth,
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const { isRead, limit = 50, offset = 0 } = req.query;
+      const notifications = await storage.getNotifications(userId, {
+        isRead: isRead === 'true' ? true : isRead === 'false' ? false : undefined,
+        limit: parseInt(limit as string) || 50,
+        offset: parseInt(offset as string) || 0,
+      });
+
+      res.json(notifications);
+    })
+  );
+
+  app.patch("/api/notifications/:id/read", 
+    customAuth,
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const notificationId = parseInt(req.params.id);
+      if (isNaN(notificationId)) {
+        return res.status(400).json({ message: "Invalid notification ID" });
+      }
+
+      const notification = await storage.markNotificationAsRead(notificationId, userId);
+      res.json(notification);
+    })
+  );
+
+  app.patch("/api/notifications/read-all", 
+    customAuth,
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const result = await storage.markAllNotificationsAsRead(userId);
+      res.json(result);
+    })
+  );
+
   const httpServer = createServer(app);
   return httpServer;
 }

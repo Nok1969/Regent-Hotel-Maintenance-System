@@ -1,6 +1,7 @@
 import {
   users,
   repairs,
+  notifications,
   type User,
   type UpsertUser,
   type Repair,
@@ -280,7 +281,9 @@ export class DatabaseStorage implements IStorage {
     });
 
     categoryCounts.forEach(({ category, count }) => {
-      stats.byCategory[category] = count;
+      // Map air_conditioning to hvac for consistency with frontend
+      const mappedCategory = category === "air_conditioning" ? "hvac" : category;
+      stats.byCategory[mappedCategory] = count;
     });
 
     return stats;
@@ -343,6 +346,62 @@ export class DatabaseStorage implements IStorage {
       count,
       completed,
     }));
+  }
+
+  // Notification operations
+  async createNotification(notification: {
+    userId: string;
+    title: string;
+    description: string;
+    type: "new_request" | "status_update" | "completed" | "assigned";
+    relatedId?: number;
+  }): Promise<any> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values({
+        ...notification,
+        isRead: false,
+      })
+      .returning();
+    return newNotification;
+  }
+
+  async getNotifications(userId: string, filters: {
+    isRead?: boolean;
+    limit?: number;
+    offset?: number;
+  } = {}): Promise<any[]> {
+    const { isRead, limit = 50, offset = 0 } = filters;
+    
+    const conditions = [eq(notifications.userId, userId)];
+    if (isRead !== undefined) {
+      conditions.push(eq(notifications.isRead, isRead));
+    }
+
+    return await db
+      .select()
+      .from(notifications)
+      .where(and(...conditions))
+      .orderBy(desc(notifications.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async markNotificationAsRead(id: number, userId: string): Promise<any> {
+    const [notification] = await db
+      .update(notifications)
+      .set({ isRead: true, updatedAt: new Date() })
+      .where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
+      .returning();
+    return notification;
+  }
+
+  async markAllNotificationsAsRead(userId: string): Promise<any> {
+    await db
+      .update(notifications)
+      .set({ isRead: true, updatedAt: new Date() })
+      .where(eq(notifications.userId, userId));
+    return { success: true };
   }
 }
 

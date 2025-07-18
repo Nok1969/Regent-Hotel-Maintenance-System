@@ -56,6 +56,21 @@ export const repairs = pgTable("repairs", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Notifications table
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  type: varchar("type", { 
+    enum: ["new_request", "status_update", "completed", "assigned"] 
+  }).notNull(),
+  isRead: boolean("is_read").default(false),
+  relatedId: integer("related_id"), // repair ID or user ID
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   repairs: many(repairs),
@@ -64,6 +79,13 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const repairsRelations = relations(repairs, ({ one }) => ({
   user: one(users, {
     fields: [repairs.userId],
+    references: [users.id],
+  }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
     references: [users.id],
   }),
 }));
