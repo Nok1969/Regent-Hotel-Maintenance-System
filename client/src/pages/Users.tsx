@@ -210,11 +210,30 @@ export default function Users() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t("users.title")}</h1>
-        <p className="text-muted-foreground">
-          {t("users.description")}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t("users.title")}</h1>
+          <p className="text-muted-foreground">
+            {t("users.description")}
+          </p>
+        </div>
+        {canManageUsers && (
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => {
+                // Add new user functionality will be added here
+                toast({
+                  title: "Add New User",
+                  description: "Add new user functionality coming soon!",
+                });
+              }}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors inline-flex items-center gap-2"
+            >
+              <UsersIcon className="w-4 h-4" />
+              Add New User
+            </button>
+          </div>
+        )}
       </div>
 
       <Card>
