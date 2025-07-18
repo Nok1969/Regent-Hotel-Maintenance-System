@@ -222,10 +222,6 @@ POST /api/upload             # อัพโหลดรูปภาพ
 2. ติดตั้ง dependencies: `npm install`
 3. Setup PostgreSQL database
 4. รัน development server: `npm run dev`
-5. เข้าสู่ระบบด้วย test accounts:
-   - admin/admin123
-   - manager/manager123  
-   - staff/staff123
-   - technician/tech123
+5. เข้าสู่ระบบด้วย mock authentication system
 
 ระบบจะทำงานบน port 5000 และรองรับการใช้งานผ่าน web browser ทุกแพลตฟอร์ม

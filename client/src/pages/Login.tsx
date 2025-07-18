@@ -83,15 +83,7 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-            <p className="text-sm text-blue-700 dark:text-blue-300 font-medium mb-2">Test Accounts:</p>
-            <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
-              <p><strong>Admin:</strong> admin / admin123</p>
-              <p><strong>Manager:</strong> manager / manager123</p>
-              <p><strong>Staff:</strong> staff / staff123</p>
-              <p><strong>Technician:</strong> technician / tech123</p>
-            </div>
-          </div>
+
         </CardContent>
       </Card>
     </div>
