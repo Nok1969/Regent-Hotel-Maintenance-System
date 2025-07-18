@@ -32,17 +32,39 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/stats/summary"],
+    queryKey: ["stats", "summary"],
+    queryFn: async () => {
+      const response = await fetch("/api/stats/summary");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stats summary: ${response.status}`);
+      }
+      return response.json();
+    },
     retry: false,
   });
 
   const { data: monthlyStats, isLoading: monthlyLoading } = useQuery({
-    queryKey: ["/api/stats/monthly"],
+    queryKey: ["stats", "monthly"],
+    queryFn: async () => {
+      const response = await fetch("/api/stats/monthly");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch monthly stats: ${response.status}`);
+      }
+      return response.json();
+    },
     retry: false,
   });
 
   const { data: recentRepairs = [], isLoading: repairsLoading } = useQuery({
-    queryKey: ["/api/repairs", { limit: 5 }],
+    queryKey: ["repairs", "recent", { limit: 5 }],
+    queryFn: async () => {
+      const params = new URLSearchParams({ limit: "5" });
+      const response = await fetch(`/api/repairs?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recent repairs: ${response.status}`);
+      }
+      return response.json();
+    },
     retry: false,
   });
 

@@ -95,7 +95,18 @@ export default function Users() {
     isLoading,
     error
   } = useQuery({
-    queryKey: ["/api/users", { search: debouncedSearch }],
+    queryKey: ["users", debouncedSearch],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (debouncedSearch) {
+        params.append("search", debouncedSearch);
+      }
+      const response = await fetch(`/api/users?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.status}`);
+      }
+      return response.json();
+    },
     enabled: isAuthenticated && canViewAllUsers,
     retry: false,
   });

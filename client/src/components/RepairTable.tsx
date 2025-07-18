@@ -54,7 +54,27 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   const { debouncedQuery: debouncedSearch, isSearching } = useDebouncedSearch(searchInput, 500);
 
   const { data: repairs = [], isLoading } = useQuery({
-    queryKey: ["/api/repairs", { ...filters, search: debouncedSearch }],
+    queryKey: ["repairs", "list", { ...filters, search: debouncedSearch }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      
+      // Add filters to query params
+      if (filters.status && filters.status !== "all") {
+        params.append("status", filters.status);
+      }
+      if (filters.category && filters.category !== "all") {
+        params.append("category", filters.category);
+      }
+      if (debouncedSearch) {
+        params.append("search", debouncedSearch);
+      }
+      
+      const response = await fetch(`/api/repairs?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch repairs: ${response.status}`);
+      }
+      return response.json();
+    },
     retry: false,
   });
 
@@ -64,8 +84,8 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/repairs"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["repairs"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
       toast({
         title: t("messages.success"),
         description: t("messages.statusUpdated"),

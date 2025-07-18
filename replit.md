@@ -73,6 +73,9 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
   - Created responsive chart components: RepairPieChart, RepairBarChart, RepairAreaChart
   - Implemented React.memo() and useMemo() for performance optimization
   - Added configurable chart sizes (sm, md, lg) with proper responsive design
+  - Updated all useQuery calls to use explicit queryKey and queryFn with URLSearchParams
+  - Standardized query cache invalidation with consistent queryKey patterns
+  - Enhanced error handling in fetch operations with proper status code checks
 - ✅ Created comprehensive security documentation (SECURITY.md)
 - ✅ Resolved all security vulnerabilities identified in code review
 

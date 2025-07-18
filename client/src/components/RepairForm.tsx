@@ -79,8 +79,8 @@ export function RepairForm({ onSuccess }: RepairFormProps) {
       return repair;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/repairs"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["repairs"] });
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
       toast({
         title: t("messages.success"),
         description: t("messages.repairCreated"),
