@@ -6,10 +6,10 @@ import {
   type Repair,
   type InsertRepair,
   type UpdateRepair,
-  type RepairWithUser,
+  type RepairWithUser
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, or, like, count } from "drizzle-orm";
+import { eq, desc, and, or, like, count, sql, gte } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
@@ -37,6 +37,15 @@ export interface IStorage {
     byCategory: Record<string, number>;
     byStatus: Record<string, number>;
   }>;
+  getRepairStatsSummary(): Promise<{
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+    todayCount: number;
+    weekCount: number;
+  }>;
+  getMonthlyStats(): Promise<Array<{ month: string; count: number; completed: number }>>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -213,7 +222,7 @@ export class DatabaseStorage implements IStorage {
     byCategory: Record<string, number>;
     byStatus: Record<string, number>;
   }> {
-    // Get total counts by status
+    // Get total counts by status using optimized query
     const statusCounts = await db
       .select({
         status: repairs.status,
@@ -222,7 +231,7 @@ export class DatabaseStorage implements IStorage {
       .from(repairs)
       .groupBy(repairs.status);
 
-    // Get counts by category
+    // Get counts by category using optimized query
     const categoryCounts = await db
       .select({
         category: repairs.category,
@@ -254,6 +263,65 @@ export class DatabaseStorage implements IStorage {
     });
 
     return stats;
+  }
+
+  // Optimized stats summary with single query
+  async getRepairStatsSummary(): Promise<{
+    total: number;
+    pending: number;
+    inProgress: number;
+    completed: number;
+    todayCount: number;
+    weekCount: number;
+  }> {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // Single aggregated query for better performance
+    const summaryResult = await db
+      .select({
+        total: count(),
+        pending: sql<number>`count(case when ${repairs.status} = 'pending' then 1 end)`,
+        inProgress: sql<number>`count(case when ${repairs.status} = 'in_progress' then 1 end)`,
+        completed: sql<number>`count(case when ${repairs.status} = 'completed' then 1 end)`,
+        todayCount: sql<number>`count(case when ${repairs.createdAt} >= ${today.toISOString()} then 1 end)`,
+        weekCount: sql<number>`count(case when ${repairs.createdAt} >= ${weekAgo.toISOString()} then 1 end)`,
+      })
+      .from(repairs);
+
+    return summaryResult[0] || {
+      total: 0,
+      pending: 0,
+      inProgress: 0,
+      completed: 0,
+      todayCount: 0,
+      weekCount: 0,
+    };
+  }
+
+  // Monthly statistics with aggregation
+  async getMonthlyStats(): Promise<Array<{ month: string; count: number; completed: number }>> {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const monthlyData = await db
+      .select({
+        month: sql<string>`to_char(${repairs.createdAt}, 'YYYY-MM')`,
+        count: count(),
+        completed: sql<number>`count(case when ${repairs.status} = 'completed' then 1 end)`,
+      })
+      .from(repairs)
+      .where(gte(repairs.createdAt, sixMonthsAgo))
+      .groupBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`)
+      .orderBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`);
+
+    // Format month names
+    return monthlyData.map(({ month, count, completed }) => ({
+      month: new Date(month + '-01').toLocaleDateString('en', { month: 'short' }),
+      count,
+      completed,
+    }));
   }
 }
 

@@ -32,7 +32,12 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/stats"],
+    queryKey: ["/api/stats/summary"],
+    retry: false,
+  });
+
+  const { data: monthlyStats, isLoading: monthlyLoading } = useQuery({
+    queryKey: ["/api/stats/monthly"],
     retry: false,
   });
 
@@ -95,13 +100,13 @@ export default function Dashboard() {
     return {
       categoryData: stats.byCategory || {},
       statusData: stats.byStatus || {},
-      monthlyData: stats.monthlyTrend || [
-        { month: "Jan", count: 8 },
-        { month: "Feb", count: 12 },
-        { month: "Mar", count: 15 },
-        { month: "Apr", count: 10 },
-        { month: "May", count: 18 },
-        { month: "Jun", count: 14 },
+      monthlyData: monthlyStats || [
+        { month: "Jan", count: 8, completed: 6 },
+        { month: "Feb", count: 12, completed: 10 },
+        { month: "Mar", count: 15, completed: 13 },
+        { month: "Apr", count: 10, completed: 8 },
+        { month: "May", count: 18, completed: 15 },
+        { month: "Jun", count: 14, completed: 12 },
       ],
     };
   }, [stats]);

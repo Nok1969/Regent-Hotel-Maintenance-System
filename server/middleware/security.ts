@@ -253,3 +253,29 @@ export const sanitizeInput = (req: Request, res: Response, next: NextFunction) =
 
   next();
 };
+
+// CSRF Protection middleware
+export const csrfProtection = (req: Request, res: Response, next: NextFunction) => {
+  // Skip CSRF for GET requests and auth endpoints
+  if (req.method === 'GET' || req.path.startsWith('/api/auth')) {
+    return next();
+  }
+
+  // Check for CSRF token in header
+  const csrfToken = req.headers['x-csrf-token'] as string;
+  const sessionToken = req.session?.csrfToken;
+
+  if (!csrfToken || !sessionToken || csrfToken !== sessionToken) {
+    return res.status(403).json({
+      error: "CSRF token validation failed",
+      message: "Invalid or missing CSRF token",
+    });
+  }
+
+  next();
+};
+
+// Generate CSRF token
+export const generateCSRFToken = () => {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+};

@@ -275,7 +275,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get repair statistics
+  // Get repair statistics summary
+  app.get("/api/stats/summary", 
+    customAuth,
+    queryValidation,
+    handleValidationErrors,
+    asyncHandler(async (req: any, res: any) => {
+      const stats = await storage.getRepairStatsSummary();
+      res.json(stats);
+    })
+  );
+
+  // Get monthly statistics
+  app.get("/api/stats/monthly", 
+    customAuth,
+    queryValidation,
+    handleValidationErrors,
+    asyncHandler(async (req: any, res: any) => {
+      const monthlyStats = await storage.getMonthlyStats();
+      res.json(monthlyStats);
+    })
+  );
+
+  // Legacy stats endpoint (kept for backward compatibility)
   app.get("/api/stats", customAuth, asyncHandler(async (req: any, res: any) => {
     const stats = await storage.getRepairStats();
     res.json(stats);

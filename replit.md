@@ -61,6 +61,14 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
   - Async error wrapper for all route handlers
   - Input sanitization middleware for script tag removal
   - File upload security with size/type/count restrictions
+  - CSRF protection middleware for state-changing operations
+- ✅ **Performance & Database Optimization:**
+  - Created separate aggregated endpoints: /api/stats/summary, /api/stats/monthly
+  - Optimized database queries with SQL aggregation for better performance
+  - VirtualizedTable component for large data sets with react-window
+  - Enhanced Zod schemas with complex business logic validation using refine()
+  - Database indexes recommendation for status, category, createdAt fields
+  - Memoized chart data and separated chart components for optimal rendering
 - ✅ Created comprehensive security documentation (SECURITY.md)
 - ✅ Resolved all security vulnerabilities identified in code review
 
