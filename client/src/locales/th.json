@@ -145,6 +145,83 @@
     "unauthorized": "คุณได้ออกจากระบบแล้ว กำลังเข้าสู่ระบบใหม่...",
     "accessDenied": "ไม่มีสิทธิ์เข้าถึง",
     "repairSubmitted": "ส่งคำขอซ่อมเรียบร้อยแล้ว",
-    "repairUpdated": "อัปเดตคำขอซ่อมเรียบร้อยแล้ว"
+    "repairUpdated": "อัปเดตคำขอซ่อมเรียบร้อยแล้ว",
+    "repairCreated": "สร้างคำขอซ่อมเรียบร้อยแล้ว",
+    "repairFailed": "ไม่สามารถสร้างคำขอซ่อมได้",
+    "statusUpdated": "อัปเดตสถานะเรียบร้อยแล้ว",
+    "updateFailed": "ไม่สามารถอัปเดตสถานะได้",
+    "invalidFileType": "ประเภทไฟล์ไม่ถูกต้อง กรุณาอัปโหลดรูปภาพเท่านั้น",
+    "fileTooLarge": "ไฟล์ใหญ่เกินไป ขนาดสูงสุด 5MB"
+  },
+  "charts": {
+    "byCategory": "แยกตามประเภท",
+    "byStatus": "แยกตามสถานะ",
+    "repairsByCategory": "งานซ่อมแยกตามประเภท",
+    "repairsByStatus": "งานซ่อมแยกตามสถานะ", 
+    "monthlyTrend": "แนวโน้มรายเดือน",
+    "byUrgency": "งานซ่อมแยกตามความเร่งด่วน",
+    "totalRepairs": "งานซ่อมทั้งหมด",
+    "completedRepairs": "งานซ่อมที่เสร็จแล้ว"
+  },
+  "stats": {
+    "totalRepairs": "งานซ่อมทั้งหมด",
+    "pendingRepairs": "รอดำเนินการ",
+    "inProgressRepairs": "กำลังดำเนินการ",
+    "completedRepairs": "เสร็จสิ้นแล้ว"
+  },
+  "months": {
+    "jan": "ม.ค.",
+    "feb": "ก.พ.", 
+    "mar": "มี.ค.",
+    "apr": "เม.ย.",
+    "may": "พ.ค.",
+    "jun": "มิ.ย.",
+    "jul": "ก.ค.",
+    "aug": "ส.ค.",
+    "sep": "ก.ย.",
+    "oct": "ต.ค.",
+    "nov": "พ.ย.",
+    "dec": "ธ.ค."
+  },
+  "forms": {
+    "newRepair": "คำขอซ่อมใหม่",
+    "title": "หัวข้อ",
+    "titlePlaceholder": "ใส่หัวข้อการซ่อม",
+    "location": "สถานที่",
+    "locationPlaceholder": "หมายเลขห้องหรือสถานที่",
+    "category": "ประเภท",
+    "selectCategory": "เลือกประเภท",
+    "urgency": "ความเร่งด่วน",
+    "selectUrgency": "เลือกความเร่งด่วน",
+    "description": "รายละเอียด",
+    "descriptionPlaceholder": "อธิบายปัญหาโดยละเอียด",
+    "images": "รูปภาพ",
+    "uploadImages": "คลิกเพื่ออัปโหลดรูปภาพ",
+    "creating": "กำลังสร้าง...",
+    "create": "สร้างคำขอซ่อม"
+  },
+  "repairs": {
+    "title": "คำขอซ่อม",
+    "items": "รายการ",
+    "noRepairs": "ไม่พบคำขอซ่อม"
+  },
+  "filters": {
+    "search": "ค้นหา",
+    "searchPlaceholder": "ค้นหางานซ่อม...",
+    "status": "สถานะ",
+    "allStatus": "สถานะทั้งหมด",
+    "category": "ประเภท",
+    "allCategories": "ประเภททั้งหมด",
+    "clear": "ล้างตัวกรอง"
+  },
+  "table": {
+    "title": "หัวข้อ",
+    "location": "สถานที่",
+    "category": "ประเภท",
+    "urgency": "ความเร่งด่วน",
+    "status": "สถานะ",
+    "reporter": "ผู้แจ้ง",
+    "created": "วันที่สร้าง",
+    "actions": "การดำเนินการ"
   }
 }

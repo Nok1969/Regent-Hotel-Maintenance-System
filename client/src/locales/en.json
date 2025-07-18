@@ -166,7 +166,33 @@
   },
   "charts": {
     "byCategory": "Repairs by Category",
-    "byStatus": "Repairs by Status"
+    "byStatus": "Repairs by Status",
+    "repairsByCategory": "Repairs by Category",
+    "repairsByStatus": "Repairs by Status", 
+    "monthlyTrend": "Monthly Trend",
+    "byUrgency": "Repairs by Urgency Level",
+    "totalRepairs": "Total Repairs",
+    "completedRepairs": "Completed Repairs"
+  },
+  "stats": {
+    "totalRepairs": "Total Repairs",
+    "pendingRepairs": "Pending Repairs",
+    "inProgressRepairs": "In Progress",
+    "completedRepairs": "Completed Repairs"
+  },
+  "months": {
+    "jan": "Jan",
+    "feb": "Feb", 
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
   },
   "forms": {
     "newRepair": "New Repair Request",

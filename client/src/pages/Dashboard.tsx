@@ -150,27 +150,28 @@ export default function Dashboard() {
 
       {/* Charts */}
       {statsLoading ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-64 w-full" />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-64 w-full" />
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-[120px]" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-[400px]" />
+            <Skeleton className="h-[400px]" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-[400px]" />
+            <Skeleton className="h-[400px]" />
+          </div>
         </div>
       ) : (
         <DashboardCharts
           stats={{
+            total: stats?.total || 0,
+            pending: stats?.pending || 0,
+            inProgress: stats?.inProgress || 0,
+            completed: stats?.completed || 0,
             byCategory: stats?.byCategory || {},
             byStatus: stats?.byStatus || {},
           }}
