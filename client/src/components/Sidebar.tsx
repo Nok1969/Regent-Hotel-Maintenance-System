@@ -14,7 +14,6 @@ import {
   LogOut,
   Wrench,
   Users,
-  Smartphone,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -64,13 +63,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
       badge: null,
       requiresPermission: "canViewAllUsers",
     },
-    {
-      href: "/device-test",
-      icon: Smartphone,
-      label: "Device Test",
-      badge: "DEV",
-      requiresPermission: null,
-    },
+
   ];
 
   // Filter menu items based on user permissions

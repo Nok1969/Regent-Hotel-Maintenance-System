@@ -8,7 +8,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NotificationBell } from "@/components/NotificationBell";
-import { MobileEmulator } from "@/components/MobileEmulator";
+
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
@@ -23,7 +23,7 @@ import NewRepair from "@/pages/NewRepair";
 import Repairs from "@/pages/Repairs";
 import Notifications from "@/pages/Notifications";
 import Users from "@/pages/Users";
-import DeviceTest from "@/pages/DeviceTest";
+
 import NotFound from "@/pages/not-found";
 
 import "./i18n";
@@ -147,7 +147,7 @@ function Router() {
             <Route path="/repairs" component={Repairs} />
             <Route path="/notifications" component={Notifications} />
             <Route path="/users" component={Users} />
-            <Route path="/device-test" component={DeviceTest} />
+
             <Route component={NotFound} />
           </Switch>
         </main>
@@ -160,10 +160,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <MobileEmulator>
-          <Toaster />
-          <Router />
-        </MobileEmulator>
+        <Toaster />
+        <Router />
       </TooltipProvider>
     </QueryClientProvider>
   );
