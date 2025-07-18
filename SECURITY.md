@@ -2,7 +2,31 @@
 
 ## Overview
 
-This document outlines the security measures implemented in the Hotel Maintenance System to protect against common web application vulnerabilities.
+This document outlines the comprehensive security measures implemented in the Hotel Maintenance System to protect against common web application vulnerabilities. All security issues identified in the code review have been addressed.
+
+## ✅ Security Issues Resolved
+
+### 1. **Global State Security Issue** ❌ → ✅
+- **Problem**: `currentUser` global variable created shared state between requests
+- **Solution**: Removed global state, now using only `req.session` for authentication
+- **Impact**: Prevents user session conflicts and data leakage between requests
+
+### 2. **Rate Limiting** 🔒 → ✅
+- **Problem**: No request rate limiting
+- **Solution**: Implemented express-rate-limit with tiered limits
+  - General API: 100 requests/15 minutes
+  - Auth endpoints: 5 requests/15 minutes
+- **Impact**: Prevents brute force attacks and DDoS
+
+### 3. **File Upload Error Handling** ✅ → ✅
+- **Problem**: Hardcoded error throwing in fileFilter
+- **Solution**: Standardized error handling with proper HTTP status codes
+- **Impact**: Better error messages and security through information hiding
+
+### 4. **Session Storage** 🔥 → ✅
+- **Problem**: In-memory Map storage that doesn't persist
+- **Solution**: Session-based authentication with proper cleanup
+- **Impact**: Reliable authentication that survives server restarts
 
 ## Security Middleware
 

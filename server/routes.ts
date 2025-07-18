@@ -17,10 +17,12 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+// Improved file upload configuration with better error handling
 const upload = multer({
   dest: uploadDir,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
+    files: 5, // Maximum 5 files
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -30,10 +32,38 @@ const upload = multer({
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb(new Error("Only image files are allowed!"));
+      // Return standardized error instead of throwing
+      const error = new Error("Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.");
+      (error as any).code = "INVALID_FILE_TYPE";
+      return cb(error, false);
     }
   },
 });
+
+// File upload error handler middleware
+const handleUploadError = (err: any, req: any, res: any, next: any) => {
+  if (err) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ 
+        message: "File size too large. Maximum size is 5MB." 
+      });
+    }
+    if (err.code === "LIMIT_FILE_COUNT") {
+      return res.status(400).json({ 
+        message: "Too many files. Maximum 5 files allowed." 
+      });
+    }
+    if (err.code === "INVALID_FILE_TYPE") {
+      return res.status(400).json({ 
+        message: "Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed." 
+      });
+    }
+    return res.status(400).json({ 
+      message: "File upload error: " + err.message 
+    });
+  }
+  next();
+};
 
 // Validation middleware
 const validateSchema = (schema: any) => {
@@ -83,19 +113,12 @@ const sanitizeInput = (req: any, res: any, next: any) => {
   next();
 };
 
-// Simple in-memory storage for logged-in users (for development only)
-const loggedInUsers = new Map<string, { id: string; role: string; timestamp: number }>();
-let currentUser: { id: string; role: string } | null = null;
+// Remove global state - use session-based authentication only
 
 // Custom authentication middleware that supports both session and Replit auth
 const customAuth = (req: any, res: any, next: any) => {
-  // Check current user first
-  if (currentUser) {
-    return next();
-  }
-  
-  // Check session-based authentication fallback
-  if ((req.session as any)?.mockUser?.isAuthenticated) {
+  // Check session-based authentication first
+  if (req.session?.mockUser?.isAuthenticated) {
     return next();
   }
   
@@ -154,10 +177,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         language: "en"
       });
 
-      // Store current user in memory (simple approach for development)
-      currentUser = {
+      // Store user info in session instead of global variable
+      req.session.mockUser = {
         id: mockUser.id,
-        role: mockUser.role
+        role: mockUser.role,
+        isAuthenticated: true,
+        timestamp: Date.now()
       };
 
       console.log('Login successful for user:', mockUser.id);
@@ -168,51 +193,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
 
   // Logout route
-  app.post("/api/auth/logout", (req, res) => {
-    currentUser = null;
-    res.json({ success: true });
+  app.post("/api/auth/logout", (req: any, res: any) => {
+    if (req.session) {
+      req.session.destroy((err: any) => {
+        if (err) {
+          console.error('Session destruction error:', err);
+          return res.status(500).json({ message: "Logout failed" });
+        }
+        res.json({ success: true });
+      });
+    } else {
+      res.json({ success: true });
+    }
   });
 
   // Auth routes
-  app.get("/api/auth/user", async (req: any, res) => {
-    try {
-      // Check current user first (simple in-memory approach)
-      if (currentUser) {
-        const user = await storage.getUser(currentUser.id);
-        if (user) {
-          const permissions = getUserPermissions(user.role as any);
-          return res.json({ ...user, permissions });
-        }
-      }
-
-      // Check for mock session fallback
-      if ((req.session as any)?.mockUser?.isAuthenticated) {
-        const userId = (req.session as any).mockUser.id;
-        const user = await storage.getUser(userId);
-        if (user) {
-          const permissions = getUserPermissions(user.role as any);
-          return res.json({ ...user, permissions });
-        }
-      }
-
-      // Then check Replit auth
-      if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const userId = req.user.claims.sub;
+  app.get("/api/auth/user", asyncHandler(async (req: any, res: any) => {
+    // Check for session-based authentication first
+    if (req.session?.mockUser?.isAuthenticated) {
+      const userId = req.session.mockUser.id;
       const user = await storage.getUser(userId);
       if (user) {
         const permissions = getUserPermissions(user.role as any);
-        res.json({ ...user, permissions });
-      } else {
-        res.status(404).json({ message: "User not found" });
+        return res.json({ ...user, permissions });
       }
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
     }
-  });
+
+    // Then check Replit auth
+    if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userId = req.user.claims.sub;
+    const user = await storage.getUser(userId);
+    if (user) {
+      const permissions = getUserPermissions(user.role as any);
+      res.json({ ...user, permissions });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  }));
 
   // Mock logout
   app.post("/api/auth/mock-logout", (req: any, res) => {
@@ -238,7 +258,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Repair routes
   app.get("/api/repairs", customAuth, asyncHandler(async (req: any, res: any) => {
-    const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
+    const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
     const user = await storage.getUser(userId);
     
     if (!user) {
@@ -275,7 +295,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     customAuth,
     validateSchema(insertRepairSchema),
     asyncHandler(async (req: any, res: any) => {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -302,7 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     customAuth,
     validateSchema(updateRepairSchema.omit({ id: true })),
     asyncHandler(async (req: any, res: any) => {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id || currentUser?.id;
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const user = await storage.getUser(userId);
       
       if (!user) {
@@ -329,8 +349,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     })
   );
 
-  app.post("/api/repairs/:id/upload", customAuth, upload.array("images", 5), async (req: any, res) => {
-    try {
+  app.post("/api/repairs/:id/upload", 
+    customAuth, 
+    upload.array("images", 5), 
+    handleUploadError,
+    asyncHandler(async (req: any, res: any) => {
       const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const user = await storage.getUser(userId);
       
@@ -350,37 +373,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // In a real app, you'd store these paths in the database
       // For now, we'll just return the uploaded file paths
       res.json({ files: filePaths });
-    } catch (error) {
-      console.error("Error uploading files:", error);
-      res.status(500).json({ message: "Failed to upload files" });
-    }
-  });
+    })
+  );
 
   // User management routes
-  app.get("/api/users", customAuth, async (req: any, res) => {
-    try {
-      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
-      const currentUser = await storage.getUser(userId);
-      
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const permissions = getUserPermissions(currentUser.role);
-      if (!permissions.canViewAllUsers) {
-        return res.status(403).json({ message: "Permission denied" });
-      }
-
-      const users = await storage.getAllUsers();
-      res.json(users);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ message: "Failed to fetch users" });
+  app.get("/api/users", customAuth, asyncHandler(async (req: any, res: any) => {
+    const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+    const currentUser = await storage.getUser(userId);
+    
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
     }
-  });
 
-  app.patch("/api/users/:userId/role", customAuth, async (req: any, res) => {
-    try {
+    const permissions = getUserPermissions(currentUser.role);
+    if (!permissions.canViewAllUsers) {
+      return res.status(403).json({ message: "Permission denied" });
+    }
+
+    const users = await storage.getAllUsers();
+    res.json(users);
+  }));
+
+  app.patch("/api/users/:userId/role", 
+    customAuth,
+    validateSchema(z.object({
+      role: z.enum(["admin", "manager", "staff", "technician"])
+    })),
+    asyncHandler(async (req: any, res: any) => {
       const currentUserId = req.user?.claims?.sub || req.session?.mockUser?.id;
       const currentUser = await storage.getUser(currentUserId);
       
@@ -396,21 +415,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { userId } = req.params;
       const { role } = req.body;
 
-      if (!['admin', 'manager', 'staff', 'technician'].includes(role)) {
-        return res.status(400).json({ message: "Invalid role" });
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
       }
 
       const updatedUser = await storage.updateUserRole(userId, role);
       res.json(updatedUser);
-    } catch (error) {
-      console.error("Error updating user role:", error);
-      res.status(500).json({ message: "Failed to update user role" });
-    }
-  });
+    })
+  );
 
   // File upload endpoint
-  app.post("/api/upload", customAuth, upload.array("images", 5), async (req, res) => {
-    try {
+  app.post("/api/upload", 
+    customAuth, 
+    upload.array("images", 5), 
+    handleUploadError,
+    asyncHandler(async (req: any, res: any) => {
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) {
         return res.status(400).json({ message: "No files uploaded" });
@@ -418,11 +437,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const fileUrls = files.map(file => `/uploads/${file.filename}`);
       res.json({ urls: fileUrls });
-    } catch (error) {
-      console.error("Error uploading files:", error);
-      res.status(500).json({ message: "Failed to upload files" });
-    }
-  });
+    })
+  );
 
   const httpServer = createServer(app);
   return httpServer;
