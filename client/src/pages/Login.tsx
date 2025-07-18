@@ -67,31 +67,13 @@ export default function Login() {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          {/* Test Login Section */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">Test Login</h3>
-            <p className="text-sm text-blue-600 dark:text-blue-300 mb-4">
-              Use these credentials to test different roles:
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium text-blue-700 dark:text-blue-300">Username:</span>
-                <span className="text-blue-600 dark:text-blue-400">admin, manager, staff, or technician</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium text-blue-700 dark:text-blue-300">Password:</span>
-                <span className="text-blue-600 dark:text-blue-400">Use: admin123, manager123, staff123, tech123</span>
-              </div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-gray-700 font-medium">Username</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="admin, manager, staff, or technician"
+                placeholder="Enter your username"
                 value={credentials.username}
                 onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                 required
@@ -103,7 +85,7 @@ export default function Login() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Use: admin123, manager123, staff123, tech123"
+                placeholder="Enter your password"
                 value={credentials.password}
                 onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 required
@@ -115,7 +97,7 @@ export default function Login() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" 
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Test Login"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </CardContent>
