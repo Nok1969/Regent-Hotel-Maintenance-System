@@ -6,7 +6,7 @@ This is a full-stack hotel maintenance system built with modern web technologies
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+Preferred communication style: Simple, everyday language in Thai language (ภาษาไทย).
 
 ## Recent Changes
 
