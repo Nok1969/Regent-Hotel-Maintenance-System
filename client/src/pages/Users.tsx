@@ -85,7 +85,7 @@ const roleIcons = {
 
 // Form schema for adding new user
 const addUserSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  name: z.string().min(1, "Name is required"),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   firstName: z.string().min(1, "First name is required"),
@@ -170,7 +170,7 @@ export default function Users() {
   const addUserForm = useForm<AddUserFormData>({
     resolver: zodResolver(addUserSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
       firstName: "",
@@ -323,12 +323,12 @@ export default function Users() {
                   >
                     <FormField
                       control={addUserForm.control}
-                      name="username"
+                      name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Full Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter username" {...field} />
+                            <Input placeholder="Enter full name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

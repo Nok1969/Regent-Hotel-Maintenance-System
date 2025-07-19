@@ -187,20 +187,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const mockUser = mockUsers[username as keyof typeof mockUsers];
       
-      if (!mockUser || mockUser.password !== password) {
+      if (!mockUser) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Create or update user in database
-      await storage.upsertUser({
-        id: mockUser.id,
-        email: `${username}@hotel.com`,
-        firstName: username.charAt(0).toUpperCase() + username.slice(1),
-        lastName: "User",
-        profileImageUrl: null,
-        role: mockUser.role as "admin" | "manager" | "staff" | "technician",
-        language: "en"
-      });
+      // For existing mock users, verify password using bcrypt if stored password is hashed
+      const user = await storage.getUser(mockUser.id);
+      if (user?.password) {
+        const isValidPassword = await storage.verifyPassword(mockUser.id, password);
+        if (!isValidPassword) {
+          return res.status(401).json({ message: "Invalid credentials" });
+        }
+      } else if (mockUser.password !== password) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      // Create or update user in database with hashed password
+      const existingUser = await storage.getUser(mockUser.id);
+      if (!existingUser) {
+        await storage.createUserWithPassword({
+          name: `${username.charAt(0).toUpperCase() + username.slice(1)} User`,
+          email: `${username}@hotel.com`,
+          password: mockUser.password,
+          firstName: username.charAt(0).toUpperCase() + username.slice(1),
+          lastName: "User",
+          role: mockUser.role,
+          language: "en"
+        });
+      }
 
       // Store user info in session instead of global variable
       req.session.mockUser = {
@@ -506,7 +520,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/users", 
     customAuth,
     validateSchema(z.object({
-      username: z.string().min(3, "Username must be at least 3 characters"),
+      name: z.string().min(1, "Name is required"),
       email: z.string().email("Please enter a valid email address"),
       password: z.string().min(6, "Password must be at least 6 characters"),
       firstName: z.string().min(1, "First name is required"),
@@ -528,36 +542,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Permission denied" });
       }
 
-      const { username, email, password, firstName, lastName, role, language } = req.body;
+      const { name, email, password, firstName, lastName, role, language } = req.body;
       
-      // Check if username already exists
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-
       // Check if email already exists
       const existingEmailUser = await storage.getUserByEmail(email);
       if (existingEmailUser) {
         return res.status(400).json({ message: "Email already exists" });
       }
 
-      // Create new user with unique ID
-      const newUserId = `${username}-${Date.now()}`;
-      const newUser = await storage.upsertUser({
-        id: newUserId,
+      // Create new user with hashed password
+      const newUser = await storage.createUserWithPassword({
+        name: name,
         email: email,
+        password: password,
         firstName: firstName,
         lastName: lastName,
-        profileImageUrl: null,
         role: role,
         language: language,
       });
 
-      // Store username and password for mock auth (in real app this would be hashed)
-      await storage.setUserCredentials(newUserId, username, password);
-
-      res.status(201).json(newUser);
+      // Don't return password in response
+      const { password: _, ...userResponse } = newUser;
+      res.status(201).json(userResponse);
     })
   );
 

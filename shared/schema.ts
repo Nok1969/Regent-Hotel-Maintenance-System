@@ -27,12 +27,14 @@ export const sessions = pgTable(
 // User storage table (mandatory for Replit Auth)
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
+  name: text("name").notNull(),
+  email: varchar("email").unique().notNull(),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role", { enum: ["admin", "manager", "staff", "technician"] }).default("staff").notNull(),
   language: varchar("language", { enum: ["en", "th"] }).default("en").notNull(),
+  password: text("password").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -101,18 +103,22 @@ export const statusEnum = z.enum(["pending", "in_progress", "completed"]);
 export const upsertUserSchema = createInsertSchema(users, {
   role: roleEnum,
   language: languageEnum,
+  email: z.string().email("Invalid email format"),
+  name: z.string().min(1, "Name is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 }).omit({
   createdAt: true,
   updatedAt: true,
-}).refine((data) => {
-  // Custom validation: email is required if provided
-  if (data.email && !data.email.includes("@")) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Invalid email format",
-  path: ["email"],
+});
+
+export const createUserSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  role: roleEnum,
+  language: languageEnum.default("en"),
 });
 
 // Repair schemas with custom validation
@@ -226,6 +232,7 @@ export const userFiltersSchema = z.object({
 // Types - ensuring consistency between frontend and backend
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type CreateUser = z.infer<typeof createUserSchema>;
 export type InsertRepair = z.infer<typeof insertRepairSchema>;
 export type UpdateRepair = z.infer<typeof updateRepairSchema>;
 export type Repair = typeof repairs.$inferSelect;

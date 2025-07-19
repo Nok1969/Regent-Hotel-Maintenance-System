@@ -11,6 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, like, count, sql, gte } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
@@ -20,7 +21,16 @@ export interface IStorage {
   updateUserRole(userId: string, role: string): Promise<User>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
-  setUserCredentials(userId: string, username: string, password: string): Promise<void>;
+  createUserWithPassword(userData: {
+    name: string;
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    role: string;
+    language: string;
+  }): Promise<User>;
+  verifyPassword(userId: string, password: string): Promise<boolean>;
   
   // Repair operations
   createRepair(repair: InsertRepair): Promise<Repair>;
@@ -122,11 +132,47 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async setUserCredentials(userId: string, username: string, password: string): Promise<void> {
-    // In a real application, this would store hashed passwords in a secure way
-    // For this mock system, we'll just store the credentials in a simple way
-    // This is just for demo purposes - never store plain text passwords in production!
-    console.log(`Stored credentials for user ${userId}: username=${username}`);
+  async createUserWithPassword(userData: {
+    name: string;
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    role: string;
+    language: string;
+  }): Promise<User> {
+    // Hash password with bcrypt
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+    
+    // Generate unique ID
+    const userId = `${userData.name.toLowerCase().replace(/\s+/g, '')}-${Date.now()}`;
+    
+    const [user] = await db
+      .insert(users)
+      .values({
+        id: userId,
+        name: userData.name,
+        email: userData.email,
+        firstName: userData.firstName || null,
+        lastName: userData.lastName || null,
+        profileImageUrl: null,
+        role: userData.role as any,
+        language: userData.language as any,
+        password: hashedPassword,
+      })
+      .returning();
+    
+    return user;
+  }
+
+  async verifyPassword(userId: string, password: string): Promise<boolean> {
+    const user = await this.getUser(userId);
+    if (!user?.password) {
+      return false;
+    }
+    
+    return await bcrypt.compare(password, user.password);
   }
 
   async updateUserRole(userId: string, role: string): Promise<User> {
