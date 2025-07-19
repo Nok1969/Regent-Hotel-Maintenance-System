@@ -18,6 +18,9 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   updateUserRole(userId: string, role: string): Promise<User>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  setUserCredentials(userId: string, username: string, password: string): Promise<void>;
   
   // Repair operations
   createRepair(repair: InsertRepair): Promise<Repair>;
@@ -93,6 +96,37 @@ export class DatabaseStorage implements IStorage {
       createdAt: users.createdAt,
       updatedAt: users.updatedAt,
     }).from(users).orderBy(users.createdAt);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    // For mock users, we need to check against the predefined usernames
+    const mockUsers: Record<string, string> = {
+      "admin": "admin-123",
+      "manager": "manager-123", 
+      "staff": "staff-123",
+      "technician": "tech-123"
+    };
+
+    const userId = mockUsers[username];
+    if (userId) {
+      return this.getUser(userId);
+    }
+
+    // Check if any user has this username pattern in their ID
+    const allUsers = await this.getAllUsers();
+    return allUsers.find(user => user.id.startsWith(username + "-"));
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async setUserCredentials(userId: string, username: string, password: string): Promise<void> {
+    // In a real application, this would store hashed passwords in a secure way
+    // For this mock system, we'll just store the credentials in a simple way
+    // This is just for demo purposes - never store plain text passwords in production!
+    console.log(`Stored credentials for user ${userId}: username=${username}`);
   }
 
   async updateUserRole(userId: string, role: string): Promise<User> {

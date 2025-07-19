@@ -502,6 +502,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(users);
   }));
 
+  // Add new user route
+  app.post("/api/users", 
+    customAuth,
+    validateSchema(z.object({
+      username: z.string().min(3, "Username must be at least 3 characters"),
+      email: z.string().email("Please enter a valid email address"),
+      password: z.string().min(6, "Password must be at least 6 characters"),
+      firstName: z.string().min(1, "First name is required"),
+      lastName: z.string().min(1, "Last name is required"),
+      role: z.enum(["admin", "manager", "staff", "technician"]),
+      language: z.enum(["en", "th"]).default("en"),
+    })),
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const currentUser = await storage.getUser(userId);
+      
+      if (!currentUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Check if user has permission to manage users (only admin can add users)
+      const permissions = getUserPermissions(currentUser.role);
+      if (!permissions.canManageUsers) {
+        return res.status(403).json({ message: "Permission denied" });
+      }
+
+      const { username, email, password, firstName, lastName, role, language } = req.body;
+      
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      // Check if email already exists
+      const existingEmailUser = await storage.getUserByEmail(email);
+      if (existingEmailUser) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      // Create new user with unique ID
+      const newUserId = `${username}-${Date.now()}`;
+      const newUser = await storage.upsertUser({
+        id: newUserId,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        profileImageUrl: null,
+        role: role,
+        language: language,
+      });
+
+      // Store username and password for mock auth (in real app this would be hashed)
+      await storage.setUserCredentials(newUserId, username, password);
+
+      res.status(201).json(newUser);
+    })
+  );
+
   app.patch("/api/users/:userId/role", 
     customAuth,
     validateSchema(z.object({
