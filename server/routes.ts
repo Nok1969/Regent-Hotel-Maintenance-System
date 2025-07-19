@@ -520,11 +520,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/users", 
     customAuth,
     validateSchema(z.object({
-      name: z.string().min(1, "Name is required"),
-      email: z.string().email("Please enter a valid email address"),
-      password: z.string().min(6, "Password must be at least 6 characters"),
-      firstName: z.string().min(1, "First name is required"),
-      lastName: z.string().min(1, "Last name is required"),
+      name: z.string()
+        .min(2, "Name must be at least 2 characters")
+        .max(100, "Name must be less than 100 characters")
+        .regex(/^[a-zA-Zก-ฮ\s]+$/, "Name can only contain letters and spaces"),
+      email: z.string()
+        .email("Please enter a valid email address")
+        .max(255, "Email must be less than 255 characters"),
+      password: z.string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+      firstName: z.string()
+        .min(1, "First name is required")
+        .max(50, "First name must be less than 50 characters")
+        .regex(/^[a-zA-Zก-ฮ]+$/, "First name can only contain letters"),
+      lastName: z.string()
+        .min(1, "Last name is required")
+        .max(50, "Last name must be less than 50 characters")
+        .regex(/^[a-zA-Zก-ฮ]+$/, "Last name can only contain letters"),
       role: z.enum(["admin", "manager", "staff", "technician"]),
       language: z.enum(["en", "th"]).default("en"),
     })),
@@ -539,7 +552,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user has permission to manage users (only admin can add users)
       const permissions = getUserPermissions(currentUser.role);
       if (!permissions.canManageUsers) {
-        return res.status(403).json({ message: "Permission denied" });
+        return res.status(403).json({ 
+          message: "Access denied. Only administrators can create new users." 
+        });
       }
 
       const { name, email, password, firstName, lastName, role, language } = req.body;

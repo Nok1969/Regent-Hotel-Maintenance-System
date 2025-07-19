@@ -6,9 +6,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useDebouncedSearch } from "@/hooks/useDebounce";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { AddUserDialog } from "@/components/AddUserDialog";
 import {
   Card,
   CardContent,
@@ -37,24 +35,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Users as UsersIcon, Shield, Crown, Wrench, Search, Plus } from "lucide-react";
 
 interface User {
@@ -83,18 +63,7 @@ const roleIcons = {
   technician: Wrench,
 };
 
-// Form schema for adding new user
-const addUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  role: z.enum(["admin", "manager", "staff", "technician"]),
-  language: z.enum(["en", "th"]).default("en"),
-});
 
-type AddUserFormData = z.infer<typeof addUserSchema>;
 
 export default function Users() {
   const { toast } = useToast();
@@ -166,52 +135,7 @@ export default function Users() {
     );
   });
 
-  // Form for adding new user
-  const addUserForm = useForm<AddUserFormData>({
-    resolver: zodResolver(addUserSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      role: "staff",
-      language: "en",
-    },
-  });
 
-  const addUserMutation = useMutation({
-    mutationFn: async (userData: AddUserFormData) => {
-      return await apiRequest("POST", "/api/users", userData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      toast({
-        title: "User Added",
-        description: "New user has been added successfully",
-      });
-      setIsAddUserDialogOpen(false);
-      addUserForm.reset();
-    },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: t("common.unauthorized"),
-          description: t("auth.loginAgain"),
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: t("common.error"),
-        description: "Failed to add user. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
 
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
@@ -302,156 +226,13 @@ export default function Users() {
         </div>
         {canManageUsers && (
           <div className="flex items-center space-x-2">
-            <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="inline-flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
-                  Add New User
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
-                  <DialogDescription>
-                    Create a new user account with appropriate role and permissions.
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...addUserForm}>
-                  <form
-                    onSubmit={addUserForm.handleSubmit((data) => addUserMutation.mutate(data))}
-                    className="space-y-4"
-                  >
-                    <FormField
-                      control={addUserForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter full name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addUserForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Enter email address" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addUserForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Enter password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={addUserForm.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="First name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={addUserForm.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Last name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <FormField
-                      control={addUserForm.control}
-                      name="role"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Role</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a role" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="admin">Administrator</SelectItem>
-                              <SelectItem value="manager">Manager</SelectItem>
-                              <SelectItem value="staff">Staff</SelectItem>
-                              <SelectItem value="technician">Technician</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormDescription>
-                            Choose the appropriate role for this user
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addUserForm.control}
-                      name="language"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Language</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select language" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="en">English</SelectItem>
-                              <SelectItem value="th">ไทย (Thai)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsAddUserDialogOpen(false)}
-                        disabled={addUserMutation.isPending}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={addUserMutation.isPending}>
-                        {addUserMutation.isPending ? "Adding..." : "Add User"}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
+            <Button 
+              onClick={() => setIsAddUserDialogOpen(true)}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <Plus className="w-4 h-4" />
+              Add New User
+            </Button>
           </div>
         )}
       </div>
@@ -585,6 +366,12 @@ export default function Users() {
           )}
         </CardContent>
       </Card>
+
+      {/* Add User Dialog */}
+      <AddUserDialog 
+        open={isAddUserDialogOpen} 
+        onClose={() => setIsAddUserDialogOpen(false)} 
+      />
     </div>
   );
 }
