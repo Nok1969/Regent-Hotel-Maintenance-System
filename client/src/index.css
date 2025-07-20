@@ -113,7 +113,17 @@
 
 .shadow-hover:hover {
   box-shadow: 0 8px 32px hsl(var(--primary) / 0.2);
-  transform: translateY(-2px);
+}
+
+/* Text shadow for better readability on backgrounds */
+.text-shadow-lg {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Hotel background overlay */
+.hotel-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(1px);
 }
 
 /* Button enhancements */

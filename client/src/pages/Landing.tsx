@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
+import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
 
 export default function Landing() {
   const { t } = useTranslation();
@@ -57,21 +58,19 @@ export default function Landing() {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-blue-600/90 via-blue-700/90 to-blue-800/90 flex items-center justify-center p-4 relative overflow-hidden"
-      style={{
-        backgroundImage: `linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 50%, rgba(29, 78, 216, 0.9) 100%), 
-                         url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hotel" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><rect fill="%23ffffff" fill-opacity="0.05" width="20" height="20"/><circle cx="10" cy="10" r="2" fill="%23ffffff" fill-opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23hotel)"/></svg>')`,
-        backgroundSize: 'cover, 40px 40px',
-        backgroundPosition: 'center, 0 0'
-      }}
-    >
-      <Card className="w-full max-w-md backdrop-blur-sm bg-card/95 shadow-2xl border-white/20">
-        <CardHeader className="text-center space-y-4">
-          <div className="absolute top-4 right-4 flex items-center space-x-2">
-            <LanguageSwitcher />
-            <ThemeToggle />
-          </div>
+    <HotelBackground>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="absolute top-4 right-4 flex gap-2 z-20">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
+        
+        <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+          <HotelLogo />
+        </div>
+        
+        <Card className="w-full max-w-md backdrop-blur-lg bg-white/90 dark:bg-black/80 shadow-2xl border-white/30 mt-32">
+          <CardHeader className="text-center space-y-4">
           
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
             <img 
@@ -159,6 +158,7 @@ export default function Landing() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </HotelBackground>
   );
 }

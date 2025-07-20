@@ -74,7 +74,11 @@ async function upsertUser(
 ) {
   await storage.upsertUser({
     id: claims["sub"],
+    name: `${claims["first_name"] || ''} ${claims["last_name"] || ''}`.trim() || claims["email"],
     email: claims["email"],
+    role: "staff", // Default role for new Replit auth users
+    language: "en",
+    password: "", // No password needed for OAuth users
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
@@ -142,31 +146,5 @@ export async function setupAuth(app: Express) {
   });
 }
 
-export const isAuthenticated: RequestHandler = async (req, res, next) => {
-  const user = req.user as any;
-
-  if (!req.isAuthenticated() || !user.expires_at) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  if (now <= user.expires_at) {
-    return next();
-  }
-
-  const refreshToken = user.refresh_token;
-  if (!refreshToken) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
-  }
-
-  try {
-    const config = await getOidcConfig();
-    const tokenResponse = await client.refreshTokenGrant(config, refreshToken);
-    updateUserSession(user, tokenResponse);
-    return next();
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
-  }
-};
+// No longer export isAuthenticated as a global middleware
+// Authentication is handled per-route basis now
