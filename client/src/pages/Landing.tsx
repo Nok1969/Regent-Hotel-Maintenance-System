@@ -12,14 +12,14 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
-import { hotelGradientBackground } from "@/assets/hotel-bg";
+
 
 export default function Landing() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [bgImageLoaded, setBgImageLoaded] = useState(false);
+
 
 
 
@@ -65,7 +65,7 @@ export default function Landing() {
     <div 
       className="min-h-screen relative"
       style={{
-        background: hotelGradientBackground,
+        backgroundImage: 'url(/images/regent-bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
