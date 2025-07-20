@@ -1,4 +1,4 @@
-import regentBgImage from "@assets/regent-bg.jpg";
+import regentBgImage from "@assets/regent-hotel-bg.png";
 
 interface HotelBackgroundProps {
   children: React.ReactNode;

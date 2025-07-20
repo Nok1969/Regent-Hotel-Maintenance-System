@@ -65,11 +65,12 @@ export default function Landing() {
           <ThemeToggle />
         </div>
         
-        <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-center">
           <HotelLogo />
         </div>
         
-        <Card className="w-full max-w-md backdrop-blur-lg bg-white/90 dark:bg-black/80 shadow-2xl border-white/30 mt-32">
+        <div className="flex flex-col items-center justify-center min-h-screen px-4">
+        <Card className="w-full max-w-md backdrop-blur-lg bg-white/90 dark:bg-black/80 shadow-2xl border-white/30 mt-8">
           <CardHeader className="text-center space-y-4">
           
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
@@ -158,6 +159,7 @@ export default function Landing() {
           </div>
         </CardContent>
       </Card>
+      </div>
       </div>
     </HotelBackground>
   );
