@@ -1,4 +1,5 @@
-import regentBgImage from "@assets/regent-hotel-bg.png";
+// Use direct path to public asset  
+const regentBgImage = '/regent-hotel-bg.png';
 
 interface HotelBackgroundProps {
   children: React.ReactNode;
@@ -14,11 +15,12 @@ export function HotelBackground({ children, className = "", overlay = true }: Ho
         backgroundImage: `url(${regentBgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh'
       }}
     >
       {overlay && (
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-black/30" />
       )}
       <div className="relative z-10">
         {children}
