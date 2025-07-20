@@ -60,16 +60,16 @@ export default function Notifications() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
-        title: t("messages.success"),
-        description: "Notification marked as read",
+        title: "สำเร็จ",
+        description: "ทำเครื่องหมายว่าอ่านแล้ว",
       });
     },
     onError: (error: any) => {
       toast({
-        title: t("messages.error"),
-        description: error.message || "Failed to mark notification as read",
+        title: "เกิดข้อผิดพลาด",
+        description: error.message || "ไม่สามารถทำเครื่องหมายว่าอ่านได้",
         variant: "destructive",
       });
     },
@@ -82,16 +82,16 @@ export default function Notifications() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
-        title: t("messages.success"),
-        description: "All notifications marked as read",
+        title: "สำเร็จ",
+        description: "ทำเครื่องหมายอ่านทั้งหมดแล้ว",
       });
     },
     onError: (error: any) => {
       toast({
-        title: t("messages.error"),
-        description: error.message || "Failed to mark all notifications as read",
+        title: "เกิดข้อผิดพลาด",
+        description: error.message || "ไม่สามารถทำเครื่องหมายอ่านทั้งหมดได้",
         variant: "destructive",
       });
     },
@@ -247,7 +247,7 @@ export default function Notifications() {
                           </p>
                           {!notification.isRead && (
                             <Badge variant="secondary" className="mt-1 text-xs">
-                              New
+                              ใหม่
                             </Badge>
                           )}
                         </div>

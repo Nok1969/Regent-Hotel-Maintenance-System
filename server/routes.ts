@@ -399,12 +399,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const currentUser = await storage.getUser(userId);
       const userName = currentUser?.name || `${currentUser?.firstName} ${currentUser?.lastName}` || 'Unknown User';
 
-      // Create notification for each admin/manager/technician
+      // Create notification for each admin/manager/technician  
+      const categoryMap = {
+        electrical: "ไฟฟ้า",
+        plumbing: "ประปา", 
+        hvac: "เครื่องปรับอากาศ",
+        furniture: "เฟอร์นิเจอร์",
+        other: "อื่นๆ"
+      };
+      
+      const urgencyMap = {
+        high: "สูง",
+        medium: "ปานกลาง", 
+        low: "ต่ำ"
+      };
+
       for (const notifyUser of notifyUsers) {
         await storage.createNotification({
           userId: notifyUser.id,
-          title: `New repair request submitted`,
-          description: `${userName} submitted a ${req.body.urgency} priority ${req.body.category} repair in room ${req.body.location}`,
+          title: `มีงานซ่อมใหม่เข้ามา`,
+          description: `${userName} ส่งคำขอซ่อม${categoryMap[req.body.category] || req.body.category} ความเร่งด่วน${urgencyMap[req.body.urgency] || req.body.urgency} ที่ห้อง ${req.body.location}`,
           type: "new_request",
           relatedId: repair.id,
         });
@@ -476,10 +490,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const assignedUser = await storage.getUser(assignedTo);
             const technicianName = assignedUser?.name || `${assignedUser?.firstName} ${assignedUser?.lastName}` || 'Technician';
             
+            const categoryMap = {
+              electrical: "ไฟฟ้า",
+              plumbing: "ประปา", 
+              hvac: "เครื่องปรับอากาศ",
+              furniture: "เฟอร์นิเจอร์",
+              other: "อื่นๆ"
+            };
+
             await storage.createNotification({
               userId: repairWithUser.userId,
-              title: `Your repair request has been accepted`,
-              description: `${technicianName} has accepted your ${repairWithUser.category} repair request in room ${repairWithUser.room}`,
+              title: `งานซ่อมของคุณได้รับการตอบรับแล้ว`,
+              description: `${technicianName} ได้รับงานซ่อม${categoryMap[repairWithUser.category] || repairWithUser.category} ของคุณที่ห้อง ${repairWithUser.room} แล้ว`,
               type: "assigned",
               relatedId: repairId,
             });
@@ -488,10 +510,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Job cancelled - notify original requester
           const repairWithUser = await storage.getRepairById(repairId);
           if (repairWithUser) {
+            const categoryMap = {
+              electrical: "ไฟฟ้า",
+              plumbing: "ประปา", 
+              hvac: "เครื่องปรับอากาศ",
+              furniture: "เฟอร์นิเจอร์",
+              other: "อื่นๆ"
+            };
+
             await storage.createNotification({
               userId: repairWithUser.userId,
-              title: `Repair request status updated`,
-              description: `Your ${repairWithUser.category} repair request in room ${repairWithUser.room} is back to pending status`,
+              title: `สถานะงานซ่อมได้รับการอัปเดต`,
+              description: `งานซ่อม${categoryMap[repairWithUser.category] || repairWithUser.category} ของคุณที่ห้อง ${repairWithUser.room} กลับไปเป็นสถานะรอดำเนินการแล้ว`,
               type: "status_update",
               relatedId: repairId,
             });
@@ -512,10 +542,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Get the repair with user info to notify the original requester
           const repairWithUser = await storage.getRepairById(repairId);
           if (repairWithUser) {
+            const categoryMap = {
+              electrical: "ไฟฟ้า",
+              plumbing: "ประปา", 
+              hvac: "เครื่องปรับอากาศ",
+              furniture: "เฟอร์นิเจอร์",
+              other: "อื่นๆ"
+            };
+
             await storage.createNotification({
               userId: repairWithUser.userId,
-              title: `Repair completed in room ${repairWithUser.room}`,
-              description: `Your ${repairWithUser.category} repair request has been completed by the maintenance team`,
+              title: `งานซ่อมที่ห้อง ${repairWithUser.room} เสร็จสิ้นแล้ว`,
+              description: `งานซ่อม${categoryMap[repairWithUser.category] || repairWithUser.category} ของคุณได้รับการซ่อมแซมเรียบร้อยแล้วโดยทีมช่าง`,
               type: "completed",
               relatedId: repairId,
             });
@@ -654,8 +692,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const adminUser of adminUsers) {
         await storage.createNotification({
           userId: adminUser.id,
-          title: `New user added: ${newUser.name}`,
-          description: `${currentUser.name || 'Admin'} added new ${role} user: ${newUser.name} (${newUser.email})`,
+          title: `เพิ่มผู้ใช้งานใหม่: ${newUser.name}`,
+          description: `${currentUser.name || 'ผู้ดูแลระบบ'} ได้เพิ่มผู้ใช้งาน ${role} ใหม่: ${newUser.name} (${newUser.email})`,
           type: "new_request",
         });
       }
