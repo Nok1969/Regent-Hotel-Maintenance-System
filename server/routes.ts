@@ -467,6 +467,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Use updateRepairStatus for status changes with assignment
         const repair = await storage.updateRepairStatus(repairId, status, assignedTo);
+        
+        // Create notification for job acceptance/cancellation
+        if (status === "in_progress" && assignedTo) {
+          // Job accepted - notify original requester
+          const repairWithUser = await storage.getRepairById(repairId);
+          if (repairWithUser) {
+            const assignedUser = await storage.getUser(assignedTo);
+            const technicianName = assignedUser?.name || `${assignedUser?.firstName} ${assignedUser?.lastName}` || 'Technician';
+            
+            await storage.createNotification({
+              userId: repairWithUser.userId,
+              title: `Your repair request has been accepted`,
+              description: `${technicianName} has accepted your ${repairWithUser.category} repair request in room ${repairWithUser.room}`,
+              type: "assigned",
+              relatedId: repairId,
+            });
+          }
+        } else if (status === "pending" && assignedTo === null) {
+          // Job cancelled - notify original requester
+          const repairWithUser = await storage.getRepairById(repairId);
+          if (repairWithUser) {
+            await storage.createNotification({
+              userId: repairWithUser.userId,
+              title: `Repair request status updated`,
+              description: `Your ${repairWithUser.category} repair request in room ${repairWithUser.room} is back to pending status`,
+              type: "status_update",
+              relatedId: repairId,
+            });
+          }
+        }
+        
         return res.json(repair);
       } else if (status && !assignedTo) {
         // Regular status update
@@ -475,6 +506,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         const repair = await storage.updateRepairStatus(repairId, status);
+        
+        // Create notification for status updates
+        if (status === "completed") {
+          // Get the repair with user info to notify the original requester
+          const repairWithUser = await storage.getRepairById(repairId);
+          if (repairWithUser) {
+            await storage.createNotification({
+              userId: repairWithUser.userId,
+              title: `Repair completed in room ${repairWithUser.room}`,
+              description: `Your ${repairWithUser.category} repair request has been completed by the maintenance team`,
+              type: "completed",
+              relatedId: repairId,
+            });
+          }
+        }
+        
         return res.json(repair);
       } else {
         // General repair update (other fields)
@@ -676,10 +723,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const { isRead, limit = 50, offset = 0 } = req.query;
+      const { isRead, limit = 20, offset = 0 } = req.query;
       const notifications = await storage.getNotifications(userId, {
         isRead: isRead === 'true' ? true : isRead === 'false' ? false : undefined,
-        limit: parseInt(limit as string) || 50,
+        limit: parseInt(limit as string) || 20,
         offset: parseInt(offset as string) || 0,
       });
 

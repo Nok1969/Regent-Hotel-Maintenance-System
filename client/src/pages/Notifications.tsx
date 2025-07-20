@@ -32,20 +32,25 @@ export default function Notifications() {
     }
   }, [isAuthenticated, isLoading, toast, t]);
 
-  // Fetch notifications from backend
+  // Fetch notifications from backend (latest 20 notifications)
   const { data: notifications = [], isLoading: notificationsLoading } = useQuery({
-    queryKey: ["notifications", filter],
+    queryKey: ["/api/notifications", filter],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (filter === "unread") {
         params.append("isRead", "false");
       }
-      const response = await apiRequest("GET", `/api/notifications?${params}`);
+      params.append("limit", "20"); // Limit to latest 20 notifications
+      const response = await fetch(`/api/notifications?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch notifications: ${response.status}`);
+      }
       return response.json();
     },
     enabled: isAuthenticated,
     staleTime: 30000, // 30 seconds
     gcTime: 60000, // 1 minute
+    refetchInterval: 60000, // Auto-refresh every minute for real-time updates
   });
 
   // Mark notification as read
@@ -170,7 +175,7 @@ export default function Notifications() {
               )}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Stay updated with repair requests and system updates
+              รายการแจ้งเตือนล่าสุด 20 รายการ - อัปเดตอัตโนมัติเมื่อมีงานใหม่และงานเสร็จ
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -181,7 +186,7 @@ export default function Notifications() {
                 onClick={() => setFilter("all")}
                 className="flex-1 sm:flex-none"
               >
-                All
+                ทั้งหมด
               </Button>
               <Button
                 variant={filter === "unread" ? "default" : "outline"}
@@ -189,7 +194,7 @@ export default function Notifications() {
                 onClick={() => setFilter("unread")}
                 className="flex-1 sm:flex-none"
               >
-                Unread ({unreadCount})
+                ยังไม่อ่าน ({unreadCount})
               </Button>
             </div>
             <Button
@@ -199,7 +204,7 @@ export default function Notifications() {
               disabled={markAllAsReadMutation.isPending || unreadCount === 0}
               className="flex-1 sm:flex-none"
             >
-              {t("notifications.markAllRead")}
+              อ่านทั้งหมด
             </Button>
           </div>
         </CardHeader>
@@ -264,7 +269,10 @@ export default function Notifications() {
               <div className="text-center py-12">
                 <Bell className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground text-sm sm:text-base">
-                  {filter === "unread" ? "No unread notifications" : "No notifications yet"}
+                  {filter === "unread" ? "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน" : "ยังไม่มีการแจ้งเตือน"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  การแจ้งเตือนจะปรากฏเมื่อมีงานใหม่, งานเสร็จ, หรือมีการเปลี่ยนแปลงสถานะ
                 </p>
               </div>
             )}

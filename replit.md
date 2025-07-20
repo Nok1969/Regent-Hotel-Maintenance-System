@@ -10,6 +10,17 @@ Preferred communication style: Simple, everyday language in Thai language (ภ�
 
 ## Recent Changes
 
+**July 20, 2025 - Complete Notification System Implementation**
+- ✅ Enhanced notification system to display latest 20 notifications with auto-refresh
+- ✅ Added real-time notifications for new repair requests sent to admin/manager/technician
+- ✅ Implemented completion notifications sent to original requesters when repairs are done
+- ✅ Added job acceptance/cancellation notifications with technician details
+- ✅ Updated notification page with Thai language interface and better UX
+- ✅ Integrated notification cache invalidation across all repair operations
+- ✅ Set up automatic notification refresh every minute for real-time updates
+- ✅ Enhanced notification filtering (all/unread) with proper count display
+- ✅ Created comprehensive notification workflow for complete job lifecycle tracking
+
 **July 19, 2025 - Enhanced User Management with Security Features**
 - ✅ Created separate AddUserDialog component for better code organization
 - ✅ Enhanced form validation with complex regex patterns for names and passwords

@@ -462,7 +462,7 @@ export class DatabaseStorage implements IStorage {
     limit?: number;
     offset?: number;
   } = {}): Promise<any[]> {
-    const { isRead, limit = 50, offset = 0 } = filters;
+    const { isRead, limit = 20, offset = 0 } = filters;
     
     const conditions = [eq(notifications.userId, userId)];
     if (isRead !== undefined) {

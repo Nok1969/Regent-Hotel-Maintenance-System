@@ -86,6 +86,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["repairs"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
         title: t("messages.success"),
         description: t("messages.statusUpdated"),
@@ -111,6 +112,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["repairs"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
         title: t("messages.success"),
         description: t("messages.jobAccepted"),
@@ -136,6 +138,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["repairs"] });
       queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
         title: t("messages.success"),
         description: t("messages.jobCancelled"),
