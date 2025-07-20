@@ -77,6 +77,10 @@ app.use((req, res, next) => {
 
     const server = await registerRoutes(app);
 
+    // Serve static files from client/public
+    app.use('/uploads', express.static('client/public/uploads'));
+    app.use(express.static('client/public'));
+
     // Enhanced global error handler
     app.use(globalErrorHandler);
 
