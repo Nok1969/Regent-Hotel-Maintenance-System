@@ -44,8 +44,7 @@ const addUserSchema = z.object({
     .email("Please enter a valid email address")
     .max(255, "Email must be less than 255 characters"),
   password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+    .min(6, "Password must be at least 6 characters"),
   firstName: z.string()
     .min(1, "First name is required")
     .max(50, "First name must be less than 50 characters")
@@ -206,7 +205,7 @@ export function AddUserDialog({ open, onClose }: AddUserDialogProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    Minimum 8 characters with uppercase, lowercase & number (e.g., Test123!)
+                    Minimum 6 characters (e.g., test123)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

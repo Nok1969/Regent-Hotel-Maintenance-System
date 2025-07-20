@@ -120,8 +120,7 @@ export const createUserSchema = z.object({
     .email("Invalid email format")
     .max(255, "Email must be less than 255 characters"),
   password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+    .min(6, "Password must be at least 6 characters"),
   firstName: z.string()
     .min(1, "First name is required")
     .max(50, "First name must be less than 50 characters")
