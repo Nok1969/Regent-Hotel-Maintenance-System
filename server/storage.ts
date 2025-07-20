@@ -65,8 +65,8 @@ export interface IStorage {
   createNotification(notification: {
     userId: string;
     title: string;
-    message: string;
-    type: string;
+    description: string;
+    type: "new_request" | "status_update" | "completed" | "assigned";
     isRead?: boolean;
     relatedId?: number;
   }): Promise<any>;
@@ -445,13 +445,14 @@ export class DatabaseStorage implements IStorage {
     title: string;
     description: string;
     type: "new_request" | "status_update" | "completed" | "assigned";
+    isRead?: boolean;
     relatedId?: number;
   }): Promise<any> {
     const [newNotification] = await db
       .insert(notifications)
       .values({
         ...notification,
-        isRead: false,
+        isRead: notification.isRead || false,
       })
       .returning();
     return newNotification;
