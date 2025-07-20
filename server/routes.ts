@@ -807,6 +807,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     })
   );
 
+  // Alternative POST endpoint for mark-as-read (same functionality as PATCH)
+  app.post("/api/notifications/mark-as-read", 
+    customAuth,
+    asyncHandler(async (req: any, res: any) => {
+      const userId = req.user?.claims?.sub || req.session?.mockUser?.id;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const result = await storage.markAllNotificationsAsRead(userId);
+      res.json(result);
+    })
+  );
+
   const httpServer = createServer(app);
   return httpServer;
 }

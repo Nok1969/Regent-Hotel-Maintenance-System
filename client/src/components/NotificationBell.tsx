@@ -63,7 +63,7 @@ export function NotificationBell() {
   // Mark all notifications as read
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("PATCH", "/api/notifications/read-all");
+      const response = await apiRequest("POST", "/api/notifications/mark-as-read");
       return response.json();
     },
     onSuccess: () => {
