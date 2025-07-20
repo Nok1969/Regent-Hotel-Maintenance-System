@@ -1,5 +1,5 @@
-// Use direct path to public asset  
-const regentBgImage = '/regent-hotel-bg.png';
+// Use uploads path for background image
+const regentBgImage = '/uploads/regent-bg.png';
 
 interface HotelBackgroundProps {
   children: React.ReactNode;

@@ -58,8 +58,20 @@ export default function Landing() {
   };
 
   return (
-    <HotelBackground>
-      <div className="min-h-screen flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url(/uploads/regent-bg.png)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/30"></div>
+      
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="absolute top-4 right-4 flex gap-2 z-20">
           <LanguageSwitcher />
           <ThemeToggle />
@@ -161,6 +173,6 @@ export default function Landing() {
       </Card>
       </div>
       </div>
-    </HotelBackground>
+    </div>
   );
 }
