@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Plus, CheckCircle, Clock, Bell, AlertCircle } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
+import { th } from "date-fns/locale";
 
 export default function Notifications() {
   const { t } = useTranslation();
@@ -50,7 +52,7 @@ export default function Notifications() {
     enabled: isAuthenticated,
     staleTime: 30000, // 30 seconds
     gcTime: 60000, // 1 minute
-    refetchInterval: 60000, // Auto-refresh every minute for real-time updates
+    refetchInterval: 30000, // Auto-refresh every 30 seconds for real-time updates
   });
 
   // Mark notification as read
@@ -175,7 +177,7 @@ export default function Notifications() {
               )}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              รายการแจ้งเตือนล่าสุด 20 รายการ - อัปเดตอัตโนมัติเมื่อมีงานใหม่และงานเสร็จ
+              รายการแจ้งเตือนล่าสุด 20 รายการ - อัปเดตอัตโนมัติทุก 30 วินาทีพร้อมแสดงเวลา real-time
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -214,10 +216,20 @@ export default function Notifications() {
               const Icon = getNotificationIcon(notification.type);
               const colorClass = getNotificationColor(notification.type);
               const createdAt = new Date(notification.createdAt);
-              const timeAgo = new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
-                Math.floor((createdAt.getTime() - Date.now()) / (1000 * 60 * 60)),
-                'hour'
-              );
+              
+              // Format time in Thai
+              const formatNotificationTime = (dateString: string) => {
+                try {
+                  const date = new Date(dateString);
+                  const timeAgo = formatDistanceToNow(date, { addSuffix: true, locale: th });
+                  const exactTime = format(date, "d MMMM yyyy 'เวลา' HH:mm", { locale: th });
+                  return { timeAgo, exactTime };
+                } catch (error) {
+                  return { timeAgo: "เมื่อไหร่ไม่ทราบ", exactTime: "เวลาไม่ทราบ" };
+                }
+              };
+              
+              const { timeAgo, exactTime } = formatNotificationTime(notification.createdAt);
 
               return (
                 <div
@@ -240,7 +252,7 @@ export default function Notifications() {
                       <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex-1 min-w-0">
                           <p className="text-sm sm:text-base font-medium text-foreground line-clamp-1">
                             {notification.title}
@@ -251,13 +263,16 @@ export default function Notifications() {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex-shrink-0">
-                          <p className="text-xs text-muted-foreground">
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          <span className="text-xs text-muted-foreground font-mono">
                             {timeAgo}
-                          </p>
+                          </span>
+                          <span className="text-[10px] text-muted-foreground/70 whitespace-nowrap">
+                            {exactTime}
+                          </span>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-sm text-muted-foreground line-clamp-2">
                         {notification.description}
                       </p>
                     </div>

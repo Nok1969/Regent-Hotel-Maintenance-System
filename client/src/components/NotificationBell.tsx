@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { th } from "date-fns/locale";
 
 interface Notification {
@@ -39,7 +39,7 @@ export function NotificationBell() {
     queryKey: ["/api/notifications"],
     staleTime: 30000, // 30 seconds
     gcTime: 60000, // 1 minute
-    refetchInterval: 60000, // Auto-refresh every minute
+    refetchInterval: 30000, // Auto-refresh every 30 seconds for real-time
   });
 
   // Mark notification as read
@@ -105,9 +105,11 @@ export function NotificationBell() {
   const formatNotificationTime = (createdAt: string) => {
     try {
       const date = new Date(createdAt);
-      return formatDistanceToNow(date, { addSuffix: true, locale: th });
+      const timeAgo = formatDistanceToNow(date, { addSuffix: true, locale: th });
+      const exactTime = format(date, "d MMM HH:mm", { locale: th });
+      return { timeAgo, exactTime };
     } catch (error) {
-      return "เมื่อไหร่ไม่ทราบ";
+      return { timeAgo: "เมื่อไหร่ไม่ทราบ", exactTime: "เวลาไม่ทราบ" };
     }
   };
 
@@ -189,9 +191,16 @@ export function NotificationBell() {
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                       {notification.description}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatNotificationTime(notification.createdAt)}
-                    </p>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {formatNotificationTime(notification.createdAt).timeAgo}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/70">
+                          {formatNotificationTime(notification.createdAt).exactTime}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </DropdownMenuItem>
