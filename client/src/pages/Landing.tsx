@@ -61,7 +61,7 @@ export default function Landing() {
     <div 
       className="min-h-screen relative"
       style={{
-        background: `linear-gradient(135deg, rgba(255, 162, 70, 0.9) 0%, rgba(102, 126, 234, 0.9) 30%, rgba(238, 174, 202, 0.9) 70%, rgba(148, 187, 233, 0.9) 100%)`,
+        backgroundImage: `url(/uploads/regent-bg.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -69,7 +69,7 @@ export default function Landing() {
       }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="absolute inset-0 bg-black/30"></div>
       
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
