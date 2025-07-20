@@ -112,11 +112,24 @@ export const upsertUserSchema = createInsertSchema(users, {
 });
 
 export const createUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
+  name: z.string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters")
+    .regex(/^[a-zA-Zก-ฮ0-9\s]+$/, "Name can only contain letters, numbers and spaces"),
+  email: z.string()
+    .email("Invalid email format")
+    .max(255, "Email must be less than 255 characters"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+  firstName: z.string()
+    .min(1, "First name is required")
+    .max(50, "First name must be less than 50 characters")
+    .regex(/^[a-zA-Zก-ฮ0-9]+$/, "First name can only contain letters and numbers"),
+  lastName: z.string()
+    .min(1, "Last name is required")
+    .max(50, "Last name must be less than 50 characters")
+    .regex(/^[a-zA-Zก-ฮ0-9]+$/, "Last name can only contain letters and numbers"),
   role: roleEnum,
   language: languageEnum.default("en"),
 });

@@ -523,7 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       name: z.string()
         .min(2, "Name must be at least 2 characters")
         .max(100, "Name must be less than 100 characters")
-        .regex(/^[a-zA-Zก-ฮ\s]+$/, "Name can only contain letters and spaces"),
+        .regex(/^[a-zA-Zก-ฮ0-9\s]+$/, "Name can only contain letters, numbers and spaces"),
       email: z.string()
         .email("Please enter a valid email address")
         .max(255, "Email must be less than 255 characters"),
@@ -533,11 +533,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       firstName: z.string()
         .min(1, "First name is required")
         .max(50, "First name must be less than 50 characters")
-        .regex(/^[a-zA-Zก-ฮ]+$/, "First name can only contain letters"),
+        .regex(/^[a-zA-Zก-ฮ0-9]+$/, "First name can only contain letters and numbers"),
       lastName: z.string()
         .min(1, "Last name is required")
         .max(50, "Last name must be less than 50 characters")
-        .regex(/^[a-zA-Zก-ฮ]+$/, "Last name can only contain letters"),
+        .regex(/^[a-zA-Zก-ฮ0-9]+$/, "Last name can only contain letters and numbers"),
       role: z.enum(["admin", "manager", "staff", "technician"]),
       language: z.enum(["en", "th"]).default("en"),
     })),
