@@ -1,12 +1,32 @@
--- Sample notifications for testing
+-- เพิ่มข้อมูลตัวอย่างการแจ้งเตือนสำหรับระบบบำรุงรักษาโรงแรม
 INSERT INTO notifications (user_id, title, description, type, is_read, related_id, created_at) VALUES
-('admin-123', 'New repair request submitted', 'Room 101 - Electrical issue reported', 'new_request', false, 1, NOW() - INTERVAL '5 minutes'),
-('admin-123', 'Repair completed', 'Room 312 air conditioning repair has been completed', 'completed', false, 2, NOW() - INTERVAL '1 hour'),
-('admin-123', 'Status updated', 'Room 205 plumbing repair is now in progress', 'status_update', true, 3, NOW() - INTERVAL '3 hours'),
-('manager-123', 'Job assigned', 'You have been assigned to handle Room 150 electrical repair', 'assigned', false, 4, NOW() - INTERVAL '2 hours'),
-('manager-123', 'New repair request submitted', 'Room 250 - Air conditioning not working', 'new_request', false, 5, NOW() - INTERVAL '1 hour'),
-('staff-123', 'Repair completed', 'Your repair request for Room 180 has been completed', 'completed', false, 6, NOW() - INTERVAL '30 minutes'),
-('staff-123', 'Status updated', 'Your repair request for Room 190 is now in progress', 'status_update', true, 7, NOW() - INTERVAL '4 hours'),
-('tech-123', 'Job assigned', 'You have been assigned to handle Room 205 plumbing repair', 'assigned', false, 8, NOW() - INTERVAL '1 hour'),
-('tech-123', 'New repair request submitted', 'Room 220 - Furniture repair needed', 'new_request', false, 9, NOW() - INTERVAL '2 hours'),
-('tech-123', 'Status updated', 'Room 180 electrical repair is now completed', 'status_update', true, 10, NOW() - INTERVAL '5 hours');
+-- การแจ้งเตือนสำหรับ admin-123
+('admin-123', 'งานซ่อมใหม่: ห้อง 305 ระบบไฟฟ้า', 'Staff User ได้ส่งคำขอซ่อมระบบไฟฟ้าในห้อง 305 - ไฟในห้องน้ำไม่ติด ต้องการตรวจสอบเร่งด่วน', 'new_request', false, 1, NOW() - INTERVAL '1 hour'),
+('admin-123', 'งานซ่อมใหม่: ห้อง 201 เครื่องปรับอากาศ', 'Staff User ได้ส่งคำขอซ่อมเครื่องปรับอากาศในห้อง 201 - เครื่องปรับอากาศไม่เย็น มีเสียงดังผิดปกติ', 'new_request', false, 2, NOW() - INTERVAL '2 hours'),
+('admin-123', 'งานซ่อมเสร็จสิ้น: ห้อง 102 ประปา', 'Technician User ได้ทำการซ่อมปัญหาประปาในห้อง 102 เสร็จเรียบร้อยแล้ว', 'completed', false, 3, NOW() - INTERVAL '3 hours'),
+('admin-123', 'งานซ่อมใหม่: ห้อง 410 เฟอร์นิเจอร์', 'Manager User ได้ส่งคำขอซ่อมเฟอร์นิเจอร์ในห้อง 410 - เก้าอี้หักขา ต้องเปลี่ยนใหม่', 'new_request', true, 4, NOW() - INTERVAL '4 hours'),
+('admin-123', 'มีการมอบหมายงาน: ห้อง 506 ระบบไฟฟ้า', 'งานซ่อมห้อง 506 ได้รับการมอบหมายให้ Technician User ดำเนินการ', 'assigned', true, 5, NOW() - INTERVAL '5 hours'),
+('admin-123', 'งานซ่อมใหม่: ล็อบบี้ แอร์เซ็นทรัล', 'Staff User รายงานปัญหาแอร์เซ็นทรัลที่ล็อบบี้ ไม่เย็นเท่าที่ควร', 'new_request', true, 6, NOW() - INTERVAL '6 hours'),
+('admin-123', 'งานซ่อมเสร็จสิ้น: ห้อง 208 ประปา', 'การซ่อมท่อประปารั่วในห้อง 208 ได้เสร็จสิ้นแล้ว', 'completed', true, 7, NOW() - INTERVAL '1 day'),
+
+-- การแจ้งเตือนสำหรับ manager-123
+('manager-123', 'งานซ่อมใหม่: ห้อง 305 ระบบไฟฟ้า', 'Staff User ได้ส่งคำขอซ่อมระบบไฟฟ้าในห้อง 305 - ไฟในห้องน้ำไม่ติด ต้องการตรวจสอบเร่งด่วน', 'new_request', false, 1, NOW() - INTERVAL '1 hour'),
+('manager-123', 'งานซ่อมใหม่: ห้อง 201 เครื่องปรับอากาศ', 'Staff User ได้ส่งคำขอซ่อมเครื่องปรับอากาศในห้อง 201 - เครื่องปรับอากาศไม่เย็น มีเสียงดังผิดปกติ', 'new_request', false, 2, NOW() - INTERVAL '2 hours'),
+('manager-123', 'งานซ่อมเสร็จสิ้น: ห้อง 102 ประปา', 'Technician User ได้ทำการซ่อมปัญหาประปาในห้อง 102 เสร็จเรียบร้อยแล้ว', 'completed', false, 3, NOW() - INTERVAL '3 hours'),
+('manager-123', 'อัปเดตสถานะงาน: ห้อง 315 เฟอร์นิเจอร์', 'งานซ่อมเฟอร์นิเจอร์ห้อง 315 ได้รับการอัปเดตสถานะเป็น "กำลังดำเนินการ"', 'status_update', true, 8, NOW() - INTERVAL '4 hours'),
+('manager-123', 'งานซ่อมใหม่: ห้องประชุม เครื่องเสียง', 'Staff User รายงานปัญหาเครื่องเสียงในห้องประชุมใหญ่ ไม่มีเสียง', 'new_request', true, 9, NOW() - INTERVAL '8 hours'),
+('manager-123', 'งานซ่อมเสร็จสิ้น: ลิฟต์ชั้น 1', 'การบำรุงรักษาลิฟต์ชั้น 1 เสร็จสิ้นแล้ว สามารถใช้งานได้ปกติ', 'completed', true, 10, NOW() - INTERVAL '1 day'),
+
+-- การแจ้งเตือนสำหรับ staff-123
+('staff-123', 'งานซ่อมของคุณเสร็จสิ้น: ห้อง 102 ประปา', 'งานซ่อมประปาที่คุณแจ้งในห้อง 102 ได้รับการซ่อมแซมเสร็จเรียบร้อยแล้ว โดย Technician User', 'completed', false, 3, NOW() - INTERVAL '3 hours'),
+('staff-123', 'งานซ่อมของคุณได้รับการมอบหมาย: ห้อง 208', 'งานซ่อมท่อประปารั่วที่คุณแจ้งในห้อง 208 ได้รับการมอบหมายให้ช่างเทคนิค', 'assigned', false, 7, NOW() - INTERVAL '6 hours'),
+('staff-123', 'งานซ่อมของคุณกำลังดำเนินการ: ห้อง 315', 'งานซ่อมเฟอร์นิเจอร์ที่คุณแจ้งในห้อง 315 อยู่ระหว่างการดำเนินการ', 'status_update', true, 8, NOW() - INTERVAL '8 hours'),
+('staff-123', 'งานซ่อมของคุณเสร็จสิ้น: ห้องประชุม', 'งานซ่อมเครื่องเสียงในห้องประชุมที่คุณแจ้งได้เสร็จสิ้นแล้ว', 'completed', true, 9, NOW() - INTERVAL '1 day'),
+
+-- การแจ้งเตือนสำหรับ tech-123  
+('tech-123', 'งานใหม่รอการรับ: ห้อง 305 ระบบไฟฟ้า', 'มีงานซ่อมระบบไฟฟ้าใหม่ในห้อง 305 รอการรับงาน - ไฟในห้องน้ำไม่ติด ต้องการตรวจสอบเร่งด่วน', 'new_request', false, 1, NOW() - INTERVAL '1 hour'),
+('tech-123', 'งานใหม่รอการรับ: ห้อง 201 เครื่องปรับอากาศ', 'มีงานซ่อมเครื่องปรับอากาศใหม่ในห้อง 201 รอการรับงาน - เครื่องปรับอากาศไม่เย็น มีเสียงดังผิดปกติ', 'new_request', false, 2, NOW() - INTERVAL '2 hours'),
+('tech-123', 'คุณได้รับมอบหมายงาน: ห้อง 506 ระบบไฟฟ้า', 'คุณได้รับการมอบหมายให้ทำงานซ่อมระบบไฟฟ้าในห้อง 506', 'assigned', false, 5, NOW() - INTERVAL '5 hours'),
+('tech-123', 'งานใหม่รอการรับ: ล็อบบี้ แอร์เซ็นทรัล', 'มีงานซ่อมแอร์เซ็นทรัลที่ล็อบบี้รอการรับงาน - ไม่เย็นเท่าที่ควร', 'new_request', true, 6, NOW() - INTERVAL '6 hours'),
+('tech-123', 'งานใหม่รอการรับ: ห้องประชุม เครื่องเสียง', 'มีงานซ่อมเครื่องเสียงในห้องประชุมใหญ่รอการรับงาน - ไม่มีเสียง', 'new_request', true, 9, NOW() - INTERVAL '8 hours'),
+('tech-123', 'งานใหม่รอการรับ: ลิฟต์ชั้น 1', 'มีงานบำรุงรักษาลิฟต์ชั้น 1 รอการรับงาน - ตรวจสอบระบบความปลอดภัย', 'new_request', true, 10, NOW() - INTERVAL '1 day');
