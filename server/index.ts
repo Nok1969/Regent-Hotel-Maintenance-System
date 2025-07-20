@@ -77,9 +77,9 @@ app.use((req, res, next) => {
 
     const server = await registerRoutes(app);
 
-    // Serve static files from client/public
-    app.use('/uploads', express.static('client/public/uploads'));
-    app.use(express.static('client/public'));
+    // Serve static files from client/public (images, etc.)
+    app.use('/images', express.static('client/public/images'));
+    app.use('/uploads', express.static('uploads')); // Keep existing uploads folder
 
     // Enhanced global error handler
     app.use(globalErrorHandler);
