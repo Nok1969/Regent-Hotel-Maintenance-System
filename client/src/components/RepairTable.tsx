@@ -1,7 +1,8 @@
 import { useState, useMemo, memo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
+import { th } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -76,6 +77,9 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
       return response.json();
     },
     retry: false,
+    staleTime: 30000, // 30 seconds
+    gcTime: 60000, // 1 minute
+    refetchInterval: 30000, // Auto-refresh every 30 seconds for real-time updates
   });
 
   const updateStatusMutation = useMutation({
@@ -309,21 +313,19 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("table.title")}</TableHead>
-                <TableHead>{t("table.location")}</TableHead>
-                <TableHead>{t("table.category")}</TableHead>
-                <TableHead>{t("table.urgency")}</TableHead>
-                <TableHead>{t("table.status")}</TableHead>
-                <TableHead>{t("table.reporter")}</TableHead>
-                <TableHead>{t("table.assignedTo")}</TableHead>
-                <TableHead>{t("table.created")}</TableHead>
+                <TableHead>ห้อง</TableHead>
+                <TableHead>ประเภท</TableHead>
+                <TableHead>สถานะ</TableHead>
+                <TableHead>ความเร่งด่วน</TableHead>
+                <TableHead>วันที่</TableHead>
+                <TableHead>เวลา</TableHead>
                 <TableHead>{t("table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredRepairs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     <div className="text-muted-foreground">
                       {t("repairs.noRepairs")}
                     </div>
@@ -333,12 +335,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 filteredRepairs.map((repair: any) => (
                   <TableRow key={repair.id}>
                     <TableCell className="font-medium">
-                      <div className="max-w-[200px] truncate" title={repair.description}>
-                        {repair.description}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[150px] truncate" title={repair.room}>
+                      <div className="max-w-[120px] truncate" title={repair.room}>
                         {repair.room}
                       </div>
                     </TableCell>
@@ -346,32 +343,24 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                       <CategoryBadge category={repair.category as any} />
                     </TableCell>
                     <TableCell>
-                      <UrgencyBadge urgency={repair.urgency as any} />
-                    </TableCell>
-                    <TableCell>
                       <StatusBadge status={repair.status as any} />
                     </TableCell>
                     <TableCell>
-                      <div className="max-w-[120px] truncate" title={`${repair.user?.firstName || ''} ${repair.user?.lastName || ''}`}>
-                        {repair.user?.firstName} {repair.user?.lastName}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[120px] truncate">
-                        {repair.assignedTo ? (
-                          <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                            {repair.assignedTo}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-muted-foreground">
-                            {t("table.unassigned")}
-                          </span>
-                        )}
-                      </div>
+                      <UrgencyBadge urgency={repair.urgency as any} />
                     </TableCell>
                     <TableCell>
                       <div className="text-sm text-muted-foreground">
-                        {format(new Date(repair.createdAt), "MMM dd, yyyy")}
+                        {format(new Date(repair.createdAt), "d/M/yyyy", { locale: th })}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        <div className="text-xs text-muted-foreground font-mono">
+                          {formatDistanceToNow(new Date(repair.createdAt), { addSuffix: true, locale: th })}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground/70">
+                          {format(new Date(repair.createdAt), "HH:mm น.", { locale: th })}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
