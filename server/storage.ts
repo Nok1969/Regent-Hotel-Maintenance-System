@@ -497,4 +497,13 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Initialize storage with error handling
+let storage: DatabaseStorage;
+try {
+  storage = new DatabaseStorage();
+} catch (error) {
+  console.error('Failed to initialize database storage:', error);
+  throw error;
+}
+
+export { storage };

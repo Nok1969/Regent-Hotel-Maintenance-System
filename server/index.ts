@@ -66,33 +66,46 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  try {
+    // Test database connection before starting server
+    const { testDatabaseConnection } = await import("./db.js");
+    const dbConnected = await testDatabaseConnection();
+    
+    if (!dbConnected) {
+      console.warn('Database connection test failed, but continuing with server startup...');
+    }
 
-  // Enhanced global error handler
-  app.use(globalErrorHandler);
+    const server = await registerRoutes(app);
 
-  // 404 handler for API routes
-  app.use('/api/*', (req: Request, res: Response) => {
-    res.status(404).json({
-      error: "Not Found",
-      message: `API endpoint ${req.method} ${req.path} not found`,
+    // Enhanced global error handler
+    app.use(globalErrorHandler);
+
+    // 404 handler for API routes
+    app.use('/api/*', (req: Request, res: Response) => {
+      res.status(404).json({
+        error: "Not Found",
+        message: `API endpoint ${req.method} ${req.path} not found`,
+      });
     });
-  });
-
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  const PORT = Number(process.env.PORT) || 5000;
-  server.listen(PORT, "0.0.0.0", () => {
-    const url = `http://localhost:${PORT}`;
-    console.log(`Server running on ${url}`);
 
     if (process.env.NODE_ENV === "development") {
-      console.log(`Frontend: ${url}`);
-      console.log(`Backend API: ${url}/api`);
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
     }
-  });
+
+    const PORT = Number(process.env.PORT) || 5000;
+    server.listen(PORT, "0.0.0.0", () => {
+      const url = `http://localhost:${PORT}`;
+      console.log(`Server running on ${url}`);
+
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Frontend: ${url}`);
+        console.log(`Backend API: ${url}/api`);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 })();
