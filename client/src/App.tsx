@@ -51,7 +51,7 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
       <div className="flex items-center space-x-4">
         <LanguageSwitcher />
         <ThemeToggle />
-        <NotificationBell count={3} />
+        <NotificationBell />
 
         {user && (
           <div className="flex items-center space-x-4">

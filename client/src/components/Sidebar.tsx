@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "wouter";
+import { NotificationBell } from "@/components/NotificationBell";
 import {
   Home,
   Plus,
