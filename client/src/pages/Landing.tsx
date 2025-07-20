@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +18,22 @@ export default function Landing() {
   const { toast } = useToast();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [bgImageLoaded, setBgImageLoaded] = useState(false);
+
+  // Preload background image
+  useEffect(() => {
+    const imageUrl = "http://localhost:5000/uploads/regent-bg.png";
+    console.log('Attempting to load background image:', imageUrl);
+    const img = new Image();
+    img.onload = () => {
+      console.log('✅ Background image loaded successfully');
+      setBgImageLoaded(true);
+    };
+    img.onerror = () => {
+      console.error('❌ Failed to load background image');
+    };
+    img.src = imageUrl;
+  }, []);
 
   const handleLogin = () => {
     window.location.href = "/api/login";
@@ -61,7 +77,7 @@ export default function Landing() {
     <div 
       className="min-h-screen relative"
       style={{
-        backgroundImage: `url(/uploads/regent-bg.png)`,
+        backgroundImage: `url(http://localhost:5000/uploads/regent-bg.png)`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
