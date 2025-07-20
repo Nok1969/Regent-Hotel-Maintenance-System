@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
+import { hotelGradientBackground } from "@/assets/hotel-bg";
 
 export default function Landing() {
   const { t } = useTranslation();
@@ -20,20 +21,7 @@ export default function Landing() {
   const [password, setPassword] = useState("");
   const [bgImageLoaded, setBgImageLoaded] = useState(false);
 
-  // Preload background image
-  useEffect(() => {
-    const imageUrl = "http://localhost:5000/uploads/regent-bg.png";
-    console.log('Attempting to load background image:', imageUrl);
-    const img = new Image();
-    img.onload = () => {
-      console.log('✅ Background image loaded successfully');
-      setBgImageLoaded(true);
-    };
-    img.onerror = () => {
-      console.error('❌ Failed to load background image');
-    };
-    img.src = imageUrl;
-  }, []);
+
 
   const handleLogin = () => {
     window.location.href = "/api/login";
@@ -77,7 +65,7 @@ export default function Landing() {
     <div 
       className="min-h-screen relative"
       style={{
-        backgroundImage: `url(http://localhost:5000/uploads/regent-bg.png)`,
+        background: hotelGradientBackground,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
