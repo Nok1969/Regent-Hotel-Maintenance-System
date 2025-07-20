@@ -388,6 +388,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const repair = await storage.createRepair(repairData);
+
+      // Create notification for new repair request to all admin/manager/technician users
+      const allUsers = await storage.getAllUsers();
+      const notifyUsers = allUsers.filter(user => 
+        user.role === 'admin' || user.role === 'manager' || user.role === 'technician'
+      );
+
+      // Get current user info for notification
+      const currentUser = await storage.getUser(userId);
+      const userName = currentUser?.name || `${currentUser?.firstName} ${currentUser?.lastName}` || 'Unknown User';
+
+      // Create notification for each admin/manager/technician
+      for (const notifyUser of notifyUsers) {
+        await storage.createNotification({
+          userId: notifyUser.id,
+          title: `New repair request submitted`,
+          description: `${userName} submitted a ${req.body.urgency} priority ${req.body.category} repair in room ${req.body.location}`,
+          type: "new_request",
+          relatedId: repair.id,
+        });
+      }
+
       res.json(repair);
     })
   );
