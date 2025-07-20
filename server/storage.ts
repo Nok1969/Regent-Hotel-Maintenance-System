@@ -60,6 +60,17 @@ export interface IStorage {
     weekCount: number;
   }>;
   getMonthlyStats(): Promise<Array<{ month: string; count: number; completed: number }>>;
+  
+  // Notification operations
+  createNotification(notification: {
+    userId: string;
+    title: string;
+    message: string;
+    type: string;
+    isRead?: boolean;
+    relatedId?: number;
+  }): Promise<any>;
+  getNotifications(userId: string): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {

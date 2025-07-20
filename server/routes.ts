@@ -575,6 +575,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         language: language,
       });
 
+      // Create notification for new user addition to all admin/manager users
+      const allUsers = await storage.getAllUsers();
+      const adminUsers = allUsers.filter(user => 
+        user.role === 'admin' || user.role === 'manager'
+      );
+
+      // Create notification for each admin/manager
+      for (const adminUser of adminUsers) {
+        await storage.createNotification({
+          userId: adminUser.id,
+          title: `New user added: ${newUser.name}`,
+          description: `${currentUser.name || 'Admin'} added new ${role} user: ${newUser.name} (${newUser.email})`,
+          type: "new_request",
+        });
+      }
+
       // Don't return password in response
       const { password: _, ...userResponse } = newUser;
       res.status(201).json(userResponse);

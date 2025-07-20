@@ -89,6 +89,7 @@ export function AddUserDialog({ open, onClose }: AddUserDialogProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
       toast({
         title: "User Added Successfully",
         description: "New user has been created with secure password",

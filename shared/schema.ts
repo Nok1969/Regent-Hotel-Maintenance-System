@@ -65,7 +65,7 @@ export const notifications = pgTable("notifications", {
   title: varchar("title").notNull(),
   description: text("description").notNull(),
   type: varchar("type", { 
-    enum: ["new_request", "status_update", "completed", "assigned"] 
+    enum: ["new_request", "status_update", "completed", "assigned", "user_created"] 
   }).notNull(),
   isRead: boolean("is_read").default(false),
   relatedId: integer("related_id"), // repair ID or user ID
