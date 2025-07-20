@@ -206,7 +206,7 @@ export function AddUserDialog({ open, onClose }: AddUserDialogProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    Min 8 characters with uppercase, lowercase & number (e.g., Test123!)
+                    Minimum 8 characters with uppercase, lowercase & number (e.g., Test123!)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
