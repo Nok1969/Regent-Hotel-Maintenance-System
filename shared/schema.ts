@@ -1,21 +1,11 @@
-import {
-  pgTable,
-  text,
-  varchar,
-  timestamp,
-  jsonb,
-  index,
-  serial,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { pgTable, serial, varchar, text, timestamp, boolean, integer, jsonb, index } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
+import { z } from "zod";
 
-// Session storage table (mandatory for Replit Auth)
-export const sessions = pgTable(
-  "sessions",
+// Session storage table used by express-session
+export const session = pgTable(
+  "session",
   {
     sid: varchar("sid").primaryKey(),
     sess: jsonb("sess").notNull(),
@@ -164,39 +154,6 @@ export const backendRepairSchema = baseRepairSchema.extend({
   room: z.string().min(3, "Room must be at least 3 characters"),
 });
 
-// Schedule-related schemas with time validation
-export const scheduleSchema = z.object({
-  startTime: z.string().datetime(),
-  endTime: z.string().datetime(),
-  repairId: z.number(),
-  technicianId: z.string(),
-}).refine((data) => {
-  // Custom validation: start time must be before end time
-  const start = new Date(data.startTime);
-  const end = new Date(data.endTime);
-  return start < end;
-}, {
-  message: "Start time must be before end time",
-  path: ["endTime"],
-}).refine((data) => {
-  // Custom validation: schedule must be in the future
-  const start = new Date(data.startTime);
-  const now = new Date();
-  return start > now;
-}, {
-  message: "Schedule must be in the future",
-  path: ["startTime"],
-}).refine((data) => {
-  // Custom validation: minimum duration of 30 minutes
-  const start = new Date(data.startTime);
-  const end = new Date(data.endTime);
-  const diffInMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-  return diffInMinutes >= 30;
-}, {
-  message: "Minimum schedule duration is 30 minutes",
-  path: ["endTime"],
-});
-
 // Update schemas
 export const updateRepairSchema = z.object({
   id: z.number(),
@@ -204,76 +161,48 @@ export const updateRepairSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters").optional(),
   category: categoryEnum.optional(),
   urgency: urgencyEnum.optional(),
-  location: z.string().min(3, "Location must be at least 3 characters").optional(),
   status: statusEnum.optional(),
-  userId: z.string().optional(),
+  assignedTo: z.string().nullable().optional(),
   images: z.array(z.string()).optional(),
-}).refine((data) => {
-  // Custom validation: high urgency requires detailed description if provided
-  if (data.urgency === "high" && data.description && data.description.length < 20) {
-    return false;
-  }
-  return true;
-}, {
-  message: "High urgency repairs require detailed description (min 20 characters)",
-  path: ["description"],
 });
 
-export const updateUserRoleSchema = z.object({
-  role: roleEnum,
-});
-
-// API validation schemas
-export const paginationSchema = z.object({
-  limit: z.coerce.number().min(1).max(100).default(10),
-  offset: z.coerce.number().min(0).default(0),
-});
-
+// Additional schemas needed by routes
 export const repairFiltersSchema = z.object({
+  userId: z.string().optional(),
   status: statusEnum.optional(),
   category: categoryEnum.optional(),
   urgency: urgencyEnum.optional(),
   search: z.string().optional(),
-}).merge(paginationSchema);
+  limit: z.coerce.number().min(1).max(100).default(10),
+  offset: z.coerce.number().min(0).default(0),
+});
 
 export const userFiltersSchema = z.object({
-  role: roleEnum.optional(),
   search: z.string().optional(),
-}).merge(paginationSchema);
+  role: roleEnum.optional(),
+  limit: z.coerce.number().min(1).max(100).default(10),
+  offset: z.coerce.number().min(0).default(0),
+});
 
-// Types - ensuring consistency between frontend and backend
-export type UpsertUser = z.infer<typeof upsertUserSchema>;
+export const updateUserRoleSchema = z.object({
+  userId: z.string(),
+  role: roleEnum,
+});
+
+// Type exports
 export type User = typeof users.$inferSelect;
+export type InsertUser = typeof users.$inferInsert;
+export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type CreateUser = z.infer<typeof createUserSchema>;
-export type InsertRepair = z.infer<typeof insertRepairSchema>;
-export type UpdateRepair = z.infer<typeof updateRepairSchema>;
+
 export type Repair = typeof repairs.$inferSelect;
-export type RepairWithUser = Repair & { user: User };
-export type Schedule = z.infer<typeof scheduleSchema>;
+export type InsertRepair = z.infer<typeof insertRepairSchema>;
+export type BackendRepair = z.infer<typeof backendRepairSchema>;
+export type UpdateRepair = z.infer<typeof updateRepairSchema>;
 
-// Enum types for type safety
-export type Role = z.infer<typeof roleEnum>;
-export type Language = z.infer<typeof languageEnum>;
-export type Category = z.infer<typeof categoryEnum>;
-export type Urgency = z.infer<typeof urgencyEnum>;
-export type Status = z.infer<typeof statusEnum>;
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
 
-// Filter types
-export type RepairFilters = z.infer<typeof repairFiltersSchema>;
-export type UserFilters = z.infer<typeof userFiltersSchema>;
-export type Pagination = z.infer<typeof paginationSchema>;
-
-// API response types for consistency
-export type ApiResponse<T> = {
-  data: T;
-  success: boolean;
-  message?: string;
-};
-
-export type PaginatedResponse<T> = {
-  data: T[];
-  total: number;
-  limit: number;
-  offset: number;
-  hasMore: boolean;
+export type RepairWithUser = Repair & {
+  user: Pick<User, 'id' | 'name' | 'email' | 'firstName' | 'lastName' | 'role'>;
 };

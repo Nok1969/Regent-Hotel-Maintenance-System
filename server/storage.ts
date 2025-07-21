@@ -80,17 +80,46 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
+  async upsertUser(user: UpsertUser): Promise<User> {
+    const { id, email, ...userData } = user;
+    
+    // Check if user exists
+    const existingUser = await this.getUser(id);
+    
+    if (existingUser) {
+      // Update existing user
+      const [updatedUser] = await db
+        .update(users)
+        .set({
           ...userData,
+          email,
           updatedAt: new Date(),
-        },
+        })
+        .where(eq(users.id, id))
+        .returning();
+      return updatedUser;
+    } else {
+      // Create new user
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          id,
+          email,
+          ...userData,
+        })
+        .returning();
+      return newUser;
+    }
+  }
+
+  async updateUserRole(userId: string, role: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        role: role as any,
+        updatedAt: new Date(),
       })
+      .where(eq(users.id, userId))
       .returning();
     return user;
   }
@@ -100,22 +129,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    // For mock users, we need to check against the predefined usernames
-    const mockUsers: Record<string, string> = {
-      "admin": "admin-123",
-      "manager": "manager-123", 
-      "staff": "staff-123",
-      "technician": "tech-123"
-    };
-
-    const userId = mockUsers[username];
-    if (userId) {
-      return this.getUser(userId);
-    }
-
-    // Check if any user has this username pattern in their ID
-    const allUsers = await this.getAllUsers();
-    return allUsers.find(user => user.id.startsWith(username + "-"));
+    const [user] = await db.select().from(users).where(eq(users.firstName, username));
+    return user;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
@@ -132,50 +147,28 @@ export class DatabaseStorage implements IStorage {
     role: string;
     language: string;
   }): Promise<User> {
-    // Hash password with bcrypt
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-    
-    // Generate unique ID
-    const userId = `${userData.name.toLowerCase().replace(/\s+/g, '')}-${Date.now()}`;
+    // Hash password
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
     
     const [user] = await db
       .insert(users)
       .values({
-        id: userId,
         name: userData.name,
         email: userData.email,
-        firstName: userData.firstName || null,
-        lastName: userData.lastName || null,
-        profileImageUrl: null,
+        password: hashedPassword,
+        firstName: userData.firstName || userData.name.split(' ')[0],
+        lastName: userData.lastName || userData.name.split(' ')[1] || '',
         role: userData.role as any,
         language: userData.language as any,
-        password: hashedPassword,
       })
       .returning();
-    
     return user;
   }
 
   async verifyPassword(userId: string, password: string): Promise<boolean> {
     const user = await this.getUser(userId);
-    if (!user?.password) {
-      return false;
-    }
-    
+    if (!user || !user.password) return false;
     return await bcrypt.compare(password, user.password);
-  }
-
-  async updateUserRole(userId: string, role: string): Promise<User> {
-    const [user] = await db
-      .update(users)
-      .set({ 
-        role: role as any,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    return user;
   }
 
   // Repair operations
@@ -214,7 +207,7 @@ export class DatabaseStorage implements IStorage {
 
     const query = db
       .select({
-        // Select only necessary repair fields
+        // Select all repair fields
         id: repairs.id,
         room: repairs.room,
         category: repairs.category,
@@ -226,7 +219,7 @@ export class DatabaseStorage implements IStorage {
         assignedTo: repairs.assignedTo,
         createdAt: repairs.createdAt,
         updatedAt: repairs.updatedAt,
-        // Select only necessary user fields  
+        // Select only necessary user fields
         user: {
           id: users.id,
           name: users.name,
@@ -234,11 +227,6 @@ export class DatabaseStorage implements IStorage {
           lastName: users.lastName,
           email: users.email,
           role: users.role,
-          language: users.language,
-          profileImageUrl: users.profileImageUrl,
-          password: users.password,
-          createdAt: users.createdAt,
-          updatedAt: users.updatedAt,
         },
       })
       .from(repairs)
@@ -271,12 +259,7 @@ export class DatabaseStorage implements IStorage {
           email: users.email,
           firstName: users.firstName,
           lastName: users.lastName,
-          profileImageUrl: users.profileImageUrl,
           role: users.role,
-          language: users.language,
-          password: users.password,
-          createdAt: users.createdAt,
-          updatedAt: users.updatedAt,
         },
       })
       .from(repairs)
@@ -351,24 +334,22 @@ export class DatabaseStorage implements IStorage {
     };
 
     statusCounts.forEach(({ status, count }) => {
-      stats.byStatus[status] = count;
-      stats.total += count;
+      const countNum = Number(count);
+      stats.total += countNum;
+      stats.byStatus[status] = countNum;
       
-      if (status === "pending") stats.pending = count;
-      else if (status === "in_progress") stats.inProgress = count;
-      else if (status === "completed") stats.completed = count;
+      if (status === "pending") stats.pending = countNum;
+      else if (status === "in_progress") stats.inProgress = countNum;
+      else if (status === "completed") stats.completed = countNum;
     });
 
     categoryCounts.forEach(({ category, count }) => {
-      // Map air_conditioning to hvac for consistency with frontend
-      const mappedCategory = category === "air_conditioning" ? "hvac" : category;
-      stats.byCategory[mappedCategory] = count;
+      stats.byCategory[category] = Number(count);
     });
 
     return stats;
   }
 
-  // Optimized stats summary with single query
   async getRepairStatsSummary(): Promise<{
     total: number;
     pending: number;
@@ -377,53 +358,49 @@ export class DatabaseStorage implements IStorage {
     todayCount: number;
     weekCount: number;
   }> {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const stats = await this.getRepairStats();
+    
+    // Get today's count
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const [todayResult] = await db
+      .select({ count: count() })
+      .from(repairs)
+      .where(gte(repairs.createdAt, today));
 
-    // Single aggregated query for better performance
-    const summaryResult = await db
-      .select({
-        total: count(),
-        pending: sql<number>`count(case when ${repairs.status} = 'pending' then 1 end)`,
-        inProgress: sql<number>`count(case when ${repairs.status} = 'in_progress' then 1 end)`,
-        completed: sql<number>`count(case when ${repairs.status} = 'completed' then 1 end)`,
-        todayCount: sql<number>`count(case when ${repairs.createdAt} >= ${today.toISOString()} then 1 end)`,
-        weekCount: sql<number>`count(case when ${repairs.createdAt} >= ${weekAgo.toISOString()} then 1 end)`,
-      })
-      .from(repairs);
+    // Get this week's count
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    
+    const [weekResult] = await db
+      .select({ count: count() })
+      .from(repairs)
+      .where(gte(repairs.createdAt, weekAgo));
 
-    return summaryResult[0] || {
-      total: 0,
-      pending: 0,
-      inProgress: 0,
-      completed: 0,
-      todayCount: 0,
-      weekCount: 0,
+    return {
+      ...stats,
+      todayCount: Number(todayResult?.count || 0),
+      weekCount: Number(weekResult?.count || 0),
     };
   }
 
-  // Monthly statistics with aggregation
   async getMonthlyStats(): Promise<Array<{ month: string; count: number; completed: number }>> {
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
     const monthlyData = await db
       .select({
-        month: sql<string>`to_char(${repairs.createdAt}, 'YYYY-MM')`,
+        month: sql<string>`TO_CHAR(${repairs.createdAt}, 'YYYY-MM')`,
         count: count(),
-        completed: sql<number>`count(case when ${repairs.status} = 'completed' then 1 end)`,
+        completed: count(sql`CASE WHEN ${repairs.status} = 'completed' THEN 1 END`),
       })
       .from(repairs)
-      .where(gte(repairs.createdAt, sixMonthsAgo))
-      .groupBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`)
-      .orderBy(sql`to_char(${repairs.createdAt}, 'YYYY-MM')`);
+      .where(gte(repairs.createdAt, sql`NOW() - INTERVAL '12 months'`))
+      .groupBy(sql`TO_CHAR(${repairs.createdAt}, 'YYYY-MM')`)
+      .orderBy(sql`TO_CHAR(${repairs.createdAt}, 'YYYY-MM')`);
 
-    // Format month names and ensure numbers are properly typed
-    return monthlyData.map(({ month, count, completed }) => ({
-      month: new Date(month + '-01').toLocaleDateString('en', { month: 'short' }),
-      count: Number(count),
-      completed: Number(completed),
+    return monthlyData.map(row => ({
+      month: row.month,
+      count: Number(row.count),
+      completed: Number(row.completed),
     }));
   }
 
@@ -438,60 +415,19 @@ export class DatabaseStorage implements IStorage {
   }): Promise<any> {
     const [newNotification] = await db
       .insert(notifications)
-      .values({
-        ...notification,
-        isRead: notification.isRead || false,
-      })
+      .values(notification)
       .returning();
     return newNotification;
   }
 
-  async getNotifications(userId: string, filters: {
-    isRead?: boolean;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<any[]> {
-    const { isRead, limit = 20, offset = 0 } = filters;
-    
-    const conditions = [eq(notifications.userId, userId)];
-    if (isRead !== undefined) {
-      conditions.push(eq(notifications.isRead, isRead));
-    }
-
+  async getNotifications(userId: string): Promise<any[]> {
     return await db
       .select()
       .from(notifications)
-      .where(and(...conditions))
+      .where(eq(notifications.userId, userId))
       .orderBy(desc(notifications.createdAt))
-      .limit(limit)
-      .offset(offset);
-  }
-
-  async markNotificationAsRead(id: number, userId: string): Promise<any> {
-    const [notification] = await db
-      .update(notifications)
-      .set({ isRead: true, updatedAt: new Date() })
-      .where(and(eq(notifications.id, id), eq(notifications.userId, userId)))
-      .returning();
-    return notification;
-  }
-
-  async markAllNotificationsAsRead(userId: string): Promise<any> {
-    await db
-      .update(notifications)
-      .set({ isRead: true, updatedAt: new Date() })
-      .where(eq(notifications.userId, userId));
-    return { success: true };
+      .limit(20);
   }
 }
 
-// Initialize storage with error handling
-let storage: DatabaseStorage;
-try {
-  storage = new DatabaseStorage();
-} catch (error) {
-  console.error('Failed to initialize database storage:', error);
-  throw error;
-}
-
-export { storage };
+export const storage = new DatabaseStorage();
