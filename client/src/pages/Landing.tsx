@@ -12,7 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
-import styles from "./Landing.module.css";
+import "../force-orange.css";
 
 
 
@@ -66,16 +66,7 @@ export default function Landing() {
   return (
     <div 
       className="min-h-screen relative"
-      style={{
-        background: '#e65100',
-        backgroundImage: 'linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00)',
-        minHeight: '100vh',
-        width: '100%',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        zIndex: 1
-      }}
+      id="orange-landing"
     >
       
       {/* Content */}

@@ -1,0 +1,23 @@
+/* FORCE ORANGE THEME - HIGHEST PRIORITY */
+* {
+  background: #e65100 !important;
+  background-image: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important;
+}
+
+html, body, #root, [data-react-root], .min-h-screen {
+  background: #e65100 !important;
+  background-image: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important;
+  background-color: #e65100 !important;
+}
+
+/* White text for hotel branding */
+h1, h2, h3, .hotel-text {
+  color: white !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* Override all cards and components to be transparent */
+.bg-white, .bg-gray-900, [class*="bg-"], .card {
+  background: rgba(255,255,255,0.1) !important;
+  backdrop-filter: blur(10px) !important;
+}
