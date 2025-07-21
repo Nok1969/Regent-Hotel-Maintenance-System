@@ -4,7 +4,9 @@ export function useAuth() {
   const { data: user, isLoading, refetch } = useQuery({
     queryKey: ["auth", "user"],
     queryFn: async () => {
-      const response = await fetch("/api/auth/user");
+      const response = await fetch("/api/auth/user", {
+        credentials: "include", // Include cookies for session
+      });
       if (!response.ok) {
         if (response.status === 401) {
           return null; // User not authenticated
@@ -14,10 +16,10 @@ export function useAuth() {
       return response.json();
     },
     retry: false,
-    refetchOnWindowFocus: false, // Reduce unnecessary refetches
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
-    refetchInterval: false, // Don't auto-refetch
+    refetchOnWindowFocus: true, // Check auth when user returns
+    staleTime: 10 * 1000, // Cache for 10 seconds
+    gcTime: 30 * 1000, // Keep in cache for 30 seconds
+    refetchInterval: 30 * 1000, // Check every 30 seconds
   });
 
   return {

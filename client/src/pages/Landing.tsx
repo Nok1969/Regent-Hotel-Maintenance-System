@@ -36,6 +36,7 @@ export default function Landing() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
+        credentials: "include", // Include cookies for session
       });
       
       if (!response.ok) {
@@ -50,7 +51,10 @@ export default function Landing() {
         title: "เข้าสู่ระบบสำเร็จ",
         description: "ยินดีต้อนรับสู่ระบบซ่อมแซมโรงแรม",
       });
-      window.location.href = "/dashboard";
+      // Reload the page to refresh auth state
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     },
     onError: (error: any) => {
       toast({

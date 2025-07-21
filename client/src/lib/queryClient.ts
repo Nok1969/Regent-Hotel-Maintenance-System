@@ -44,11 +44,11 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      queryFn: getQueryFn({ on401: "returnNull" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // Cache for 5 minutes to reduce API calls
-      gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (TanStack Query v5)
+      staleTime: 30 * 1000, // Cache for 30 seconds to allow quick login
+      gcTime: 2 * 60 * 1000, // Keep in cache for 2 minutes
       retry: (failureCount, error: any) => {
         // Don't retry on rate limiting or auth errors
         if (error?.message?.includes('429') || 
@@ -56,9 +56,9 @@ export const queryClient = new QueryClient({
             error?.message?.includes('403')) {
           return false;
         }
-        return failureCount < 2;
+        return failureCount < 1;
       },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: 1000,
     },
     mutations: {
       retry: false,
