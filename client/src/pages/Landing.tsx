@@ -64,7 +64,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center animate-fade-in relative overflow-hidden bg-orange-gradient">
       
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
