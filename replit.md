@@ -1,13 +1,13 @@
-# Hotel Maintenance System
+# Vala Hua-Hin Nu Chapter Hotel Maintenance System
 
 ## Overview
 
-This is a full-stack hotel maintenance system built with modern web technologies. The application allows hotel staff to submit maintenance requests and enables administrators to manage and track repair tasks. The system features a React frontend with TypeScript, an Express.js backend, PostgreSQL database with Drizzle ORM, and includes internationalization support for English and Thai languages.
+This is a full-stack hotel maintenance system built specifically for Vala Hua-Hin Nu Chapter Hotel. The application allows hotel staff to submit maintenance requests and enables administrators to manage and track repair tasks. The system features a React frontend with TypeScript, an Express.js backend, PostgreSQL database with Drizzle ORM, and includes internationalization support for English and Thai languages.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language in Thai language (ภาษาไทย).
-UI Theme Preference: Dark orange theme with white text for professional hotel branding.
+UI Theme Preference: Dark orange theme (#e65100) with white text for professional hotel branding.
 
 ## Known Issues & Feedback (July 21, 2025)
 
@@ -20,6 +20,14 @@ UI Theme Preference: Dark orange theme with white text for professional hotel br
 
 ## Recent Changes
 
+**July 21, 2025 - Database Recovery & System Restoration**
+- ✅ Successfully restored original database structure after system issues
+- ✅ Recreated users, repairs, and notifications tables with proper schema
+- ✅ Restored Vala Hotel user accounts and sample repair data
+- ✅ Fixed all missing schema exports and route dependencies
+- ✅ Cleaned up project by removing Regent Hotel files per user request
+- ✅ System now running stable with orange theme (#e65100) for Vala branding
+
 **July 21, 2025 - Complete Hotel Branding & Domain Update to Vala Hua-Hin Nu Chapter**
 - ✅ Updated hotel name from "The Regent Cha Am Beach Resort" to "Vala Hua-Hin Nu Chapter Hotel"
 - ✅ Changed project domain from "regent-hotel-maintenance-system" to "vala-hua-hin-nu-chapter-hotel-maintenance-system"
@@ -30,16 +38,6 @@ UI Theme Preference: Dark orange theme with white text for professional hotel br
 - ✅ Enhanced design with modern Inter/Poppins fonts and professional styling
 - ✅ Added comprehensive animations (fade-in, slide-in, scale-in) for improved UX
 - ✅ Implemented consistent orange theme with modern form styling and professional footer
-
-**July 21, 2025 - Complete Project Separation & Regent Hotel Package Creation**
-- ✅ Created complete database separation using vala_hotel schema for current project
-- ✅ Generated comprehensive project package for Regent Cha-am Beach Resort
-- ✅ Prepared complete deployment files for new separate Replit project
-- ✅ Designed professional blue theme (#2563eb) for Regent branding
-- ✅ Created detailed setup instructions for independent project creation
-- ✅ Configured separate database schema and complete file structure
-- ✅ Established template system for future hotel projects
-- ✅ Ensured complete data and deployment isolation between hotels
 
 **July 20, 2025 - Complete Server Architecture Refactor with Hotel Background**
 - ✅ Successfully refactored large server/routes.ts (800+ lines) into modular route files
