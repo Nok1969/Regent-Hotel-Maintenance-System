@@ -37,7 +37,7 @@ export const repairs = pgTable("repairs", {
     enum: ["electrical", "plumbing", "air_conditioning", "furniture", "other"] 
   }).notNull(),
   urgency: varchar("urgency", { enum: ["high", "medium", "low"] }).notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   images: text("images").array().default([]),
   status: varchar("status", { 
     enum: ["pending", "in_progress", "completed"] 
@@ -125,10 +125,7 @@ export const createUserSchema = z.object({
 
 // Repair schemas with custom validation
 export const baseRepairSchema = z.object({
-  description: z.string().refine((val) => {
-    // Use spread operator to count actual grapheme clusters for Thai characters
-    return [...val].length >= 6;
-  }, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร"),
+  description: z.string().min(6, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร").nullable(),
   category: categoryEnum,
   urgency: urgencyEnum,
   status: statusEnum.default("pending"),
@@ -143,7 +140,7 @@ export const insertRepairSchema = baseRepairSchema.extend({
   location: z.string().min(3, "สถานที่ต้องมีอย่างน้อย 3 ตัวอักษร"),
 }).refine((data) => {
   // Custom validation: high urgency requires detailed description
-  if (data.urgency === "high" && data.description.length < 20) {
+  if (data.urgency === "high" && (data.description === null || data.description.length < 20)) {
     return false;
   }
   return true;
@@ -161,10 +158,7 @@ export const backendRepairSchema = baseRepairSchema.extend({
 export const updateRepairSchema = z.object({
   id: z.number(),
   title: z.string().min(3, "Title must be at least 3 characters").optional(),
-  description: z.string().refine((val) => {
-    // Use spread operator to count actual grapheme clusters for Thai characters
-    return !val || [...val].length >= 6;
-  }, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร").optional(),
+  description: z.string().min(6, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร").nullable().optional(),
   category: categoryEnum.optional(),
   urgency: urgencyEnum.optional(),
   status: statusEnum.optional(),
