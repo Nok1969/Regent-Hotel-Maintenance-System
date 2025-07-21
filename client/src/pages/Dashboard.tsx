@@ -26,6 +26,7 @@ import {
   CheckCircle,
   TrendingUp,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -153,37 +154,37 @@ export default function Dashboard() {
         title: t("dashboard.totalRepairs"),
         value: stats.total || 0,
         icon: ClipboardList,
-        color: "text-blue-600 dark:text-blue-400",
-        bgColor: "bg-gradient-to-br from-blue-500/10 to-blue-600/20",
-        cardBg: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20",
-        iconBg: "bg-blue-500/20",
+        color: "text-white font-bold",
+        bgColor: "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg",
+        cardBg: "bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400",
+        iconBg: "bg-white/20",
       },
       {
         title: t("dashboard.pendingRepairs"),
         value: stats.pending || 0,
         icon: Clock,
-        color: "text-yellow-600 dark:text-yellow-400",
-        bgColor: "bg-gradient-to-br from-yellow-500/10 to-yellow-600/20",
-        cardBg: "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/30 dark:to-yellow-800/20",
-        iconBg: "bg-yellow-500/20",
+        color: "text-white font-bold",
+        bgColor: "bg-gradient-to-br from-yellow-500 to-yellow-600 shadow-lg",
+        cardBg: "bg-gradient-to-br from-yellow-500 to-yellow-600 border-yellow-400",
+        iconBg: "bg-white/20",
       },
       {
         title: t("dashboard.inProgressRepairs"),
         value: stats.inProgress || 0,
         icon: Zap,
-        color: "text-orange-600 dark:text-orange-400",
-        bgColor: "bg-gradient-to-br from-orange-500/10 to-orange-600/20",
-        cardBg: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/20",
-        iconBg: "bg-orange-500/20",
+        color: "text-white font-bold",
+        bgColor: "bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg",
+        cardBg: "bg-gradient-to-br from-orange-500 to-orange-600 border-orange-400",
+        iconBg: "bg-white/20",
       },
       {
         title: t("dashboard.completedRepairs"),
         value: stats.completed || 0,
         icon: CheckCircle,
-        color: "text-green-600 dark:text-green-400",
-        bgColor: "bg-gradient-to-br from-green-500/10 to-green-600/20",
-        cardBg: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20",
-        iconBg: "bg-green-500/20",
+        color: "text-white font-bold",
+        bgColor: "bg-gradient-to-br from-green-500 to-green-600 shadow-lg",
+        cardBg: "bg-gradient-to-br from-green-500 to-green-600 border-green-400",
+        iconBg: "bg-white/20",
       },
     ];
   }, [stats, t]);
@@ -209,7 +210,7 @@ export default function Dashboard() {
               <CardContent className="p-3 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1 sm:space-y-2">
-                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    <p className="text-xs sm:text-sm font-medium text-white/90">
                       {card.title}
                     </p>
                     <p className={cn("text-xl sm:text-3xl font-bold", card.color)}>
