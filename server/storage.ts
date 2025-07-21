@@ -76,17 +76,7 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations (mandatory for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select({
-      id: users.id,
-      email: users.email,
-      firstName: users.firstName,
-      lastName: users.lastName,
-      profileImageUrl: users.profileImageUrl,
-      role: users.role,
-      language: users.language,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    }).from(users).where(eq(users.id, id));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
 
@@ -106,17 +96,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return await db.select({
-      id: users.id,
-      email: users.email,
-      firstName: users.firstName,
-      lastName: users.lastName,
-      profileImageUrl: users.profileImageUrl,
-      role: users.role,
-      language: users.language,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    }).from(users).orderBy(users.createdAt);
+    return await db.select().from(users).orderBy(users.createdAt);
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -246,13 +226,19 @@ export class DatabaseStorage implements IStorage {
         assignedTo: repairs.assignedTo,
         createdAt: repairs.createdAt,
         updatedAt: repairs.updatedAt,
-        // Select only necessary user fields
+        // Select only necessary user fields  
         user: {
           id: users.id,
+          name: users.name,
           firstName: users.firstName,
           lastName: users.lastName,
           email: users.email,
           role: users.role,
+          language: users.language,
+          profileImageUrl: users.profileImageUrl,
+          password: users.password,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
         },
       })
       .from(repairs)
@@ -281,12 +267,14 @@ export class DatabaseStorage implements IStorage {
         updatedAt: repairs.updatedAt,
         user: {
           id: users.id,
+          name: users.name,
           email: users.email,
           firstName: users.firstName,
           lastName: users.lastName,
           profileImageUrl: users.profileImageUrl,
           role: users.role,
           language: users.language,
+          password: users.password,
           createdAt: users.createdAt,
           updatedAt: users.updatedAt,
         },

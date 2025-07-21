@@ -95,7 +95,7 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
 // Base validation schemas with shared types for consistency
 export const roleEnum = z.enum(["admin", "manager", "staff", "technician"]);
 export const languageEnum = z.enum(["en", "th"]);
-export const categoryEnum = z.enum(["electrical", "plumbing", "hvac", "furniture", "other"]);
+export const categoryEnum = z.enum(["electrical", "plumbing", "air_conditioning", "furniture", "other"]);
 export const urgencyEnum = z.enum(["high", "medium", "low"]);
 export const statusEnum = z.enum(["pending", "in_progress", "completed"]);
 
