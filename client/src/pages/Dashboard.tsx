@@ -201,10 +201,10 @@ export default function Dashboard() {
                     <card.icon className={`w-6 h-6 ${card.color}`} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-semibold text-subtitle-enhanced">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold">{card.value}</p>
+                    <p className="text-2xl font-bold text-enhanced">{card.value}</p>
                   </div>
                 </div>
               </CardContent>
@@ -242,14 +242,12 @@ export default function Dashboard() {
               data={chartData.statusData}
               title={t("charts.repairsByStatus")}
               size="md"
-              color="#10B981"
             />
             <div className="lg:col-span-2 xl:col-span-1">
               <RepairAreaChart
                 data={chartData.monthlyData}
                 title={t("charts.monthlyTrend")}
                 size="md"
-                color="#3B82F6"
               />
             </div>
           </div>
@@ -273,11 +271,11 @@ export default function Dashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("table.room")}</TableHead>
-                    <TableHead>{t("table.category")}</TableHead>
-                    <TableHead>{t("table.status")}</TableHead>
-                    <TableHead>{t("table.priority")}</TableHead>
-                    <TableHead>{t("table.date")}</TableHead>
+                    <TableHead className="text-enhanced font-semibold">{t("table.room")}</TableHead>
+                    <TableHead className="text-enhanced font-semibold">{t("table.category")}</TableHead>
+                    <TableHead className="text-enhanced font-semibold">{t("table.status")}</TableHead>
+                    <TableHead className="text-enhanced font-semibold">{t("table.priority")}</TableHead>
+                    <TableHead className="text-enhanced font-semibold">{t("table.date")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
