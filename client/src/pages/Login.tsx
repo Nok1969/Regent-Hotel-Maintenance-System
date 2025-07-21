@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Wrench } from "lucide-react";
+import { Wrench, User, Lock, Hotel } from "lucide-react";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
@@ -53,7 +53,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-white/5 bg-[radial-gradient(circle,_rgba(255,255,255,0.1)_1px,_transparent_1px)] bg-[length:30px_30px]"></div>
       </div>
       
-      <Card className="w-full max-w-md shadow-2xl bg-white/95 backdrop-blur-sm border-white/20">
+      <Card className="w-full max-w-md shadow-modern bg-white/95 backdrop-blur-sm border-orange-200/30 animate-scale-in">
         <CardHeader className="text-center pb-6">
           <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-br from-orange-500 to-yellow-400 rounded-2xl flex items-center justify-center shadow-lg">
             <Wrench className="w-10 h-10 text-white" />
@@ -68,8 +68,11 @@ export default function Login() {
         
         <CardContent className="space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-700 font-medium">Username</Label>
+            <div className="space-y-3 animate-slide-left">
+              <Label htmlFor="username" className="form-label-modern">
+                <User className="inline w-4 h-4 mr-2" />
+                Username
+              </Label>
               <Input
                 id="username"
                 type="text"
@@ -77,11 +80,14 @@ export default function Login() {
                 value={credentials.username}
                 onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                 required
-                className="shadow-hover bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                className="form-input-modern"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+            <div className="space-y-3 animate-slide-left" style={{ animationDelay: '0.1s' }}>
+              <Label htmlFor="password" className="form-label-modern">
+                <Lock className="inline w-4 h-4 mr-2" />
+                Password
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -89,19 +95,29 @@ export default function Login() {
                 value={credentials.password}
                 onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 required
-                className="shadow-hover bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                className="form-input-modern"
               />
             </div>
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 border-0" 
+              className="w-full btn-orange animate-slide-up" 
+              style={{ animationDelay: '0.2s' }}
               disabled={isLoading}
             >
+              <Wrench className="inline w-4 h-4 mr-2" />
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </CardContent>
       </Card>
+      
+      {/* Professional Footer */}
+      <footer className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div className="text-white/80 text-sm font-light backdrop-blur-sm bg-black/20 px-4 py-2 rounded-full">
+          <Hotel className="inline w-4 h-4 mr-2" />
+          The Regent Cha Am Beach Resort © 2025
+        </div>
+      </footer>
     </div>
   );
 }
