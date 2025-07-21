@@ -31,16 +31,16 @@ export function HotelBackground({ children, className = "", overlay = true }: Ho
 
 export function HotelLogo() {
   return (
-    <div className="flex flex-col items-center justify-center text-white mb-8 p-6 rounded-2xl backdrop-blur-sm bg-black/20">
+    <div className="flex flex-col items-center justify-center mb-8 p-6 rounded-2xl backdrop-blur-sm bg-black/30" style={{ color: 'white' }}>
       <div className="text-center space-y-3">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white drop-shadow-lg">
+        <h1 style={{ color: 'white', fontSize: '4rem', fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
           The Regent
         </h1>
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-light tracking-wider text-white opacity-95 mt-2">
+        <h2 style={{ color: 'white', fontSize: '2rem', fontWeight: '300', textShadow: '1px 1px 2px rgba(0,0,0,0.8)', marginTop: '0.5rem' }}>
           Cha Am Beach Resort
         </h2>
         <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent mt-4 mx-auto"></div>
-        <p className="text-sm md:text-base opacity-80 mt-4 text-center max-w-md">
+        <p style={{ color: 'white', fontSize: '1rem', opacity: 0.9, marginTop: '1rem', textAlign: 'center', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>
           ระบบบำรุงรักษาโรงแรม | Hotel Maintenance System
         </p>
       </div>

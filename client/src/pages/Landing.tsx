@@ -64,9 +64,13 @@ export default function Landing() {
 
   return (
     <div 
-      className="min-h-screen relative orange-theme"
+      className="min-h-screen relative"
+      style={{
+        background: '#e65100',
+        backgroundColor: '#e65100',
+        backgroundImage: 'linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00)'
+      }}
     >
-      {/* Overlay - removed for orange theme */}
       
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
