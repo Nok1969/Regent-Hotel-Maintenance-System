@@ -94,7 +94,7 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
                   window.location.href = "/api/logout";
                 }
               }}
-              className="border-white/20 text-primary-foreground hover:bg-white/10 shadow-modern"
+              className="border-white/20 text-white-enhanced hover:bg-white/10 shadow-modern font-semibold"
             >
               Logout
             </Button>

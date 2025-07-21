@@ -114,7 +114,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
 
         <Separator className="my-4" />
 
-        <Button variant="ghost" className="w-full justify-start">
+        <Button variant="ghost" className="w-full justify-start font-medium text-enhanced">
           <Settings className="h-4 w-4 mr-3" />
           {t("navigation.settings")}
         </Button>
@@ -122,7 +122,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
         <Button
           variant="ghost"
           onClick={handleLogout}
-          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 font-semibold text-enhanced"
         >
           <LogOut className="h-4 w-4 mr-3" />
           {t("auth.signOut")}
