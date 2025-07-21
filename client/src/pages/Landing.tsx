@@ -65,7 +65,17 @@ export default function Landing() {
 
   return (
     <div 
-      className={`min-h-screen relative ${styles.orangeBackground}`}
+      className="min-h-screen relative"
+      style={{
+        background: '#e65100',
+        backgroundImage: 'linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00)',
+        minHeight: '100vh',
+        width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 1
+      }}
     >
       
       {/* Content */}
