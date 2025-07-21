@@ -183,7 +183,7 @@ export default function Landing() {
       <footer className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
         <div className="text-white/80 text-sm font-light backdrop-blur-sm bg-black/20 px-4 py-2 rounded-full">
           <Hotel className="inline w-4 h-4 mr-2" />
-          The Regent Cha Am Beach Resort © 2025
+          Vala Hua-Hin Nu Chapter Hotel © 2025
         </div>
       </footer>
       </div>

@@ -59,7 +59,7 @@ export default function Login() {
             <Wrench className="w-10 h-10 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold text-gray-800 mb-2">
-            Regent Hotel Maintenance System
+            Vala Hua-Hin Nu Chapter Hotel Maintenance System
           </CardTitle>
           <CardDescription className="text-gray-600 text-base">
             
@@ -115,7 +115,7 @@ export default function Login() {
       <footer className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
         <div className="text-white/80 text-sm font-light backdrop-blur-sm bg-black/20 px-4 py-2 rounded-full">
           <Hotel className="inline w-4 h-4 mr-2" />
-          The Regent Cha Am Beach Resort © 2025
+          Vala Hua-Hin Nu Chapter Hotel © 2025
         </div>
       </footer>
     </div>
