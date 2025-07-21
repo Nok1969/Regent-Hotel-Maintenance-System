@@ -134,10 +134,10 @@ export default function Landing() {
               
               <Button 
                 type="submit" 
-                className="w-full"
+                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 border-0"
                 disabled={mockLoginMutation.isPending}
               >
-                {mockLoginMutation.isPending ? "Signing in..." : "Test Login"}
+                {mockLoginMutation.isPending ? "Signing in..." : "Sign In"}
               </Button>
             </form>
             

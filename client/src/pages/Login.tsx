@@ -77,7 +77,7 @@ export default function Login() {
                 value={credentials.username}
                 onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                 required
-                className="shadow-hover bg-gray-50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="shadow-hover bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
               />
             </div>
             <div className="space-y-2">
@@ -89,12 +89,12 @@ export default function Login() {
                 value={credentials.password}
                 onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 required
-                className="shadow-hover bg-gray-50 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                className="shadow-hover bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
               />
             </div>
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" 
+              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 border-0" 
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
