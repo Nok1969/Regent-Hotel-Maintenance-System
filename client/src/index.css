@@ -3,63 +3,63 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(222, 84%, 5%);
-  --muted: hsl(215, 25%, 27%);
-  --muted-foreground: hsl(215, 20%, 65%);
+  --background: hsl(330, 25%, 97%);
+  --foreground: hsl(220, 15%, 15%);
+  --muted: hsl(220, 20%, 94%);
+  --muted-foreground: hsl(220, 10%, 45%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(222, 84%, 5%);
+  --popover-foreground: hsl(220, 15%, 15%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(222, 84%, 5%);
-  --border: hsl(215, 20%, 82%);
-  --input: hsl(215, 20%, 82%);
-  --primary: hsl(219, 85%, 58%);
+  --card-foreground: hsl(220, 15%, 15%);
+  --border: hsl(220, 20%, 88%);
+  --input: hsl(220, 20%, 88%);
+  --primary: hsl(24, 100%, 45%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(220, 85%, 55%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --accent: hsl(221, 83%, 53%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(0, 0%, 100%);
-  --ring: hsl(219, 85%, 58%);
+  --secondary: hsl(220, 30%, 92%);
+  --secondary-foreground: hsl(220, 15%, 15%);
+  --accent: hsl(220, 60%, 88%);
+  --accent-foreground: hsl(220, 15%, 15%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(220, 70%, 50%);
   --radius: 0.75rem;
   
-  /* Chart colors - Blue theme */
-  --chart-1: hsl(219, 85%, 58%);
-  --chart-2: hsl(220, 85%, 55%);
-  --chart-3: hsl(221, 83%, 53%);
-  --chart-4: hsl(215, 85%, 60%);
-  --chart-5: hsl(210, 80%, 65%);
+  /* Chart colors */
+  --chart-1: hsl(220, 70%, 50%);
+  --chart-2: hsl(260, 60%, 60%);
+  --chart-3: hsl(280, 55%, 55%);
+  --chart-4: hsl(200, 80%, 60%);
+  --chart-5: hsl(180, 65%, 50%);
 }
 
 .dark {
-  --background: hsl(222, 84%, 5%);
-  --foreground: hsl(210, 40%, 98%);
-  --muted: hsl(215, 25%, 16%);
-  --muted-foreground: hsl(215, 20%, 65%);
-  --popover: hsl(215, 25%, 9%);
-  --popover-foreground: hsl(210, 40%, 98%);
-  --card: hsl(215, 25%, 9%);
-  --card-foreground: hsl(210, 40%, 98%);
-  --border: hsl(215, 25%, 18%);
-  --input: hsl(215, 25%, 18%);
-  --primary: hsl(219, 85%, 58%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(215, 25%, 16%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-  --accent: hsl(215, 25%, 16%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 84%, 60%);
-  --destructive-foreground: hsl(0, 0%, 100%);
-  --ring: hsl(219, 85%, 58%);
+  --background: hsl(220, 25%, 6%);
+  --foreground: hsl(220, 15%, 92%);
+  --muted: hsl(220, 15%, 12%);
+  --muted-foreground: hsl(220, 10%, 55%);
+  --popover: hsl(220, 20%, 8%);
+  --popover-foreground: hsl(220, 15%, 92%);
+  --card: hsl(220, 20%, 8%);
+  --card-foreground: hsl(220, 15%, 92%);
+  --border: hsl(220, 15%, 12%);
+  --input: hsl(220, 15%, 12%);
+  --primary: hsl(220, 70%, 60%);
+  --primary-foreground: hsl(220, 25%, 6%);
+  --secondary: hsl(220, 15%, 12%);
+  --secondary-foreground: hsl(220, 15%, 92%);
+  --accent: hsl(220, 25%, 15%);
+  --accent-foreground: hsl(220, 15%, 92%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(220, 70%, 60%);
   --radius: 0.75rem;
   
-  /* Chart colors for dark mode - Blue theme */
-  --chart-1: hsl(219, 85%, 58%);
-  --chart-2: hsl(220, 85%, 55%);
-  --chart-3: hsl(221, 83%, 53%);
-  --chart-4: hsl(215, 85%, 60%);
-  --chart-5: hsl(210, 80%, 65%);
+  /* Chart colors for dark mode */
+  --chart-1: hsl(220, 70%, 60%);
+  --chart-2: hsl(260, 60%, 65%);
+  --chart-3: hsl(280, 55%, 60%);
+  --chart-4: hsl(200, 80%, 65%);
+  --chart-5: hsl(180, 65%, 55%);
 }
 
 @layer base {
@@ -71,8 +71,8 @@
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
-    background: #2563eb !important;
-    background-image: linear-gradient(135deg, #2563eb, #1d4ed8, #1e40af, #3b82f6, #60a5fa) !important;
+    background: #e65100 !important;
+    background-image: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important;
   }
 
   /* Enhanced text contrast for better readability */

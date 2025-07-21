@@ -1,0 +1,85 @@
+# Regent Cha-am Hotel Maintenance System - Complete Package
+
+## การใช้งานแพ็คเกจนี้
+
+### สำหรับการสร้างโปรเจคใหม่:
+
+1. **สร้าง Repl ใหม่ใน Replit**
+   - ตั้งชื่อ: "Regent-Cha-am-Hotel-Maintenance-System"
+   - เลือก Node.js template
+
+2. **Copy ไฟล์ทั้งหมดจากโปรเจคปัจจุบัน**
+   - Copy ทุกโฟลเดอร์และไฟล์
+
+3. **แทนที่ไฟล์ต่อไปนี้:**
+
+### ไฟล์ที่ต้องเปลี่ยน:
+
+#### A. client/src/locales/en.json:
+แทนที่ส่วนบนสุดด้วย:
+```json
+{
+  "app": {
+    "title": "Regent Cha-am Hotel Maintenance System",
+    "subtitle": "Hotel maintenance request system"
+  },
+```
+
+#### B. client/src/locales/th.json:
+แทนที่ส่วนบนสุดด้วย:
+```json
+{
+  "app": {
+    "title": "ระบบแจ้งซ่อมโรงแรมรีเจนท์ ชะอำ", 
+    "subtitle": "ระบบแจ้งซ่อมสำหรับโรงแรม"
+  },
+```
+
+#### C. client/src/index.css:
+แทนที่ส่วน :root ด้วย:
+```css
+:root {
+  --primary: hsl(219, 85%, 58%); /* Blue #2563eb */
+  --primary-foreground: hsl(0, 0%, 100%);
+  /* ... ดูรายละเอียดในไฟล์ regent-blue-theme.css */
+}
+```
+
+และเปลี่ยน background เป็น:
+```css
+background: #2563eb !important;
+background-image: linear-gradient(135deg, #2563eb, #1d4ed8, #1e40af, #3b82f6, #60a5fa) !important;
+```
+
+#### D. package.json:
+เปลี่ยนชื่อ:
+```json
+{
+  "name": "regent-cha-am-hotel-maintenance-system",
+  "description": "Maintenance management system for Regent Cha-am Hotel"
+}
+```
+
+#### E. client/src/pages/Landing.tsx:
+แทนที่ชื่อโรงแรมจาก "Vala Hua-Hin Nu Chapter Hotel" เป็น "Regent Cha-am Hotel"
+
+### 4. รันโปรเจค:
+```bash
+npm install
+npm run dev
+```
+
+### 5. Deploy:
+- ไปที่แท็บ Deployments
+- คลิก Deploy
+- รอให้เสร็จ
+
+## ผลลัพธ์:
+- โปรเจคใหม่: Regent Cha-am Hotel (ธีมสีฟ้า)
+- โปรเจคเดิม: Vala Hua-Hin Nu Chapter Hotel (ธีมสีส้ม)
+- ทั้งสองใช้งานแยกกันได้
+
+## หมายเหตุ:
+- ข้อมูลในฐานข้อมูลจะแยกกัน
+- ระบบ authentication แยกกัน 
+- สามารถใช้งานพร้อมกันได้
