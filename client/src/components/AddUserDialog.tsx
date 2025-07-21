@@ -44,7 +44,8 @@ const addUserSchema = z.object({
     .email("Please enter a valid email address")
     .max(255, "Email must be less than 255 characters"),
   password: z.string()
-    .min(6, "Password must be at least 6 characters"),
+    .min(4, "รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร")
+    .regex(/^(?=.*\d)/, "รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว"),
   firstName: z.string()
     .min(1, "First name is required")
     .max(50, "First name must be less than 50 characters")
@@ -206,7 +207,7 @@ export function AddUserDialog({ open, onClose }: AddUserDialogProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และต้องมีตัวอักษรเล็ก ตัวอักษรใหญ่ และตัวเลข (เช่น Test123456)
+                    รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร และต้องมีตัวเลขอย่างน้อย 1 ตัว (เช่น test1, abc123)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
