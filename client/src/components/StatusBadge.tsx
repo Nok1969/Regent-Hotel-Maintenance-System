@@ -105,7 +105,7 @@ export function CategoryBadge({ category, className }: CategoryBadgeProps) {
         className: "bg-gradient-to-r from-blue-100 to-sky-200 text-blue-800 border-2 border-blue-300 shadow-lg shadow-blue-100/50 dark:from-blue-900/30 dark:to-sky-800/20 dark:text-blue-400 dark:border-blue-600/30",
       },
       air_conditioning: {
-        label: t("categories.hvac"),
+        label: t("categories.air_conditioning"),
         className: "bg-gradient-to-r from-cyan-100 to-teal-200 text-cyan-800 border-2 border-cyan-300 shadow-lg shadow-cyan-100/50 dark:from-cyan-900/30 dark:to-teal-800/20 dark:text-cyan-400 dark:border-cyan-600/30",
       },
 

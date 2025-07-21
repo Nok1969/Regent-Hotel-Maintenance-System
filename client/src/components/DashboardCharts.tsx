@@ -28,7 +28,7 @@ export function DashboardCharts({ stats }: DashboardChartsProps) {
     [
       { category: t('categories.electrical'), count: 15, original: 'electrical' },
       { category: t('categories.plumbing'), count: 8, original: 'plumbing' },
-      { category: t('categories.hvac'), count: 12, original: 'air_conditioning' },
+      { category: t('categories.air_conditioning'), count: 12, original: 'air_conditioning' },
       { category: t('categories.furniture'), count: 5, original: 'furniture' },
       { category: t('categories.other'), count: 3, original: 'other' }
     ];

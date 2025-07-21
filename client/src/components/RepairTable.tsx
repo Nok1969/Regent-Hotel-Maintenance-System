@@ -289,7 +289,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <SelectItem value="all">{t("filters.allCategories")}</SelectItem>
                 <SelectItem value="electrical">{t("categories.electrical")}</SelectItem>
                 <SelectItem value="plumbing">{t("categories.plumbing")}</SelectItem>
-                <SelectItem value="air_conditioning">{t("categories.hvac")}</SelectItem>
+                <SelectItem value="air_conditioning">{t("categories.air_conditioning")}</SelectItem>
                 <SelectItem value="furniture">{t("categories.furniture")}</SelectItem>
                 <SelectItem value="other">{t("categories.other")}</SelectItem>
               </SelectContent>
