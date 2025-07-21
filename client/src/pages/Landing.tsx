@@ -78,7 +78,7 @@ export default function Landing() {
         </div>
         
         <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-md backdrop-blur-lg bg-white/95 dark:bg-gray-900/90 shadow-2xl border-orange-200/50 mt-8">
+        <Card className="w-full max-w-md backdrop-blur-lg bg-white/10 dark:bg-gray-900/20 shadow-2xl border-orange-200/50 mt-8">
           <CardHeader className="text-center space-y-4">
           
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">

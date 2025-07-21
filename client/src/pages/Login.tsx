@@ -55,7 +55,7 @@ export default function Login() {
       
       <Card className="w-full max-w-md shadow-2xl bg-white/95 backdrop-blur-sm border-white/20">
         <CardHeader className="text-center pb-6">
-          <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+          <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-br from-orange-500 to-yellow-400 rounded-2xl flex items-center justify-center shadow-lg">
             <Wrench className="w-10 h-10 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold text-gray-800 mb-2">
