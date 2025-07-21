@@ -125,7 +125,7 @@ export const createUserSchema = z.object({
 
 // Repair schemas with custom validation
 export const baseRepairSchema = z.object({
-  description: z.string().min(10, "รายละเอียดต้องมีอย่างน้อย 10 ตัวอักษร"),
+  description: z.string().min(6, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร"),
   category: categoryEnum,
   urgency: urgencyEnum,
   status: statusEnum.default("pending"),
@@ -158,7 +158,7 @@ export const backendRepairSchema = baseRepairSchema.extend({
 export const updateRepairSchema = z.object({
   id: z.number(),
   title: z.string().min(3, "Title must be at least 3 characters").optional(),
-  description: z.string().min(10, "Description must be at least 10 characters").optional(),
+  description: z.string().min(6, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร").optional(),
   category: categoryEnum.optional(),
   urgency: urgencyEnum.optional(),
   status: statusEnum.optional(),

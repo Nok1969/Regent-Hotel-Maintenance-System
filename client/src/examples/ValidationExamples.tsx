@@ -49,7 +49,7 @@ const timeRangeSchema = z.object({
 // Example 2: Conditional validation based on urgency
 const repairValidationSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().min(6, "รายละเอียดต้องมีอย่างน้อย 6 ตัวอักษร"),
   urgency: z.enum(["low", "medium", "high"]),
   category: z.enum(["electrical", "plumbing", "air_conditioning", "furniture", "other"]),
 }).refine((data) => {
