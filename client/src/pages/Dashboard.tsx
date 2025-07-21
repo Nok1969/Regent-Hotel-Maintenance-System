@@ -181,30 +181,30 @@ export default function Dashboard() {
   }, [stats, t]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         {statsLoading ? (
           [...Array(4)].map((_, i) => (
             <Card key={i}>
-              <CardContent className="p-6">
-                <Skeleton className="h-16 w-full" />
+              <CardContent className="p-3 sm:p-6">
+                <Skeleton className="h-12 sm:h-16 w-full" />
               </CardContent>
             </Card>
           ))
         ) : (
           statsCards.map((card, index) => (
             <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-full ${card.bgColor}`}>
-                    <card.icon className={`w-6 h-6 ${card.color}`} />
+              <CardContent className="p-3 sm:p-6">
+                <div className="flex items-center space-x-2 sm:space-x-4">
+                  <div className={`p-2 sm:p-3 rounded-full ${card.bgColor}`}>
+                    <card.icon className={`w-4 h-4 sm:w-6 sm:h-6 ${card.color}`} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-subtitle-enhanced">
+                    <p className="text-xs sm:text-sm font-semibold text-subtitle-enhanced">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-enhanced">{card.value}</p>
+                    <p className="text-lg sm:text-2xl font-bold text-enhanced">{card.value}</p>
                   </div>
                 </div>
               </CardContent>
@@ -215,39 +215,31 @@ export default function Dashboard() {
 
       {/* Charts */}
       {statsLoading ? (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-[120px]" />
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 gap-4">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-[250px] sm:h-[300px]" />
             ))}
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Skeleton className="h-[400px]" />
-            <Skeleton className="h-[400px]" />
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Skeleton className="h-[400px]" />
-            <Skeleton className="h-[400px]" />
           </div>
         </div>
       ) : (
         chartData && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
             <RepairPieChart
               data={chartData.categoryData}
               title={t("charts.repairsByCategory")}
-              size="md"
+              size="sm"
             />
             <RepairBarChart
               data={chartData.statusData}
               title={t("charts.repairsByStatus")}
-              size="md"
+              size="sm"
             />
             <div className="lg:col-span-2 xl:col-span-1">
               <RepairAreaChart
                 data={chartData.monthlyData}
                 title={t("charts.monthlyTrend")}
-                size="md"
+                size="sm"
               />
             </div>
           </div>

@@ -82,21 +82,26 @@ export default function Landing() {
     <div className="min-h-screen flex items-center justify-center animate-fade-in relative overflow-hidden bg-orange-gradient">
       
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="absolute top-4 right-4 flex gap-2 z-20">
-          <LanguageSwitcher />
-          <ThemeToggle />
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-3 sm:p-4">
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-2 z-20">
+          <div className="hidden sm:flex gap-2">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
+          <div className="sm:hidden">
+            <ThemeToggle />
+          </div>
         </div>
         
         <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-center">
           <HotelLogo />
         </div>
         
-        <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-md backdrop-blur-lg bg-white/95 dark:bg-gray-900/95 shadow-modern border-orange-200/30 mt-8 animate-scale-in">
-          <CardHeader className="text-center space-y-4">
+        <div className="flex flex-col items-center justify-center min-h-screen px-3 sm:px-4">
+        <Card className="w-full max-w-md backdrop-blur-lg bg-white/95 dark:bg-gray-900/95 shadow-modern border-orange-200/30 mt-8 animate-scale-in mx-3 sm:mx-0">
+          <CardHeader className="text-center space-y-3 sm:space-y-4 p-4 sm:p-6">
           
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto">
             <img 
               src={maintenanceIcon} 
               alt="Hotel Maintenance System" 
@@ -105,16 +110,16 @@ export default function Landing() {
           </div>
           
           <div>
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-xl sm:text-2xl font-bold">
               {t("app.title")}
             </CardTitle>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-sm sm:text-base text-muted-foreground mt-2">
               {t("app.subtitle")}
             </p>
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
           {/* Mock Login for Testing */}
           <div className="space-y-4">
             <div className="text-center">
@@ -125,9 +130,9 @@ export default function Landing() {
             </div>
             
             <form onSubmit={handleMockLogin} className="space-y-3">
-              <div className="space-y-3 animate-slide-left">
-                <Label htmlFor="username" className="form-label-modern">
-                  <User className="inline w-4 h-4 mr-2" />
+              <div className="space-y-2 sm:space-y-3 animate-slide-left">
+                <Label htmlFor="username" className="form-label-modern text-sm">
+                  <User className="inline w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Username
                 </Label>
                 <Input
@@ -136,13 +141,13 @@ export default function Landing() {
                   placeholder="admin, manager, staff, or technician"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="form-input-modern"
+                  className="form-input-modern text-sm sm:text-base"
                 />
               </div>
               
-              <div className="space-y-3 animate-slide-left" style={{ animationDelay: '0.1s' }}>
-                <Label htmlFor="password" className="form-label-modern">
-                  <Lock className="inline w-4 h-4 mr-2" />
+              <div className="space-y-2 sm:space-y-3 animate-slide-left" style={{ animationDelay: '0.1s' }}>
+                <Label htmlFor="password" className="form-label-modern text-sm">
+                  <Lock className="inline w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Password
                 </Label>
                 <Input
@@ -151,17 +156,17 @@ export default function Landing() {
                   placeholder="Use: admin123, manager123, staff123, tech123"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="form-input-modern"
+                  className="form-input-modern text-sm sm:text-base"
                 />
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full btn-orange animate-slide-up"
+                className="w-full btn-orange animate-slide-up text-sm sm:text-base py-2 sm:py-3"
                 style={{ animationDelay: '0.2s' }}
                 disabled={mockLoginMutation.isPending}
               >
-                <Settings className="inline w-4 h-4 mr-2" />
+                <Settings className="inline w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                 {mockLoginMutation.isPending ? "Signing in..." : "Sign In"}
               </Button>
             </form>

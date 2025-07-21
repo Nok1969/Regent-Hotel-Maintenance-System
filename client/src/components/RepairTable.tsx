@@ -240,18 +240,19 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
       </CardHeader>
       <CardContent>
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="space-y-2">
-            <Label>{t("filters.search")}</Label>
+            <Label className="text-sm">{t("filters.search")}</Label>
             <div className="relative">
               <Input
                 placeholder={t("filters.searchPlaceholder")}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
+                className="text-sm"
               />
               {isSearching && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-primary"></div>
                 </div>
               )}
             </div>
@@ -308,18 +309,62 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="rounded-md border">
+        {/* Mobile Cards View */}
+        <div className="block sm:hidden space-y-3">
+          {filteredRepairs.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              {t("repairs.noRepairs")}
+            </div>
+          ) : (
+            filteredRepairs.map((repair: any) => (
+              <Card key={repair.id} className="p-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-lg">ห้อง {repair.room}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(repair.createdAt), "dd/MM/yyyy HH:mm", { locale: th })}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      {user?.permissions?.canUpdateRepairStatus && (
+                        <Button size="sm" variant="outline">
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                      )}
+                      <Button size="sm" variant="outline">
+                        <Eye className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    <CategoryBadge category={repair.category as any} />
+                    <StatusBadge status={repair.status as any} />
+                    <UrgencyBadge urgency={repair.urgency as any} />
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {repair.description}
+                  </p>
+                </div>
+              </Card>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden sm:block rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ห้อง</TableHead>
-                <TableHead>ประเภท</TableHead>
-                <TableHead>สถานะ</TableHead>
-                <TableHead>ความเร่งด่วน</TableHead>
-                <TableHead>วันที่</TableHead>
-                <TableHead>เวลา</TableHead>
-                <TableHead>{t("table.actions")}</TableHead>
+                <TableHead className="text-sm">ห้อง</TableHead>
+                <TableHead className="text-sm">ประเภท</TableHead>
+                <TableHead className="text-sm">สถานะ</TableHead>
+                <TableHead className="text-sm">ความเร่งด่วน</TableHead>
+                <TableHead className="text-sm">วันที่</TableHead>
+                <TableHead className="text-sm">เวลา</TableHead>
+                <TableHead className="text-sm">{t("table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -33,32 +33,37 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
   const isMobile = useIsMobile();
 
   return (
-    <header className="bg-card border-b border-border h-16 flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-40 shadow-modern gradient-bg">
-      <div className="flex items-center space-x-4">
+    <header className="bg-card border-b border-border h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 fixed top-0 left-0 right-0 z-40 shadow-modern gradient-bg">
+      <div className="flex items-center space-x-2 sm:space-x-4">
         {isMobile && (
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className="text-primary-foreground">
-            <Menu className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={onMenuClick} className="text-primary-foreground h-8 w-8">
+            <Menu className="h-4 w-4" />
           </Button>
         )}
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shadow-modern">
-            <Wrench className="w-6 h-6 text-primary-foreground" />
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-xl flex items-center justify-center shadow-modern">
+            <Wrench className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-semibold text-primary-foreground">{t("app.title")}</h1>
+          <h1 className="text-lg sm:text-xl font-semibold text-primary-foreground hidden sm:block">{t("app.title")}</h1>
+          <h1 className="text-sm font-semibold text-primary-foreground sm:hidden">Vala Hotel</h1>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <LanguageSwitcher />
-        <ThemeToggle />
+      <div className="flex items-center space-x-2 sm:space-x-4">
+        <div className="hidden sm:block">
+          <LanguageSwitcher />
+        </div>
+        <div className="hidden sm:block">
+          <ThemeToggle />
+        </div>
         <NotificationBell />
 
         {user && (
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-primary-foreground/80">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <span className="text-xs sm:text-sm text-primary-foreground/80 hidden md:block">
               {user.firstName} ({user.role})
             </span>
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-modern">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shadow-modern">
               {user.profileImageUrl ? (
                 <img
                   src={user.profileImageUrl}
@@ -126,7 +131,7 @@ function Router() {
     <>
       <AppHeader user={user} onMenuClick={() => setSidebarOpen(true)} />
       
-      <div className="flex pt-16">
+      <div className="flex pt-14 sm:pt-16">
         <Sidebar 
           isOpen={sidebarOpen} 
           onClose={closeSidebar}
@@ -140,7 +145,7 @@ function Router() {
           />
         )}
 
-        <main className="flex-1 lg:ml-64 p-6 custom-scrollbar">
+        <main className="flex-1 lg:ml-64 p-3 sm:p-6 custom-scrollbar overflow-x-hidden">
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/new-repair" component={NewRepair} />
