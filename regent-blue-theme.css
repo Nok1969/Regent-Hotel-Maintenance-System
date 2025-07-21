@@ -1,0 +1,129 @@
+/* Regent Cha-am Hotel - Blue Theme Configuration */
+
+:root {
+  /* Primary blue theme */
+  --primary: 219 85% 58%; /* #2563eb - Bright blue */
+  --primary-foreground: 0 0% 100%; /* White text */
+  
+  /* Secondary colors */
+  --secondary: 220 85% 55%; /* #1d4ed8 - Darker blue */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent colors */
+  --accent: 221 83% 53%; /* #1e40af - Deep blue */
+  --accent-foreground: 0 0% 100%;
+  
+  /* Muted colors for better contrast */
+  --muted: 215 25% 27%; /* Dark blue-gray */
+  --muted-foreground: 215 20% 65%;
+  
+  /* Border and ring colors */
+  --border: 215 20% 82%;
+  --ring: 219 85% 58%;
+  
+  /* Destructive (red) - keep for logout/delete actions */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Background colors */
+  --background: 0 0% 100%;
+  --foreground: 222 84% 5%;
+  
+  /* Card colors */
+  --card: 0 0% 100%;
+  --card-foreground: 222 84% 5%;
+  
+  /* Popover colors */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 84% 5%;
+}
+
+.dark {
+  --primary: 219 85% 58%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 215 25% 16%;
+  --secondary-foreground: 0 0% 100%;
+  
+  --accent: 215 25% 16%;
+  --accent-foreground: 0 0% 100%;
+  
+  --muted: 215 25% 16%;
+  --muted-foreground: 215 20% 65%;
+  
+  --border: 215 25% 18%;
+  --ring: 219 85% 58%;
+  
+  --background: 222 84% 5%;
+  --foreground: 210 40% 98%;
+  
+  --card: 215 25% 9%;
+  --card-foreground: 210 40% 98%;
+  
+  --popover: 215 25% 9%;
+  --popover-foreground: 210 40% 98%;
+}
+
+/* Enhanced text classes for blue theme */
+.text-enhanced {
+  color: hsl(222, 84%, 5%);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
+}
+
+.dark .text-enhanced {
+  color: hsl(210, 40%, 98%);
+  text-shadow: 0 1px 2px rgba(37, 99, 235, 0.3);
+}
+
+.text-subtitle-enhanced {
+  color: hsl(215, 20%, 45%);
+  font-weight: 500;
+}
+
+.dark .text-subtitle-enhanced {
+  color: hsl(215, 20%, 65%);
+}
+
+.text-white-enhanced {
+  color: hsl(0, 0%, 100%);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(37, 99, 235, 0.4);
+}
+
+/* Blue gradient for hotel logo */
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button variants for blue theme */
+.btn-blue-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);
+}
+
+.btn-blue-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Card styling for blue theme */
+.card-blue {
+  border: 1px solid hsl(215, 20%, 82%);
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+}
+
+.dark .card-blue {
+  border: 1px solid hsl(215, 25%, 18%);
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}

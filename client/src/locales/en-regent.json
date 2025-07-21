@@ -1,0 +1,141 @@
+{
+  "hotel": {
+    "name": "Regent Cha-am Hotel",
+    "subtitle": "Maintenance Management System",
+    "description": "Professional maintenance request system for Regent Cha-am Hotel staff"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "repairs": "Repairs",
+    "newRepair": "New Repair",
+    "notifications": "Notifications",
+    "users": "Users",
+    "settings": "Settings"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "welcome": "Welcome to Regent Cha-am Hotel",
+    "loginSubtitle": "Access the maintenance management system",
+    "adminLogin": "Admin Login",
+    "staffLogin": "Staff Login",
+    "technicianLogin": "Technician Login",
+    "managerLogin": "Manager Login"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcomeMessage": "Welcome to Regent Cha-am Hotel Maintenance System",
+    "totalRepairs": "Total Repairs",
+    "pendingRepairs": "Pending",
+    "inProgressRepairs": "In Progress", 
+    "completedRepairs": "Completed",
+    "recentRequests": "Recent Repair Requests",
+    "quickStats": "Quick Statistics"
+  },
+  "repairs": {
+    "title": "Repair Requests",
+    "newRepair": "New Repair Request",
+    "editRepair": "Edit Repair",
+    "searchRepairs": "Search repairs...",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterInProgress": "In Progress",
+    "filterCompleted": "Completed",
+    "noRepairs": "No repair requests found"
+  },
+  "form": {
+    "room": "Room Number",
+    "category": "Category",
+    "urgency": "Priority Level",
+    "description": "Description",
+    "submit": "Submit Request",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "required": "This field is required",
+    "roomPlaceholder": "e.g., 101, 205",
+    "descriptionPlaceholder": "Describe the issue in detail..."
+  },
+  "categories": {
+    "electrical": "Electrical",
+    "plumbing": "Plumbing", 
+    "airconditioning": "Air Conditioning",
+    "furniture": "Furniture",
+    "other": "Other"
+  },
+  "urgency": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "status": {
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "completed": "Completed"
+  },
+  "table": {
+    "room": "Room",
+    "category": "Category", 
+    "status": "Status",
+    "priority": "Priority",
+    "date": "Date",
+    "actions": "Actions",
+    "technician": "Technician",
+    "description": "Description"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAsRead": "Mark as Read",
+    "markAllAsRead": "Mark All as Read",
+    "noNotifications": "No notifications",
+    "filter": {
+      "all": "All",
+      "unread": "Unread"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "addUser": "Add New User",
+    "editUser": "Edit User",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "role": "Role",
+    "language": "Language",
+    "searchUsers": "Search users...",
+    "searchPlaceholder": "Search by name or email...",
+    "noUsers": "No users found"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "manager": "Manager",
+    "staff": "Staff",
+    "technician": "Technician"
+  },
+  "languages": {
+    "en": "English",
+    "th": "Thai"
+  },
+  "charts": {
+    "repairsByCategory": "Repairs by Category",
+    "repairsByStatus": "Repairs by Status", 
+    "monthlyTrend": "Monthly Trend",
+    "urgencyDistribution": "Priority Distribution"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import"
+  }
+}
