@@ -87,7 +87,7 @@ export function UrgencyBadge({ urgency, className }: UrgencyBadgeProps) {
 }
 
 interface CategoryBadgeProps {
-  category: "electrical" | "plumbing" | "hvac" | "furniture" | "other";
+  category: "electrical" | "plumbing" | "air_conditioning" | "furniture" | "other";
   className?: string;
 }
 
@@ -108,10 +108,7 @@ export function CategoryBadge({ category, className }: CategoryBadgeProps) {
         label: t("categories.hvac"),
         className: "bg-gradient-to-r from-cyan-100 to-teal-200 text-cyan-800 border-2 border-cyan-300 shadow-lg shadow-cyan-100/50 dark:from-cyan-900/30 dark:to-teal-800/20 dark:text-cyan-400 dark:border-cyan-600/30",
       },
-      hvac: {
-        label: t("categories.hvac"),
-        className: "bg-gradient-to-r from-cyan-100 to-teal-200 text-cyan-800 border-2 border-cyan-300 shadow-lg shadow-cyan-100/50 dark:from-cyan-900/30 dark:to-teal-800/20 dark:text-cyan-400 dark:border-cyan-600/30",
-      },
+
       furniture: {
         label: t("categories.furniture"),
         className: "bg-gradient-to-r from-purple-100 to-violet-200 text-purple-800 border-2 border-purple-300 shadow-lg shadow-purple-100/50 dark:from-purple-900/30 dark:to-violet-800/20 dark:text-purple-400 dark:border-purple-600/30",

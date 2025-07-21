@@ -51,7 +51,7 @@ const repairValidationSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   urgency: z.enum(["low", "medium", "high"]),
-  category: z.enum(["electrical", "plumbing", "hvac", "furniture", "other"]),
+  category: z.enum(["electrical", "plumbing", "air_conditioning", "furniture", "other"]),
 }).refine((data) => {
   // Custom validation: high urgency requires detailed description
   if (data.urgency === "high" && data.description.length < 20) {
@@ -264,7 +264,7 @@ export function ValidationExamples() {
                           <SelectContent>
                             <SelectItem value="electrical">Electrical</SelectItem>
                             <SelectItem value="plumbing">Plumbing</SelectItem>
-                            <SelectItem value="hvac">HVAC</SelectItem>
+                            <SelectItem value="air_conditioning">Air Conditioning</SelectItem>
                             <SelectItem value="furniture">Furniture</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
