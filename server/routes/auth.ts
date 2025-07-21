@@ -105,15 +105,18 @@ export function setupAuthRoutes(app: Express) {
 
     // Then check Replit auth
     if (req.isAuthenticated && req.isAuthenticated() && req.user?.claims?.sub) {
-
-    const userId = req.user.claims.sub;
-    const user = await storage.getUser(userId);
-    if (user) {
-      const permissions = getUserPermissions(user.role as any);
-      res.json({ ...user, permissions });
-    } else {
-      res.status(404).json({ message: "User not found" });
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (user) {
+        const permissions = getUserPermissions(user.role as any);
+        return res.json({ ...user, permissions });
+      } else {
+        return res.status(404).json({ message: "User not found" });
+      }
     }
+    
+    // If no authentication found
+    return res.status(401).json({ message: "Unauthorized" });
   }));
 
   // Mock logout

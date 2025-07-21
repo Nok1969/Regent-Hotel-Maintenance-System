@@ -16,13 +16,15 @@ export const apiLimiter = rateLimit({
 
 // Stricter rate limiting for auth endpoints
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit auth attempts
+  windowMs: 5 * 60 * 1000, // 5 minutes (reduced from 15)
+  max: 10, // increased from 5 to 10 attempts per window
   message: {
-    error: "Too many authentication attempts, please try again later.",
+    error: "Too many authentication attempts, please try again later."
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Skip rate limiting for localhost in development
+  skip: (req: Request) => process.env.NODE_ENV === 'development' && req.ip === '127.0.0.1'
 });
 
 // Upload rate limiting
