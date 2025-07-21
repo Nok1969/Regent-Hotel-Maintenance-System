@@ -1,0 +1,238 @@
+{
+  "app": {
+    "title": "ระบบแจ้งซ่อมโรงแรมรีเจนท์ ชะอำ",
+    "subtitle": "ระบบแจ้งซ่อมสำหรับโรงแรม"
+  },
+  "auth": {
+    "signIn": "เข้าสู่ระบบ",
+    "signOut": "ออกจากระบบ",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "welcome": "ยินดีต้อนรับสู่โรงแรมรีเจนท์ ชะอำ",
+    "loginRequired": "กรุณาเข้าสู่ระบบเพื่อใช้งาน",
+    "loginButton": "เข้าสู่ระบบด้วย Replit",
+    "loading": "กำลังเข้าสู่ระบบ...",
+    "error": "การเข้าสู่ระบบล้มเหลว"
+  },
+  "hotel": {
+    "name": "โรงแรมรีเจนท์ ชะอำ บีช รีสอร์ท",
+    "location": "ชะอำ ประเทศไทย",
+    "subtitle": "รีสอร์ทหรูริมทะเล"
+  },
+  "navigation": {
+    "dashboard": "แดชบอร์ด",
+    "newRepair": "แจ้งซ่อมใหม่",
+    "repairHistory": "ประวัติการซ่อม",
+    "notifications": "การแจ้งเตือน",
+    "users": "จัดการผู้ใช้",
+    "settings": "การตั้งค่า"
+  },
+  "dashboard": {
+    "totalRequests": "รายการทั้งหมด",
+    "pending": "รอดำเนินการ",
+    "inProgress": "กำลังดำเนินการ",
+    "completed": "เสร็จสิ้น",
+    "repairCategories": "ประเภทการซ่อม",
+    "weeklyOverview": "สรุปรายสัปดาห์",
+    "recentRequests": "รายการล่าสุด"
+  },
+  "repair": {
+    "newRequest": "แจ้งซ่อมใหม่",
+    "room": "ห้อง/สถานที่",
+    "selectRoom": "เลือกห้อง...",
+    "category": "ประเภท",
+    "selectCategory": "เลือกประเภท...",
+    "priority": "ระดับความเร่งด่วน",
+    "low": "ต่ำ",
+    "medium": "กลาง",
+    "high": "สูง",
+    "description": "รายละเอียด",
+    "descriptionPlaceholder": "อธิบายปัญหาโดยละเอียด...",
+    "attachImages": "แนบรูปภาพ",
+    "dragDropImages": "ลากและวางรูปภาพที่นี่ หรือคลิกเพื่อเลือกไฟล์",
+    "browseFiles": "เลือกไฟล์",
+    "submitRequest": "ส่งคำขอ",
+    "cancel": "ยกเลิก",
+    "repairHistory": "ประวัติการซ่อม",
+    "allStatus": "ทุกสถานะ",
+    "allCategories": "ทุกประเภท"
+  },
+  "categories": {
+    "electrical": "ไฟฟ้า",
+    "plumbing": "ประปา",
+    "hvac": "แอร์",
+    "air_conditioning": "เครื่องปรับอากาศ",
+    "furniture": "เฟอร์นิเจอร์",
+    "other": "อื่นๆ"
+  },
+  "status": {
+    "pending": "รอดำเนินการ",
+    "in_progress": "กำลังดำเนินการ",
+    "completed": "เสร็จสิ้น"
+  },
+  "priority": {
+    "high": "สูง",
+    "medium": "กลาง",
+    "low": "ต่ำ"
+  },
+  "urgency": {
+    "high": "สูง",
+    "medium": "กลาง",
+    "low": "ต่ำ"
+  },
+  "table": {
+    "id": "รหัส",
+    "room": "ห้อง",
+    "title": "หัวข้อ",
+    "location": "สถานที่",
+    "category": "ประเภท",
+    "description": "รายละเอียด",
+    "status": "สถานะ",
+    "priority": "ความสำคัญ",
+    "urgency": "ความเร่งด่วน",
+    "reporter": "ผู้แจ้ง",
+    "created": "วันที่สร้าง",
+    "date": "วันที่",
+    "actions": "การกระทำ",
+    "viewDetails": "ดูรายละเอียด",
+    "edit": "แก้ไข",
+    "showing": "แสดง",
+    "to": "ถึง",
+    "of": "จาก",
+    "results": "รายการ",
+    "previous": "ก่อนหน้า",
+    "next": "ถัดไป",
+    "acceptJob": "รับงาน",
+    "cancelJob": "ยกเลิกงาน",
+    "assignedTo": "มอบหมายให้",
+    "unassigned": "ยังไม่มอบหมาย"
+  },
+  "notifications": {
+    "title": "การแจ้งเตือน",
+    "markAllRead": "ทำเครื่องหมายอ่านแล้วทั้งหมด",
+    "newRequest": "มีการแจ้งซ่อมใหม่",
+    "statusUpdated": "อัพเดทสถานะแล้ว",
+    "repairCompleted": "การซ่อมเสร็จสิ้น"
+  },
+  "roles": {
+    "admin": "ผู้ดูแลระบบ",
+    "manager": "ผู้จัดการ",
+    "staff": "พนักงาน",
+    "technician": "ช่างซ่อม"
+  },
+  "users": {
+    "title": "จัดการผู้ใช้",
+    "description": "จัดการผู้ใช้และสิทธิ์การเข้าถึงระบบ",
+    "allUsers": "ผู้ใช้ทั้งหมด",
+    "manageRoles": "จัดการบทบาทและสิทธิ์ผู้ใช้",
+    "user": "ผู้ใช้",
+    "role": "บทบาท",
+    "language": "ภาษา",
+    "joinedAt": "เข้าร่วมเมื่อ",
+    "actions": "การกระทำ",
+    "noUsers": "ไม่พบผู้ใช้",
+    "noPermission": "คุณไม่มีสิทธิ์ดูข้อมูลผู้ใช้",
+    "roleUpdated": "อัพเดทบทบาทแล้ว",
+    "roleUpdateSuccess": "อัพเดทบทบาทผู้ใช้สำเร็จ",
+    "roleUpdateError": "ไม่สามารถอัพเดทบทบาทผู้ใช้ได้",
+    "searchUsers": "ค้นหาผู้ใช้",
+    "searchPlaceholder": "กรอกชื่อหรืออีเมล"
+  },
+  "common": {
+    "loading": "กำลังโหลด...",
+    "noData": "ไม่มีข้อมูล",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "search": "ค้นหา",
+    "filter": "กรอง",
+    "next": "ถัดไป",
+    "previous": "ก่อนหน้า",
+    "close": "ปิด",
+    "error": "ข้อผิดพลาด",
+    "errorLoading": "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+    "unauthorized": "ไม่ได้รับอนุญาต",
+    "accessDenied": "ปฏิเสธการเข้าถึง"
+  },
+  "messages": {
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "success": "ดำเนินการสำเร็จ",
+    "unauthorized": "คุณถูกออกจากระบบ กำลังเข้าสู่ระบบใหม่...",
+    "accessDenied": "ปฏิเสธการเข้าถึง",
+    "repairSubmitted": "ส่งคำขอซ่อมสำเร็จ",
+    "repairUpdated": "อัพเดทคำขอซ่อมสำเร็จ",
+    "repairCreated": "สร้างคำขอซ่อมสำเร็จ",
+    "repairFailed": "ไม่สามารถสร้างคำขอซ่อมได้",
+    "statusUpdated": "อัพเดทสถานะสำเร็จ",
+    "updateFailed": "ไม่สามารถอัพเดทสถานะได้",
+    "jobAccepted": "รับงานสำเร็จ",
+    "acceptFailed": "ไม่สามารถรับงานได้",
+    "jobCancelled": "ยกเลิกงานสำเร็จ",
+    "cancelFailed": "ไม่สามารถยกเลิกงานได้",
+    "invalidFileType": "ไฟล์ประเภทไม่ถูกต้อง กรุณาอัพโหลดรูปภาพเท่านั้น",
+    "fileTooLarge": "ขนาดไฟล์ใหญ่เกินไป สูงสุด 5MB"
+  },
+  "charts": {
+    "byCategory": "การซ่อมตามประเภท",
+    "byStatus": "การซ่อมตามสถานะ",
+    "repairsByCategory": "การซ่อมตามประเภท",
+    "repairsByStatus": "การซ่อมตามสถานะ",
+    "monthlyTrend": "แนวโน้มรายเดือน",
+    "byUrgency": "การซ่อมตามระดับความเร่งด่วน",
+    "totalRepairs": "การซ่อมทั้งหมด",
+    "completedRepairs": "การซ่อมที่เสร็จสิ้น"
+  },
+  "stats": {
+    "totalRepairs": "การซ่อมทั้งหมด",
+    "pendingRepairs": "การซ่อมที่รอดำเนินการ",
+    "inProgressRepairs": "กำลังดำเนินการ",
+    "completedRepairs": "การซ่อมที่เสร็จสิ้น"
+  },
+  "months": {
+    "jan": "ม.ค.",
+    "feb": "ก.พ.",
+    "mar": "มี.ค.",
+    "apr": "เม.ย.",
+    "may": "พ.ค.",
+    "jun": "มิ.ย.",
+    "jul": "ก.ค.",
+    "aug": "ส.ค.",
+    "sep": "ก.ย.",
+    "oct": "ต.ค.",
+    "nov": "พ.ย.",
+    "dec": "ธ.ค."
+  },
+  "forms": {
+    "newRepair": "แจ้งซ่อมใหม่",
+    "title": "หัวข้อ",
+    "titlePlaceholder": "กรอกหัวข้อการซ่อม",
+    "location": "สถานที่",
+    "locationPlaceholder": "หมายเลขห้องหรือสถานที่",
+    "category": "ประเภท",
+    "selectCategory": "เลือกประเภท",
+    "urgency": "ความเร่งด่วน",
+    "selectUrgency": "เลือกความเร่งด่วน",
+    "description": "รายละเอียด",
+    "descriptionPlaceholder": "อธิบายปัญหาโดยละเอียด",
+    "images": "รูปภาพ",
+    "uploadImages": "คลิกเพื่ออัพโหลดรูปภาพ",
+    "creating": "กำลังสร้าง...",
+    "create": "สร้างการซ่อม"
+  },
+  "repairs": {
+    "title": "คำขอซ่อม",
+    "items": "รายการ",
+    "noRepairs": "ไม่พบคำขอซ่อม"
+  },
+  "filters": {
+    "search": "ค้นหา",
+    "searchPlaceholder": "ค้นหาการซ่อม...",
+    "status": "สถานะ",
+    "allStatus": "ทุกสถานะ",
+    "category": "ประเภท",
+    "allCategories": "ทุกประเภท",
+    "clear": "ล้างตัวกรอง"
+  }
+}
