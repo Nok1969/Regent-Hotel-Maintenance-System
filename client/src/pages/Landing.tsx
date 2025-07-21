@@ -65,11 +65,10 @@ export default function Landing() {
     <div 
       className="min-h-screen relative"
       style={{
-        backgroundImage: 'url(/images/regent-bg.png)',
+        background: 'linear-gradient(135deg, #e65100 0%, #ff6f00 25%, #f57c00 50%, #ff8f00 75%, #ffab00 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: '#667eea'
+        backgroundRepeat: 'no-repeat'
       }}
     >
       {/* Overlay */}
@@ -87,7 +86,7 @@ export default function Landing() {
         </div>
         
         <div className="flex flex-col items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-md backdrop-blur-lg bg-white/90 dark:bg-black/80 shadow-2xl border-white/30 mt-8">
+        <Card className="w-full max-w-md backdrop-blur-lg bg-white/95 dark:bg-gray-900/90 shadow-2xl border-orange-200/50 mt-8">
           <CardHeader className="text-center space-y-4">
           
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
