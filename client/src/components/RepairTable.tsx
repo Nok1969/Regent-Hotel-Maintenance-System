@@ -31,6 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageGallery, ImageGalleryCard } from "@/components/ImageGallery";
 import { Edit, Eye, Filter, X } from "lucide-react";
 
 interface RepairTableProps {
@@ -347,6 +348,14 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {repair.description}
                   </p>
+                  
+                  {/* รูปภาพในมือถือ */}
+                  <div className="mt-2">
+                    <ImageGallery 
+                      images={repair.images?.map((img: string) => `/uploads/${img}`) || []} 
+                      repairId={repair.id}
+                    />
+                  </div>
                 </div>
               </Card>
             ))
@@ -362,6 +371,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <TableHead className="text-sm">ประเภท</TableHead>
                 <TableHead className="text-sm">สถานะ</TableHead>
                 <TableHead className="text-sm">ความเร่งด่วน</TableHead>
+                <TableHead className="text-sm">รูปภาพ</TableHead>
                 <TableHead className="text-sm">วันที่</TableHead>
                 <TableHead className="text-sm">เวลา</TableHead>
                 <TableHead className="text-sm">{t("table.actions")}</TableHead>
@@ -370,7 +380,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
             <TableBody>
               {filteredRepairs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     <div className="text-muted-foreground">
                       {t("repairs.noRepairs")}
                     </div>
@@ -392,6 +402,13 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                     </TableCell>
                     <TableCell>
                       <UrgencyBadge urgency={repair.urgency as any} />
+                    </TableCell>
+                    <TableCell>
+                      <ImageGallery 
+                        images={repair.images?.map((img: string) => `/uploads/${img}`) || []} 
+                        repairId={repair.id}
+                        className="max-w-[200px]"
+                      />
                     </TableCell>
                     <TableCell>
                       <div className="text-sm text-muted-foreground">
@@ -458,21 +475,15 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                                 </div>
                               </div>
                               
-                              {repair.images && repair.images.length > 0 && (
-                                <div>
-                                  <strong className="text-sm text-muted-foreground">{t("forms.images")}:</strong>
-                                  <div className="grid grid-cols-2 gap-2 mt-2">
-                                    {repair.images.map((image: string, index: number) => (
-                                      <img
-                                        key={index}
-                                        src={`/uploads/${image}`}
-                                        alt={`Repair ${index + 1}`}
-                                        className="w-full h-32 object-cover rounded-md border"
-                                      />
-                                    ))}
-                                  </div>
+                              <div>
+                                <strong className="text-sm text-muted-foreground">รูปภาพแนบ:</strong>
+                                <div className="mt-2">
+                                  <ImageGalleryCard 
+                                    images={repair.images?.map((img: string) => `/uploads/${img}`) || []}
+                                    title=""
+                                  />
                                 </div>
-                              )}
+                              </div>
                             </div>
                           </DialogContent>
                         </Dialog>
