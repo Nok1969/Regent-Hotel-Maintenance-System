@@ -12,7 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
-import "../styles/orange-theme.css";
+
 
 
 export default function Landing() {
