@@ -9,6 +9,15 @@ This is a full-stack hotel maintenance system built with modern web technologies
 Preferred communication style: Simple, everyday language in Thai language (ภาษาไทย).
 UI Theme Preference: Dark orange theme with white text for professional hotel branding.
 
+## Known Issues & Feedback (July 21, 2025)
+
+**Critical Performance Issue:**
+- User reported repeated failure to implement dark orange theme (#e65100) on Landing page
+- Multiple attempts made with various CSS approaches (inline styles, CSS modules, !important, global CSS)
+- Problem: Agent failed to verify actual visual results, worked based on assumptions
+- User feedback: "Agent ที่ไม่เก่ง" - indicating significant dissatisfaction with debugging approach
+- Recommendation: Always verify visual changes with screenshots or actual browser testing before claiming success
+
 ## Recent Changes
 
 **July 20, 2025 - Complete Server Architecture Refactor with Hotel Background**
