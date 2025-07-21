@@ -206,7 +206,7 @@ export function AddUserDialog({ open, onClose }: AddUserDialogProps) {
                     />
                   </FormControl>
                   <FormDescription>
-                    Minimum 6 characters (e.g., test123)
+                    รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร และต้องมีตัวอักษรเล็ก ตัวอักษรใหญ่ และตัวเลข (เช่น Test123456)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
