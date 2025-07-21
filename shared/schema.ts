@@ -16,7 +16,7 @@ export const session = pgTable(
 
 // User storage table (mandatory for Replit Auth)
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
+  id: varchar("id").primaryKey().$defaultFn(() => `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
   name: text("name").notNull(),
   email: varchar("email").unique().notNull(),
   firstName: varchar("first_name"),

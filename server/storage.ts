@@ -139,6 +139,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUserWithPassword(userData: {
+    id?: string;
     name: string;
     email: string;
     password: string;
@@ -150,17 +151,23 @@ export class DatabaseStorage implements IStorage {
     // Hash password
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
+    const insertData: any = {
+      name: userData.name,
+      email: userData.email,
+      password: hashedPassword,
+      firstName: userData.firstName || userData.name.split(' ')[0],
+      lastName: userData.lastName || userData.name.split(' ')[1] || '',
+      role: userData.role as any,
+      language: userData.language as any,
+    };
+    
+    if (userData.id) {
+      insertData.id = userData.id;
+    }
+    
     const [user] = await db
       .insert(users)
-      .values({
-        name: userData.name,
-        email: userData.email,
-        password: hashedPassword,
-        firstName: userData.firstName || userData.name.split(' ')[0],
-        lastName: userData.lastName || userData.name.split(' ')[1] || '',
-        role: userData.role as any,
-        language: userData.language as any,
-      })
+      .values(insertData)
       .returning();
     return user;
   }

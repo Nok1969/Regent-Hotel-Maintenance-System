@@ -27,7 +27,7 @@ export function setupAuthRoutes(app: Express) {
         "admin": { id: "admin-123", role: "admin", password: "admin123" },
         "manager": { id: "manager-123", role: "manager", password: "manager123" },
         "staff": { id: "staff-123", role: "staff", password: "staff123" },
-        "technician": { id: "tech-123", role: "technician", password: "tech123" }
+        "tech": { id: "tech-123", role: "technician", password: "tech123" }
       };
 
       const mockUser = mockUsers[username as keyof typeof mockUsers];
@@ -36,43 +36,37 @@ export function setupAuthRoutes(app: Express) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // For existing mock users, verify password using bcrypt if stored password is hashed
-      const user = await storage.getUser(mockUser.id);
-      if (user?.password) {
-        const isValidPassword = await storage.verifyPassword(mockUser.id, password);
-        if (!isValidPassword) {
-          return res.status(401).json({ message: "Invalid credentials" });
-        }
-      } else if (mockUser.password !== password) {
+      // Simple password check for demo
+      if (mockUser.password !== password) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // Create or update user in database with hashed password
-      const existingUser = await storage.getUser(mockUser.id);
-      if (!existingUser) {
-        await storage.createUserWithPassword({
-          name: `${username.charAt(0).toUpperCase() + username.slice(1)} User`,
-          email: `${username}@hotel.com`,
-          password: mockUser.password,
-          firstName: username.charAt(0).toUpperCase() + username.slice(1),
-          lastName: "User",
-          role: mockUser.role,
-          language: "en"
-        });
+      // Get user from database
+      const user = await storage.getUser(mockUser.id);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
       }
 
-      // Store user info in session instead of global variable
+      // Store user info in session
       req.session.mockUser = {
-        id: mockUser.id,
-        role: mockUser.role,
+        id: user.id,
+        role: user.role,
         isAuthenticated: true,
         timestamp: Date.now()
       };
 
-      console.log('Login successful for user:', mockUser.id);
+      console.log('Login successful for user:', user.id);
 
-      // Always return JSON for API requests
-      res.json({ success: true, role: mockUser.role });
+      res.json({ 
+        success: true, 
+        role: user.role,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
+      });
     })
   );
 
