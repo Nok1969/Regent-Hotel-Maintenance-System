@@ -20,8 +20,11 @@ UI Theme Preference: Dark orange theme with white text for professional hotel br
 
 ## Recent Changes
 
-**July 21, 2025 - Hotel Branding Update to Vala Hua-Hin Nu Chapter**
+**July 21, 2025 - Complete Hotel Branding & Domain Update to Vala Hua-Hin Nu Chapter**
 - ✅ Updated hotel name from "The Regent Cha Am Beach Resort" to "Vala Hua-Hin Nu Chapter Hotel"
+- ✅ Changed project domain from "regent-hotel-maintenance-system" to "vala-hua-hin-nu-chapter-hotel-maintenance-system"
+- ✅ Enhanced text clarity system-wide with font-semibold and text-enhanced classes for better readability
+- ✅ Improved logout button styling with enhanced visibility in both sidebar and header
 - ✅ Modified all UI components to reflect new branding
 - ✅ Updated translation files for both English and Thai languages
 - ✅ Enhanced design with modern Inter/Poppins fonts and professional styling
