@@ -18,6 +18,15 @@ UI Theme Preference: Dark orange theme (#e65100) with white text for professiona
 - User feedback: "Agent ที่ไม่เก่ง" - indicating significant dissatisfaction with debugging approach
 - Recommendation: Always verify visual changes with screenshots or actual browser testing before claiming success
 
+**New Critical Feedback (July 21, 2025):**
+- User expressed frustration: "แก้ไขไม่เรียบร้อยถี่ถ้วนเลย" and "login ไม่ได้อีกล่ะ"
+- User questioned effectiveness and value: "ทำไมถึงสร้างข้อผิดพลาดบ่อย"
+- Key issues identified:
+  1. Authentication instability (session management problems)
+  2. Incomplete fixes (fixing surface issues without addressing root causes)
+  3. Lack of comprehensive testing before claiming completion
+  4. Not working systematically - too many small changes instead of planned solutions
+
 ## Recent Changes
 
 **July 21, 2025 - Database Recovery & System Restoration + Mobile Responsive Design**

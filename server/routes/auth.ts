@@ -85,22 +85,26 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
-  // Get current user
+  // Get current user - Fixed for better session management
   app.get("/api/auth/user", asyncHandler(async (req: any, res: any) => {
-    // Check for session-based authentication first
+    // Check for session-based authentication first (prioritize mock auth for development)
     if (req.session?.mockUser?.isAuthenticated) {
       const userId = req.session.mockUser.id;
-      const user = await storage.getUser(userId);
-      if (user) {
-        const permissions = getUserPermissions(user.role as any);
-        return res.json({ ...user, permissions });
+      try {
+        const user = await storage.getUser(userId);
+        if (user) {
+          const permissions = getUserPermissions(user.role as any);
+          return res.json({ ...user, permissions });
+        }
+      } catch (error) {
+        console.error('Error fetching user from storage:', error);
+        // Clear invalid session
+        req.session.mockUser = null;
       }
     }
 
     // Then check Replit auth
-    if (!req.isAuthenticated || !req.isAuthenticated() || !req.user?.claims?.sub) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    if (req.isAuthenticated && req.isAuthenticated() && req.user?.claims?.sub) {
 
     const userId = req.user.claims.sub;
     const user = await storage.getUser(userId);
