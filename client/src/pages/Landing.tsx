@@ -32,20 +32,30 @@ export default function Landing() {
 
   const mockLoginMutation = useMutation({
     mutationFn: async (credentials: { username: string; password: string }) => {
-      const response = await apiRequest("POST", "/api/auth/mock-login", credentials);
-      return await response.json();
+      const response = await fetch("/api/auth/mock-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Login failed");
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Login Successful",
-        description: "Welcome to the Hotel Maintenance System",
+        title: "เข้าสู่ระบบสำเร็จ",
+        description: "ยินดีต้อนรับสู่ระบบซ่อมแซมโรงแรม",
       });
-      window.location.reload();
+      window.location.href = "/dashboard";
     },
     onError: (error: any) => {
       toast({
-        title: "Login Failed",
-        description: error.message || "Invalid credentials",
+        title: "เข้าสู่ระบบไม่สำเร็จ",
+        description: error.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
         variant: "destructive",
       });
     },
