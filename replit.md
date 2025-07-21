@@ -27,6 +27,13 @@ UI Theme Preference: Dark orange theme (#e65100) with white text for professiona
   3. Lack of comprehensive testing before claiming completion
   4. Not working systematically - too many small changes instead of planned solutions
 
+**Latest Issue Resolution (July 21, 2025 - 9:28 AM):**
+- ✅ Fixed enum validation error ("hvac" → "air_conditioning")
+- ✅ Resolved userId missing in repair requests
+- ✅ Enhanced validation with Thai language messages
+- ✅ Set minimum description length to 10 characters
+- ✅ System now creates repair requests successfully
+
 ## Recent Changes
 
 **July 21, 2025 - Database Recovery & System Restoration + Mobile Responsive Design**

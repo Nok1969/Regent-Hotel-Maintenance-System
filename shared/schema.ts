@@ -125,7 +125,7 @@ export const createUserSchema = z.object({
 
 // Repair schemas with custom validation
 export const baseRepairSchema = z.object({
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().min(10, "รายละเอียดต้องมีอย่างน้อย 10 ตัวอักษร"),
   category: categoryEnum,
   urgency: urgencyEnum,
   status: statusEnum.default("pending"),
@@ -136,8 +136,8 @@ export const baseRepairSchema = z.object({
 
 export const insertRepairSchema = baseRepairSchema.extend({
   // Frontend uses 'title' and 'location' instead of 'room'
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  location: z.string().min(3, "Location must be at least 3 characters"),
+  title: z.string().min(3, "หัวข้อต้องมีอย่างน้อย 3 ตัวอักษร"),
+  location: z.string().min(3, "สถานที่ต้องมีอย่างน้อย 3 ตัวอักษร"),
 }).refine((data) => {
   // Custom validation: high urgency requires detailed description
   if (data.urgency === "high" && data.description.length < 20) {
@@ -145,13 +145,13 @@ export const insertRepairSchema = baseRepairSchema.extend({
   }
   return true;
 }, {
-  message: "High urgency repairs require detailed description (min 20 characters)",
+  message: "การซ่อมเร่งด่วนต้องมีรายละเอียดอย่างน้อย 20 ตัวอักษร",
   path: ["description"],
 });
 
 // Backend schema that matches the database structure
 export const backendRepairSchema = baseRepairSchema.extend({
-  room: z.string().min(3, "Room must be at least 3 characters"),
+  room: z.string().min(3, "ห้องต้องมีอย่างน้อย 3 ตัวอักษร"),
 });
 
 // Update schemas
