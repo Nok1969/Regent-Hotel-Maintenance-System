@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import maintenanceIcon from "@assets/Icon_maintenance2.png!sw800_1752589313813.png";
 import { HotelBackground, HotelLogo } from "@/components/HotelBackground";
+import "../styles/orange-theme.css";
 
 
 export default function Landing() {
@@ -63,16 +64,9 @@ export default function Landing() {
 
   return (
     <div 
-      className="min-h-screen relative"
-      style={{
-        background: 'linear-gradient(135deg, #e65100 0%, #ff6f00 25%, #f57c00 50%, #ff8f00 75%, #ffab00 100%)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className="min-h-screen relative orange-theme"
     >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/30"></div>
+      {/* Overlay - removed for orange theme */}
       
       {/* Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
