@@ -153,29 +153,37 @@ export default function Dashboard() {
         title: t("dashboard.totalRepairs"),
         value: stats.total || 0,
         icon: ClipboardList,
-        color: "text-blue-600",
-        bgColor: "bg-blue-50 dark:bg-blue-900/20",
+        color: "text-blue-600 dark:text-blue-400",
+        bgColor: "bg-gradient-to-br from-blue-500/10 to-blue-600/20",
+        cardBg: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/20",
+        iconBg: "bg-blue-500/20",
       },
       {
         title: t("dashboard.pendingRepairs"),
         value: stats.pending || 0,
         icon: Clock,
-        color: "text-yellow-600",
-        bgColor: "bg-yellow-50 dark:bg-yellow-900/20",
+        color: "text-yellow-600 dark:text-yellow-400",
+        bgColor: "bg-gradient-to-br from-yellow-500/10 to-yellow-600/20",
+        cardBg: "bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/30 dark:to-yellow-800/20",
+        iconBg: "bg-yellow-500/20",
       },
       {
         title: t("dashboard.inProgressRepairs"),
         value: stats.inProgress || 0,
         icon: Zap,
-        color: "text-orange-600",
-        bgColor: "bg-orange-50 dark:bg-orange-900/20",
+        color: "text-orange-600 dark:text-orange-400",
+        bgColor: "bg-gradient-to-br from-orange-500/10 to-orange-600/20",
+        cardBg: "bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/20",
+        iconBg: "bg-orange-500/20",
       },
       {
         title: t("dashboard.completedRepairs"),
         value: stats.completed || 0,
         icon: CheckCircle,
-        color: "text-green-600",
-        bgColor: "bg-green-50 dark:bg-green-900/20",
+        color: "text-green-600 dark:text-green-400",
+        bgColor: "bg-gradient-to-br from-green-500/10 to-green-600/20",
+        cardBg: "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/20",
+        iconBg: "bg-green-500/20",
       },
     ];
   }, [stats, t]);
@@ -194,17 +202,25 @@ export default function Dashboard() {
           ))
         ) : (
           statsCards.map((card, index) => (
-            <Card key={index}>
+            <Card key={index} className={cn(
+              "overflow-hidden transition-all duration-300 hover:shadow-lg animate-scale-in border-2",
+              card.cardBg
+            )} style={{ animationDelay: `${index * 100}ms` }}>
               <CardContent className="p-3 sm:p-6">
-                <div className="flex items-center space-x-2 sm:space-x-4">
-                  <div className={`p-2 sm:p-3 rounded-full ${card.bgColor}`}>
-                    <card.icon className={`w-4 h-4 sm:w-6 sm:h-6 ${card.color}`} />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-semibold text-subtitle-enhanced">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1 sm:space-y-2">
+                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">
                       {card.title}
                     </p>
-                    <p className="text-lg sm:text-2xl font-bold text-enhanced">{card.value}</p>
+                    <p className={cn("text-xl sm:text-3xl font-bold", card.color)}>
+                      {card.value}
+                    </p>
+                  </div>
+                  <div className={cn(
+                    "h-8 w-8 sm:h-12 sm:w-12 rounded-lg flex items-center justify-center shadow-sm",
+                    card.iconBg
+                  )}>
+                    <card.icon className={cn("h-4 w-4 sm:h-6 sm:w-6", card.color)} />
                   </div>
                 </div>
               </CardContent>
