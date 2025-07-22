@@ -6,6 +6,7 @@
 html, body, #root {
   background-color: #fff3e0 !important;
   background: #fff3e0 !important;
+  color: #212121 !important;
 }
 
 /* Override any Tailwind background classes */
@@ -17,23 +18,68 @@ main {
   background-color: #fff3e0 !important;
 }
 
+/* Force text color */
+* {
+  color: #212121 !important;
+}
+
+/* Override text colors for all components */
+.text-foreground, .text-muted-foreground, .text-card-foreground, 
+.text-popover-foreground, .text-accent-foreground, .text-secondary-foreground {
+  color: #212121 !important;
+}
+
+/* Headers and important text */
+h1, h2, h3, h4, h5, h6, p, span, div, label, button, a {
+  color: #212121 !important;
+}
+
+/* Table text */
+table, th, td, tr {
+  color: #212121 !important;
+}
+
+/* Form inputs */
+input, textarea, select {
+  color: #212121 !important;
+}
+
+/* Sidebar and navigation */
+nav, .sidebar, .menu {
+  color: #212121 !important;
+}
+
+/* Cards and dialogs */
+.card, .dialog, .modal {
+  color: #212121 !important;
+}
+
+/* Specific component overrides */
+[data-radix-collection-item] {
+  color: #212121 !important;
+}
+
+.lucide {
+  color: #212121 !important;
+}
+
 :root {
   --background: 255, 224, 178;
-  --foreground: hsl(220, 25%, 10%);
+  --foreground: #212121;
   --muted: hsl(220, 20%, 96%);
-  --muted-foreground: hsl(220, 15%, 35%);
+  --muted-foreground: #212121;
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(220, 25%, 10%);
+  --popover-foreground: #212121;
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(220, 25%, 10%);
+  --card-foreground: #212121;
   --border: hsl(220, 20%, 90%);
   --input: hsl(220, 20%, 95%);
   --primary: hsl(24, 100%, 45%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(220, 30%, 95%);
-  --secondary-foreground: hsl(220, 25%, 10%);
+  --secondary-foreground: #212121;
   --accent: hsl(220, 60%, 92%);
-  --accent-foreground: hsl(220, 25%, 10%);
+  --accent-foreground: #212121;
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(220, 70%, 50%);
@@ -83,11 +129,12 @@ main {
   }
 
   body {
-    @apply antialiased text-foreground;
+    @apply antialiased;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
     background: #fff3e0 !important;
     background-color: #fff3e0 !important;
+    color: #212121 !important;
   }
   
   html {
