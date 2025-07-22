@@ -4,17 +4,17 @@
 
 /* Force background color */
 html, body, #root {
-  background-color: #ffe0b2 !important;
-  background: #ffe0b2 !important;
+  background-color: #fff3e0 !important;
+  background: #fff3e0 !important;
 }
 
 /* Override any Tailwind background classes */
 .bg-background {
-  background-color: #ffe0b2 !important;
+  background-color: #fff3e0 !important;
 }
 
 main {
-  background-color: #ffe0b2 !important;
+  background-color: #fff3e0 !important;
 }
 
 :root {
@@ -86,13 +86,13 @@ main {
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
-    background: linear-gradient(135deg, #fff3e0, #ffcc80) !important;
-    background-attachment: fixed !important;
+    background: #fff3e0 !important;
+    background-color: #fff3e0 !important;
   }
   
   html {
-    background: linear-gradient(135deg, #fff3e0, #ffcc80) !important;
-    background-attachment: fixed !important;
+    background: #fff3e0 !important;
+    background-color: #fff3e0 !important;
   }
   
   * {
@@ -100,7 +100,8 @@ main {
   }
   
   #root {
-    background: transparent !important;
+    background: #fff3e0 !important;
+    background-color: #fff3e0 !important;
     min-height: 100vh;
   }
 
