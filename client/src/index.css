@@ -25,8 +25,8 @@ main {
 
 /* Login page specific background */
 .login-page {
-  background-color: #ffee58 !important;
-  background: #ffee58 !important;
+  background-color: #f9c89f !important;
+  background: #f9c89f !important;
 }
 
 /* Override text colors for all components */
@@ -80,7 +80,7 @@ nav, .sidebar, .menu {
   --card-foreground: #212121;
   --border: hsl(220, 20%, 90%);
   --input: hsl(220, 20%, 95%);
-  --primary: hsl(24, 100%, 45%);
+  --primary: hsl(24, 88%, 68%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(220, 30%, 95%);
   --secondary-foreground: #212121;
@@ -307,10 +307,10 @@ nav, .sidebar, .menu {
   @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
 }
 /* Force orange background globally */
-html, body, #root { background: #e65100 !important; background-image: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important; }
+html, body, #root { background: #f3f2f1 !important; background-image: linear-gradient(135deg, #f9c89f, ##f9c89f, #f9c89f, #ffe0b2, #ffe0b2) !important; }
 
 .bg-orange-gradient {
-  background: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important;
+  background: linear-gradient(135deg, #f9c89f, #f9c89f, #f9c89f, #ffe0b2, #ffe0b2) !important;
 }
 
 /* Enhanced animations */
