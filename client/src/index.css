@@ -45,6 +45,52 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]) {
   }
 }
 
+/* Sidebar text enhancement for better visibility */
+.sidebar-enhanced nav button span,
+.sidebar-enhanced nav button {
+  color: #212121 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+/* Sidebar menu text visibility enhancement */
+aside nav button:not(.bg-primary) {
+  color: #212121 !important;
+}
+
+aside nav button:not(.bg-primary) span {
+  color: #212121 !important;
+  font-weight: 600 !important;
+}
+
+aside nav button:not(.bg-primary) svg {
+  color: #212121 !important;
+}
+
+/* Force sidebar background to be more opaque */
+.sidebar-enhanced {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced text contrast for all sidebar elements */
+.sidebar-enhanced * {
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Dashboard menu specific enhancement */
+.sidebar-enhanced nav a:first-child button {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.sidebar-enhanced nav a:first-child button span,
+.sidebar-enhanced nav a:first-child button svg {
+  color: #000000 !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+
 /* Textarea styling */
 textarea {
   background-color: white !important;

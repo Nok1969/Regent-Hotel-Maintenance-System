@@ -80,11 +80,12 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card border-r border-border transform transition-transform duration-200 z-30 shadow-modern gradient-card",
+        "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card border-r border-border transform transition-transform duration-200 z-30 shadow-modern gradient-card sidebar-enhanced",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:translate-x-0",
         className
       )}
+      style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
     >
       <nav className="p-4 space-y-2 custom-scrollbar">
         {visibleMenuItems.map((item) => {
@@ -96,13 +97,15 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
               <Button
                 variant={isActive ? "default" : "ghost"}
                 className={cn(
-                  "w-full justify-start",
-                  isActive && "bg-primary text-primary-foreground"
+                  "w-full justify-start text-foreground font-semibold",
+                  isActive && "bg-primary text-primary-foreground font-bold",
+                  !isActive && "text-gray-800 hover:text-gray-900 hover:bg-gray-100"
                 )}
                 onClick={onClose}
+                style={!isActive ? { color: '#212121', fontWeight: '600' } : {}}
               >
-                <Icon className="h-4 w-4 mr-3" />
-                <span className="flex-1 text-left">{item.label}</span>
+                <Icon className="h-4 w-4 mr-3" style={!isActive ? { color: '#212121' } : {}} />
+                <span className="flex-1 text-left font-semibold" style={!isActive ? { color: '#212121' } : {}}>{item.label}</span>
                 {item.badge && (
                   <Badge variant="destructive" className="ml-auto">
                     {item.badge}
@@ -115,18 +118,19 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
 
         <Separator className="my-4" />
 
-        <Button variant="ghost" className="w-full justify-start font-medium text-enhanced">
-          <Settings className="h-4 w-4 mr-3" />
-          {t("navigation.settings")}
+        <Button variant="ghost" className="w-full justify-start font-semibold text-gray-800 hover:text-gray-900 hover:bg-gray-100" style={{ color: '#212121', fontWeight: '600' }}>
+          <Settings className="h-4 w-4 mr-3" style={{ color: '#212121' }} />
+          <span style={{ color: '#212121' }}>{t("navigation.settings")}</span>
         </Button>
 
         <Button
           variant="ghost"
           onClick={handleLogout}
-          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 font-semibold text-enhanced"
+          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 font-semibold"
+          style={{ color: '#dc2626', fontWeight: '600' }}
         >
-          <LogOut className="h-4 w-4 mr-3" />
-          {t("auth.signOut")}
+          <LogOut className="h-4 w-4 mr-3" style={{ color: '#dc2626' }} />
+          <span style={{ color: '#dc2626' }}>{t("auth.signOut")}</span>
         </Button>
       </nav>
 
@@ -137,10 +141,10 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
               <Wrench className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">
+              <p className="text-sm font-medium truncate" style={{ color: '#212121', fontWeight: '600' }}>
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-xs text-muted-foreground capitalize">
+              <p className="text-xs capitalize" style={{ color: '#666666', fontWeight: '500' }}>
                 {user.role}
               </p>
             </div>
