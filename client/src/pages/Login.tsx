@@ -47,7 +47,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-orange-gradient animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center animate-fade-in relative overflow-hidden login-page" style={{ backgroundColor: '#ffee58' }}>
       {/* Background decorative elements */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-white/5 bg-[radial-gradient(circle,_rgba(255,255,255,0.1)_1px,_transparent_1px)] bg-[length:30px_30px]"></div>

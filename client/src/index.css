@@ -23,6 +23,12 @@ main {
   color: #212121 !important;
 }
 
+/* Login page specific background */
+.login-page {
+  background-color: #ffee58 !important;
+  background: #ffee58 !important;
+}
+
 /* Override text colors for all components */
 .text-foreground, .text-muted-foreground, .text-card-foreground, 
 .text-popover-foreground, .text-accent-foreground, .text-secondary-foreground {
