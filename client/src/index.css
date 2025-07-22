@@ -71,8 +71,8 @@
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
-    background: #fff3e0 !important;
-    background-image: linear-gradient(135deg, #fff3e0, #ffe0b2, #ffcc80, #ffb74d, #ffa726) !important;
+    background: #ffe0b2 !important;
+    background-image: linear-gradient(135deg, #ffe0b2, #ffcc80, #ffb74d, #ffa726, #ff9800) !important;
   }
 
   /* Enhanced text contrast for better readability */
