@@ -14,6 +14,24 @@ html, body, #root {
   background-color: #fff3e0 !important;
 }
 
+/* Make sure all input components are white */
+input:not([type="submit"]):not([type="button"]):not([type="reset"]) {
+  background-color: white !important;
+  background: white !important;
+}
+
+/* Textarea styling */
+textarea {
+  background-color: white !important;
+  background: white !important;
+}
+
+/* Select dropdown styling */
+select, [data-radix-select-trigger] {
+  background-color: white !important;
+  background: white !important;
+}
+
 main {
   background-color: #fff3e0 !important;
 }
@@ -48,6 +66,49 @@ table, th, td, tr {
 /* Form inputs */
 input, textarea, select {
   color: #212121 !important;
+  background-color: white !important;
+  background: white !important;
+}
+
+/* Input field styling */
+.form-input-modern, 
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"],
+textarea,
+select {
+  background-color: white !important;
+  background: white !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Override shadcn input styles */
+.bg-background input {
+  background-color: white !important;
+}
+
+/* Specific input component override */
+[data-radix-collection-item] input,
+.ui-input,
+input.ui-input,
+[data-radix-select-content],
+[data-radix-select-viewport] {
+  background-color: white !important;
+  background: white !important;
+}
+
+/* Comprehensive input styling for all forms */
+.space-y-3 input,
+.space-y-4 input,
+form input,
+form textarea,
+form select,
+[role="textbox"],
+[role="combobox"] {
+  background-color: white !important;
+  background: white !important;
+  border: 1px solid #d1d5db !important;
 }
 
 /* Sidebar and navigation */
@@ -79,7 +140,7 @@ nav, .sidebar, .menu {
   --card: hsl(0, 0%, 100%);
   --card-foreground: #212121;
   --border: hsl(220, 20%, 90%);
-  --input: hsl(220, 20%, 95%);
+  --input: hsl(0, 0%, 100%);
   --primary: hsl(24, 88%, 68%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(220, 30%, 95%);
@@ -306,8 +367,7 @@ nav, .sidebar, .menu {
 .priority-low {
   @apply bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400;
 }
-/* Force orange background globally */
-html, body, #root { background: #f3f2f1 !important; background-image: linear-gradient(135deg, #f9c89f, ##f9c89f, #f9c89f, #ffe0b2, #ffe0b2) !important; }
+/* Removed old background styling */
 
 .bg-orange-gradient {
   background: linear-gradient(135deg, #f9c89f, #f9c89f, #f9c89f, #ffe0b2, #ffe0b2) !important;
