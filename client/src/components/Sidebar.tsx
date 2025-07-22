@@ -32,7 +32,7 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     {
       href: "/",
       icon: Home,
-      label: t("navigation.dashboard"),
+      label: t("navigation.dashboard") || "Dashboard",
       badge: null,
       requiresPermission: null,
     },
@@ -81,7 +81,8 @@ export function Sidebar({ className, isOpen, onClose }: SidebarProps) {
     <aside
       className={cn(
         "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-card border-r border-border transform transition-transform duration-200 z-30 shadow-modern gradient-card",
-        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full",
+        "lg:translate-x-0",
         className
       )}
     >

@@ -20,6 +20,31 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]) {
   background: white !important;
 }
 
+/* Mobile menu button visibility */
+@media (max-width: 1024px) {
+  .mobile-menu-button {
+    display: flex !important;
+  }
+}
+
+/* Sidebar mobile responsive */
+@media (max-width: 1024px) {
+  .sidebar-mobile {
+    transform: translateX(-100%) !important;
+  }
+  
+  .sidebar-mobile.open {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Desktop sidebar always visible */
+@media (min-width: 1024px) {
+  .sidebar-desktop {
+    transform: translateX(0) !important;
+  }
+}
+
 /* Textarea styling */
 textarea {
   background-color: white !important;

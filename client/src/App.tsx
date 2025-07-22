@@ -35,11 +35,15 @@ function AppHeader({ user, onMenuClick }: { user: any; onMenuClick: () => void }
   return (
     <header className="bg-card border-b border-border h-14 sm:h-16 flex items-center justify-between px-3 sm:px-6 fixed top-0 left-0 right-0 z-40 shadow-modern gradient-bg">
       <div className="flex items-center space-x-2 sm:space-x-4">
-        {isMobile && (
-          <Button variant="ghost" size="icon" onClick={onMenuClick} className="text-primary-foreground h-8 w-8">
-            <Menu className="h-4 w-4" />
-          </Button>
-        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onMenuClick} 
+          className="text-primary-foreground h-8 w-8 hover:bg-white/10 lg:hidden"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-xl flex items-center justify-center shadow-modern">
             <Wrench className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
@@ -138,14 +142,14 @@ function Router() {
         />
         
         {/* Mobile overlay */}
-        {isMobile && sidebarOpen && (
+        {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 z-20"
+            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
             onClick={closeSidebar}
           />
         )}
 
-        <main className="flex-1 lg:ml-64 p-3 sm:p-6 custom-scrollbar overflow-x-hidden" style={{ backgroundColor: '#fff3e0' }}>
+        <main className="flex-1 lg:ml-64 p-3 sm:p-6 custom-scrollbar overflow-x-hidden transition-all duration-200" style={{ backgroundColor: '#fff3e0' }}>
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/new-repair" component={NewRepair} />
