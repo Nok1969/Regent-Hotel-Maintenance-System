@@ -2,8 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force background color */
+html, body, #root {
+  background-color: #ffe0b2 !important;
+  background: #ffe0b2 !important;
+}
+
+/* Override any Tailwind background classes */
+.bg-background {
+  background-color: #ffe0b2 !important;
+}
+
+main {
+  background-color: #ffe0b2 !important;
+}
+
 :root {
-  --background: hsl(330, 25%, 99%);
+  --background: 255, 224, 178;
   --foreground: hsl(220, 25%, 10%);
   --muted: hsl(220, 20%, 96%);
   --muted-foreground: hsl(220, 15%, 35%);
@@ -71,8 +86,23 @@
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
+    background-color: #ffe0b2 !important;
     background: #ffe0b2 !important;
-    background-image: linear-gradient(135deg, #ffe0b2, #ffcc80, #ffb74d, #ffa726, #ff9800) !important;
+  }
+  
+  html {
+    background-color: #ffe0b2 !important;
+    background: #ffe0b2 !important;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  #root {
+    background-color: #ffe0b2 !important;
+    background: #ffe0b2 !important;
+    min-height: 100vh;
   }
 
   /* Enhanced text contrast for better readability */

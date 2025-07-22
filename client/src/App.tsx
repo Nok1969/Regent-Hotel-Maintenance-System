@@ -145,7 +145,7 @@ function Router() {
           />
         )}
 
-        <main className="flex-1 lg:ml-64 p-3 sm:p-6 custom-scrollbar overflow-x-hidden">
+        <main className="flex-1 lg:ml-64 p-3 sm:p-6 custom-scrollbar overflow-x-hidden" style={{ backgroundColor: '#ffe0b2' }}>
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/new-repair" component={NewRepair} />
@@ -165,8 +165,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <div style={{ backgroundColor: '#ffe0b2', minHeight: '100vh' }}>
+          <Toaster />
+          <Router />
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
