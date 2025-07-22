@@ -86,13 +86,13 @@ main {
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
-    background-color: #ffe0b2 !important;
-    background: #ffe0b2 !important;
+    background: linear-gradient(135deg, #fff3e0, #ffcc80) !important;
+    background-attachment: fixed !important;
   }
   
   html {
-    background-color: #ffe0b2 !important;
-    background: #ffe0b2 !important;
+    background: linear-gradient(135deg, #fff3e0, #ffcc80) !important;
+    background-attachment: fixed !important;
   }
   
   * {
@@ -100,8 +100,7 @@ main {
   }
   
   #root {
-    background-color: #ffe0b2 !important;
-    background: #ffe0b2 !important;
+    background: transparent !important;
     min-height: 100vh;
   }
 
