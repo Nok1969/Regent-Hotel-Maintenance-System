@@ -65,7 +65,7 @@ export const repairValidation = [
     .escape(), // XSS protection
 
   body("category")
-    .isIn(["electrical", "plumbing", "hvac", "furniture", "other"])
+    .isIn(["electrical", "plumbing", "air_conditioning", "furniture", "other"])
     .withMessage("Invalid category"),
 
   body("urgency")
@@ -153,9 +153,9 @@ export const handleValidationErrors = (
     return res.status(400).json({
       error: "Validation failed",
       details: errors.array().map(err => ({
-        field: err.param,
+        field: 'param' in err ? err.param : 'unknown',
         message: err.msg,
-        value: err.value,
+        value: 'value' in err ? err.value : 'unknown',
       })),
     });
   }
@@ -265,7 +265,7 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
 
   // Check for CSRF token in header
   const csrfToken = req.headers['x-csrf-token'] as string;
-  const sessionToken = req.session?.csrfToken;
+  const sessionToken = (req.session as any)?.csrfToken;
 
   if (!csrfToken || !sessionToken || csrfToken !== sessionToken) {
     return res.status(403).json({
