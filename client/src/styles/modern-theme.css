@@ -179,7 +179,7 @@
 
 /* Priority indicators */
 .priority-high {
-  background: linear-gradient(45deg, #ef4444, #dc2626);
+  background: linear-gradient(45deg, #f4a490, #f2ae6e);
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 

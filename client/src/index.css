@@ -3,22 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(330, 25%, 97%);
-  --foreground: hsl(220, 15%, 15%);
-  --muted: hsl(220, 20%, 94%);
-  --muted-foreground: hsl(220, 10%, 45%);
+  --background: hsl(330, 25%, 99%);
+  --foreground: hsl(220, 25%, 10%);
+  --muted: hsl(220, 20%, 96%);
+  --muted-foreground: hsl(220, 15%, 35%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(220, 15%, 15%);
+  --popover-foreground: hsl(220, 25%, 10%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(220, 15%, 15%);
-  --border: hsl(220, 20%, 88%);
-  --input: hsl(220, 20%, 88%);
+  --card-foreground: hsl(220, 25%, 10%);
+  --border: hsl(220, 20%, 90%);
+  --input: hsl(220, 20%, 95%);
   --primary: hsl(24, 100%, 45%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(220, 30%, 92%);
-  --secondary-foreground: hsl(220, 15%, 15%);
-  --accent: hsl(220, 60%, 88%);
-  --accent-foreground: hsl(220, 15%, 15%);
+  --secondary: hsl(220, 30%, 95%);
+  --secondary-foreground: hsl(220, 25%, 10%);
+  --accent: hsl(220, 60%, 92%);
+  --accent-foreground: hsl(220, 25%, 10%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(220, 70%, 50%);
@@ -71,27 +71,38 @@
     @apply antialiased text-foreground;
     font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 500;
-    background: #e65100 !important;
-    background-image: linear-gradient(135deg, #e65100, #ff6f00, #f57c00, #ff8f00, #ffab00) !important;
+    background: #fff3e0 !important;
+    background-image: linear-gradient(135deg, #fff3e0, #ffe0b2, #ffcc80, #ffb74d, #ffa726) !important;
   }
 
   /* Enhanced text contrast for better readability */
   .text-enhanced {
-    color: rgba(0, 0, 0, 0.9) !important;
-    font-weight: 600 !important;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+    color: rgba(0, 0, 0, 0.95) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
   }
 
   .text-subtitle-enhanced {
-    color: rgba(0, 0, 0, 0.75) !important;
-    font-weight: 500 !important;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+    color: rgba(0, 0, 0, 0.85) !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
   }
 
   .text-white-enhanced {
-    color: rgba(255, 255, 255, 0.95) !important;
+    color: rgba(255, 255, 255, 0.98) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Additional text enhancements */
+  .text-dark-enhanced {
+    color: rgba(0, 0, 0, 0.9) !important;
     font-weight: 600 !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  .text-medium-enhanced {
+    color: rgba(0, 0, 0, 0.8) !important;
+    font-weight: 500 !important;
   }
 }
 

@@ -266,7 +266,7 @@ export default function Dashboard() {
       {/* Recent Requests */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("dashboard.recentRequests")}</CardTitle>
+          <CardTitle className="text-dark-enhanced">{t("dashboard.recentRequests")}</CardTitle>
         </CardHeader>
         <CardContent>
           {repairsLoading ? (
@@ -280,18 +280,18 @@ export default function Dashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-enhanced font-semibold">{t("table.room")}</TableHead>
-                    <TableHead className="text-enhanced font-semibold">{t("table.category")}</TableHead>
-                    <TableHead className="text-enhanced font-semibold">{t("table.status")}</TableHead>
-                    <TableHead className="text-enhanced font-semibold">{t("table.priority")}</TableHead>
-                    <TableHead className="text-enhanced font-semibold">{t("table.date")}</TableHead>
+                    <TableHead className="text-dark-enhanced font-semibold">{t("table.room")}</TableHead>
+                    <TableHead className="text-dark-enhanced font-semibold">{t("table.category")}</TableHead>
+                    <TableHead className="text-dark-enhanced font-semibold">{t("table.status")}</TableHead>
+                    <TableHead className="text-dark-enhanced font-semibold">{t("table.priority")}</TableHead>
+                    <TableHead className="text-dark-enhanced font-semibold">{t("table.date")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentRepairs.map((repair: any) => (
                     <TableRow key={repair.id}>
-                      <TableCell className="font-medium">{repair.room}</TableCell>
-                      <TableCell>{t(`categories.${repair.category}`)}</TableCell>
+                      <TableCell className="font-medium text-dark-enhanced">{repair.room}</TableCell>
+                      <TableCell className="text-medium-enhanced">{t(`categories.${repair.category}`)}</TableCell>
                       <TableCell>{getStatusBadge(repair.status)}</TableCell>
                       <TableCell>{getPriorityBadge(repair.urgency)}</TableCell>
                       <TableCell>
@@ -304,7 +304,7 @@ export default function Dashboard() {
               
               {recentRepairs.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">No recent requests found</p>
+                  <p className="text-muted-foreground text-medium-enhanced">ไม่มีรายการแจ้งซ่อมล่าสุด</p>
                 </div>
               )}
             </div>

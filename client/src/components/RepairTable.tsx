@@ -322,8 +322,8 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                 <div className="space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-semibold text-lg">ห้อง {repair.room}</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-semibold text-lg text-dark-enhanced">ห้อง {repair.room}</p>
+                      <p className="text-sm text-muted-foreground text-medium-enhanced">
                         {format(new Date(repair.createdAt), "dd/MM/yyyy HH:mm", { locale: th })}
                       </p>
                     </div>
@@ -345,7 +345,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                     <UrgencyBadge urgency={repair.urgency as any} />
                   </div>
                   
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2 text-medium-enhanced">
                     {repair.description}
                   </p>
                   
@@ -367,14 +367,14 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-sm">ห้อง</TableHead>
-                <TableHead className="text-sm">ประเภท</TableHead>
-                <TableHead className="text-sm">สถานะ</TableHead>
-                <TableHead className="text-sm">ความเร่งด่วน</TableHead>
-                <TableHead className="text-sm">รูปภาพ</TableHead>
-                <TableHead className="text-sm">วันที่</TableHead>
-                <TableHead className="text-sm">เวลา</TableHead>
-                <TableHead className="text-sm">{t("table.actions")}</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">ห้อง</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">ประเภท</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">สถานะ</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">ความเร่งด่วน</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">รูปภาพ</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">วันที่</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">เวลา</TableHead>
+                <TableHead className="text-sm text-dark-enhanced font-semibold">{t("table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -389,7 +389,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
               ) : (
                 filteredRepairs.map((repair: any) => (
                   <TableRow key={repair.id}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium text-dark-enhanced">
                       <div className="max-w-[120px] truncate" title={repair.room}>
                         {repair.room}
                       </div>
@@ -411,7 +411,7 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
                       />
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-sm text-muted-foreground text-medium-enhanced">
                         {format(new Date(repair.createdAt), "d/M/yyyy", { locale: th })}
                       </div>
                     </TableCell>
