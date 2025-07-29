@@ -37,7 +37,7 @@ export function ExportButton({ data, filename, type, title }: ExportButtonProps)
   const [exportType, setExportType] = useState<"pdf" | "excel">("pdf");
 
   const getFilteredData = () => {
-    if (type !== "repairs" || selectedPeriod === "all") {
+    if (selectedPeriod === "all") {
       return data;
     }
 
@@ -58,7 +58,13 @@ export function ExportButton({ data, filename, type, title }: ExportButtonProps)
         return data;
     }
 
-    return data.filter((item: any) => new Date(item.createdAt) >= cutoffDate);
+    // For repairs, filter by createdAt; for stats, return all data (stats are real-time)
+    if (type === "repairs") {
+      return data.filter((item: any) => new Date(item.createdAt) >= cutoffDate);
+    } else {
+      // For stats, we still show the period in the report but use current data
+      return data;
+    }
   };
 
   const exportToPDF = async () => {
@@ -234,22 +240,20 @@ export function ExportButton({ data, filename, type, title }: ExportButtonProps)
             </Select>
           </div>
 
-          {type === "repairs" && (
-            <div className="space-y-2">
-              <Label>ช่วงเวลาข้อมูล</Label>
-              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">ข้อมูลทั้งหมด</SelectItem>
-                  <SelectItem value="current">เดือนปัจจุบัน</SelectItem>
-                  <SelectItem value="1month">1 เดือนย้อนหลัง</SelectItem>
-                  <SelectItem value="2months">2 เดือนย้อนหลัง</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label>ช่วงเวลาข้อมูล</Label>
+            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">ข้อมูลทั้งหมด</SelectItem>
+                <SelectItem value="current">เดือนปัจจุบัน</SelectItem>
+                <SelectItem value="1month">1 เดือนย้อนหลัง</SelectItem>
+                <SelectItem value="2months">2 เดือนย้อนหลัง</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="pt-4 flex gap-2">
             <Button

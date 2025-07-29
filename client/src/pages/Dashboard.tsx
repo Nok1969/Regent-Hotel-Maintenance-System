@@ -271,17 +271,12 @@ export default function Dashboard() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <CardTitle className="text-dark-enhanced">{t("dashboard.recentRequests")}</CardTitle>
-            {user?.role === 'admin' && stats && (
+            {user?.role === 'admin' && stats && recentRepairs.length > 0 && (
               <ExportButton 
-                data={[
-                  { label: 'Total', value: stats.total },
-                  { label: 'Pending', value: stats.pending },
-                  { label: 'In Progress', value: stats.inProgress },
-                  { label: 'Completed', value: stats.completed }
-                ]}
-                filename={`dashboard-stats-${new Date().toISOString().split('T')[0]}`}
-                type="stats"
-                title="สถิติแดชบอร์ด - โรงแรมวาลา หัวหิน นิว แชปเตอร์"
+                data={recentRepairs}
+                filename={`dashboard-repairs-${new Date().toISOString().split('T')[0]}`}
+                type="repairs"
+                title="รายการซ่อมแซมจากแดชบอร์ด - โรงแรมวาลา หัวหิน นิว แชปเตอร์"
               />
             )}
           </div>
