@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageGallery, ImageGalleryCard } from "@/components/ImageGallery";
+import { ExportButton } from "@/components/ExportButton";
 import { Edit, Eye, Filter, X } from "lucide-react";
 
 interface RepairTableProps {
@@ -229,15 +230,25 @@ export function RepairTable({ filters: initialFilters }: RepairTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{t("repairs.title")}</span>
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4" />
-            <span className="text-sm text-muted-foreground">
-              {filteredRepairs.length} {t("repairs.items")}
-            </span>
-          </div>
-        </CardTitle>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <CardTitle className="flex items-center space-x-2">
+            <span>{t("repairs.title")}</span>
+            <div className="flex items-center space-x-2">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm text-muted-foreground">
+                {filteredRepairs.length} {t("repairs.items")}
+              </span>
+            </div>
+          </CardTitle>
+          {user?.role === 'admin' && repairs.length > 0 && (
+            <ExportButton 
+              data={repairs}
+              filename={`repair-list-${new Date().toISOString().split('T')[0]}`}
+              type="repairs"
+              title="รายการแจ้งซ่อม - โรงแรมวาลา หัวหิน นิว แชปเตอร์"
+            />
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         {/* Filters */}

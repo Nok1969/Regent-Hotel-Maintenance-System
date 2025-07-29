@@ -2,7 +2,9 @@ import { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { ExportButton } from "@/components/ExportButton";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -31,6 +33,7 @@ import { cn } from "@/lib/utils";
 export default function Dashboard() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["stats", "summary"],
@@ -266,7 +269,22 @@ export default function Dashboard() {
       {/* Recent Requests */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-dark-enhanced">{t("dashboard.recentRequests")}</CardTitle>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <CardTitle className="text-dark-enhanced">{t("dashboard.recentRequests")}</CardTitle>
+            {user?.role === 'admin' && stats && (
+              <ExportButton 
+                data={[
+                  { label: 'Total', value: stats.total },
+                  { label: 'Pending', value: stats.pending },
+                  { label: 'In Progress', value: stats.inProgress },
+                  { label: 'Completed', value: stats.completed }
+                ]}
+                filename={`dashboard-stats-${new Date().toISOString().split('T')[0]}`}
+                type="stats"
+                title="สถิติแดชบอร์ด - โรงแรมวาลา หัวหิน นิว แชปเตอร์"
+              />
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           {repairsLoading ? (

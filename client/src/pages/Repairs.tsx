@@ -43,5 +43,9 @@ export default function Repairs() {
     return null;
   }
 
-  return <RepairTable />;
+  return (
+    <div className="space-y-6">
+      <RepairTable />
+    </div>
+  );
 }
